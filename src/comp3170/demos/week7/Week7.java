@@ -103,8 +103,8 @@ public class Week7 extends JFrame implements GLEventListener {
 		// enable backface culling
 		
 		gl.glEnable(GL.GL_CULL_FACE);  
-		gl.glCullFace(GL.GL_BACK);
-		gl.glFrontFace(GL.GL_CCW);
+		gl.glCullFace(GL.GL_BACK);	// cull the back face
+		gl.glFrontFace(GL.GL_CCW);	// the front face has CCW winding order
 		
 		// Compile the shader
 		try {
