@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 
 import org.joml.Matrix4f;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -94,6 +95,20 @@ public class Week7 extends JFrame implements GLEventListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
+		
+		// enabling full-screen super-sampled anti-aliasing
+		
+		GLProfile profile = GLProfile.get(GLProfile.GL4);
+		GLCapabilities cap = new GLCapabilities(profile);
+		cap.setSampleBuffers(true);
+		cap.setNumSamples(4);
+		cap.setAlphaBits(4);
+
+		// enable backface culling
+		
+		gl.glEnable(GL.GL_CULL_FACE);  
+		gl.glCullFace(GL.GL_BACK);
+		gl.glFrontFace(GL.GL_CCW);
 		
 		// Compile the shader
 		try {

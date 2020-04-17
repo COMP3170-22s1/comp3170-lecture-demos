@@ -57,6 +57,10 @@ public class Triangle extends SceneObject {
 		b.sub(v[0]);
 		a.cross(b, n);	// NOTE: odd syntax
 		
+		// normalise n to length 1
+		
+		n.normalize();
+		
 		// draw the normal as a line from m to m+n
 		
 		n.add(m);
