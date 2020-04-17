@@ -59,9 +59,13 @@ public class Week7 extends JFrame implements GLEventListener {
 		super("COMP3170 Week 7");
 		
 		// create an OpenGL 4 canvas and add this as a listener
+		// enabling full-screen super-sampled anti-aliasing		
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
+		capabilities.setSampleBuffers(true);
+		capabilities.setNumSamples(4);
+
 		this.canvas = new GLCanvas(capabilities);
 		this.canvas.addGLEventListener(this);
 		this.add(canvas);
@@ -96,14 +100,6 @@ public class Week7 extends JFrame implements GLEventListener {
 	public void init(GLAutoDrawable drawable) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		// enabling full-screen super-sampled anti-aliasing
-		
-		GLProfile profile = GLProfile.get(GLProfile.GL4);
-		GLCapabilities cap = new GLCapabilities(profile);
-		cap.setSampleBuffers(true);
-		cap.setNumSamples(4);
-		cap.setAlphaBits(4);
-
 		// enable backface culling
 		
 		gl.glEnable(GL.GL_CULL_FACE);  
