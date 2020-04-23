@@ -25,22 +25,19 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
-import comp3170.demos.week8.sceneobjects.Plane;
+import comp3170.demos.week8.sceneobjects.Quad;
 import comp3170.demos.week8.sceneobjects.Triangle;
 
-public class Week8 extends JFrame implements GLEventListener {
+public class ZFighting extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader shader;
-	private Shader colourShader;
-	private Shader depthShader;
 
 	final private float TAU = (float) (Math.PI * 2);
 	
 	final private File DIRECTORY = new File("src/comp3170/demos/week8"); 
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
-	final private String DEPTH_FRAGMENT_SHADER = "depth_fragment.glsl";	// colour with depth
 	
 	private SceneObject root;	
 	private Matrix4f worldMatrix;
@@ -55,12 +52,11 @@ public class Week8 extends JFrame implements GLEventListener {
 	private SceneObject camera;
 	private Animator animator;
 	private long oldTime;
-
 	private SceneObject cameraPivot;
-	private Triangle redTriangle;
-	private Triangle blueTriangle;
+	private Quad redQuad;
+	private Quad blueQuad;
 	
-	public Week8() {
+	public ZFighting() {
 		super("COMP3170 Week 8");
 		
 		// create an OpenGL 4 canvas and add this as a listener
@@ -112,14 +108,8 @@ public class Week8 extends JFrame implements GLEventListener {
 		// Compile the shader
 		try {
 			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
-			File fragmentShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.colourShader = new Shader(vertexShader, fragmentShader);
-
-			fragmentShader = new File(DIRECTORY, DEPTH_FRAGMENT_SHADER);
-			this.depthShader = new Shader(vertexShader, fragmentShader);
-			
-			this.shader = this.colourShader; 
-
+			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
+			this.shader = new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -137,19 +127,14 @@ public class Week8 extends JFrame implements GLEventListener {
 		// construct objects and attach to the scene-graph
 		this.root = new SceneObject();
 		
-		Plane plane = new Plane(shader, 10);
-		plane.setParent(this.root);
-		plane.localMatrix.scale(5,5,5);
-		
-		redTriangle = new Triangle(shader, Color.RED);
-		redTriangle.setParent(this.root);
-		redTriangle.localMatrix.scale(2,2,2);
+		redQuad = new Quad(shader, Color.RED);
+		redQuad.setParent(this.root);
+		redQuad.localMatrix.scale(2,2,2);
 
-		blueTriangle = new Triangle(shader, Color.BLUE);
-		blueTriangle.setParent(this.root);
-		blueTriangle.localMatrix.translate(0.1f,0,0);
-		blueTriangle.localMatrix.rotateY(TAU/12);
-		blueTriangle.localMatrix.scale(2,2,2);
+		blueQuad = new Quad(shader, Color.BLUE);
+		blueQuad.setParent(this.root);
+		blueQuad.localMatrix.translate(0.1f,0,0);
+		blueQuad.localMatrix.scale(2,2,2);
 		
 		// camera rectangle
 		
@@ -158,7 +143,7 @@ public class Week8 extends JFrame implements GLEventListener {
 
 		this.camera = new SceneObject();
 		this.camera.setParent(this.cameraPivot);
-		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
+		this.camera.localMatrix.translate(0, 0, 5);
 		
 	}
 	
@@ -167,22 +152,12 @@ public class Week8 extends JFrame implements GLEventListener {
 	private float cameraYaw = 0;
 	private float cameraPitch = 0;
 	private float cameraDistance = 5;
-	private float cameraHeight = 1;
-
-	float camerFOVY = TAU / 8;
-	float camerAspect = (float)screenWidth / screenHeight;
-	float cameraNear = 0.1f;
-	float cameraFar = 10.0f;
+	
+	private final float TRIANGLE_TURN = TAU/24;	
+	private final float TRIANGLE_MOVE = 0.1f;	
 	
 	public void update(float dt) {
 
-		// switch shaders 
-		
-		if (this.input.wasKeyPressed(KeyEvent.VK_D)) {
-			this.shader = (this.shader == this.colourShader ? this.depthShader : this.colourShader);
-		}
-
-		
 		// rotate the camera 
 		
 		if (this.input.isKeyDown(KeyEvent.VK_UP)) {
@@ -214,27 +189,26 @@ public class Week8 extends JFrame implements GLEventListener {
 		this.cameraPivot.localMatrix.rotateY(cameraYaw);
 		this.cameraPivot.localMatrix.rotateX(cameraPitch);
 		this.camera.localMatrix.identity();
-		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
+		this.camera.localMatrix.translate(0, 0, cameraDistance);
 		
-		// adjust the view volume
+		// rotate the blue triangle
 		
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD1)) {
-			this.cameraNear -= CAMERA_ZOOM * dt;
+		if (this.input.isKeyDown(KeyEvent.VK_W)) {
+			this.blueQuad.localMatrix.translateLocal(0, 0, TRIANGLE_MOVE * dt);
 		}
 
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD4)) {
-			this.cameraNear += CAMERA_ZOOM * dt;
-		}
-		
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD2)) {
-			this.cameraFar -= CAMERA_ZOOM * dt;
+		if (this.input.isKeyDown(KeyEvent.VK_S)) {
+			this.blueQuad.localMatrix.translateLocal(0, 0, -TRIANGLE_MOVE * dt);
 		}
 
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD5)) {
-			this.cameraFar += CAMERA_ZOOM * dt;
+		if (this.input.isKeyDown(KeyEvent.VK_A)) {
+			this.blueQuad.localMatrix.rotateY(-TRIANGLE_TURN * dt);
+		}
+
+		if (this.input.isKeyDown(KeyEvent.VK_D)) {
+			this.blueQuad.localMatrix.rotateY(TRIANGLE_TURN * dt);
 		}
 		
-		input.clear();
 	}
 	
 	
@@ -270,7 +244,12 @@ public class Week8 extends JFrame implements GLEventListener {
 		
 		// set the projection matrix
 
-		this.projectionMatrix.setPerspective(camerFOVY, camerAspect, cameraNear, cameraFar);
+		float fovy = TAU / 8;
+		float aspect = (float)screenWidth / screenHeight;
+		float near = 0.1f;
+		float far = 100.0f;
+
+		this.projectionMatrix.setPerspective(fovy, aspect, near, far);
 		shader.setUniform("u_projectionMatrix", this.projectionMatrix);
 		
 		// draw the objects in the scene graph recursively
@@ -299,7 +278,7 @@ public class Week8 extends JFrame implements GLEventListener {
 	}
 
 	public static void main(String[] args) throws IOException, GLException {
-		new Week8();
+		new ZFighting();
 	}
 
 

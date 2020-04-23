@@ -11,19 +11,24 @@ import com.jogamp.opengl.GLContext;
 import comp3170.SceneObject;
 import comp3170.Shader;
 
-public class Triangle extends SceneObject {
+public class Quad extends SceneObject {
 
 	private float[] vertices = {
-		 0, 1, 0,
-		 1, 0, 0,
-	    -1, 0, 0,	    
+		 1, 1, 0,
+		 1, -1, 0,
+	    -1, -1, 0,	    
+
+		 1, 1, 0,
+		-1, 1, 0,
+	    -1, -1, 0,	    
+
 	};
 
 	private int vertexBuffer;
 	
-	private float[] colour = { 1.0f, 1.0f, 1.0f }; // white
+	private float[] colour = { 1.0f, 1.0f, 0.0f}; // white
 	
-	public Triangle(Shader shader, Color colour) {
+	public Quad(Shader shader, Color colour) {
 		
 		// read the RGB values into this.colour
 		colour.getRGBColorComponents(this.colour);
