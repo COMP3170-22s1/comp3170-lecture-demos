@@ -1,4 +1,4 @@
-package comp3170.demos.week7.sceenobjects;
+package comp3170.demos.week7.sceneobjects;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;

@@ -26,8 +26,9 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
-import comp3170.demos.week7.sceenobjects.Plane;
-import comp3170.demos.week7.sceenobjects.Triangle;
+import comp3170.demos.week7.sceneobjects.Cube;
+import comp3170.demos.week7.sceneobjects.Plane;
+import comp3170.demos.week7.sceneobjects.Triangle;
 
 public class Week7 extends JFrame implements GLEventListener {
 
@@ -64,7 +65,7 @@ public class Week7 extends JFrame implements GLEventListener {
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
 		capabilities.setSampleBuffers(true);
-		capabilities.setNumSamples(4);
+		capabilities.setNumSamples(16);
 
 		this.canvas = new GLCanvas(capabilities);
 		this.canvas.addGLEventListener(this);
@@ -134,6 +135,9 @@ public class Week7 extends JFrame implements GLEventListener {
 		
 		Triangle triangle = new Triangle(shader);
 		triangle.setParent(this.root);;
+
+//		Cube cube = new Cube(shader);
+//		cube.setParent(this.root);
 		
 		// camera rectangle
 		
