@@ -26,33 +26,13 @@ public class Quad extends SceneObject {
 
 	private int vertexBuffer;
 	
-	private float[] colour = { 1.0f, 1.0f, 0.0f}; // white
+	private float[] colour = { 1.0f, 1.0f, 1.0f, 1.0f}; // white
 	
 	public Quad(Shader shader, Color colour) {
 		
-		// read the RGB values into this.colour
-		colour.getRGBColorComponents(this.colour);
-		
-		// Calculate the face normal
+		// read the RGBA values into this.colour
+		colour.getComponents(this.colour);
 
-		Vector3f m = new Vector3f();	// midpoint
-
-		Vector3f[] v = new Vector3f[3];
-		for (int i = 0; i < 3; i++) {
-			v[i] = new Vector3f(
-					vertices[i * 3],
-					vertices[i * 3 + 1],
-					vertices[i * 3 + 2]);
-			
-			m.add(v[i]);
-		}
-		
-		m.mul(1.0f/3);
-
-		Vector3f n = new Vector3f();	// normal
-		Vector3f a = new Vector3f();	// normal
-		Vector3f b = new Vector3f();	// normal
-		
 		this.vertexBuffer = shader.createBuffer(this.vertices);
 	}
 

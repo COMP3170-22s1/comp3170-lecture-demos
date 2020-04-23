@@ -40,7 +40,7 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 	final private File DIRECTORY = new File("src/comp3170/demos/week8"); 
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
-	final private String DEPTH_FRAGMENT_SHADER = "depth_fragment.glsl";	// colour with depth
+	final private String DEPTH_FRAGMENT_SHADER = "depthFragment.glsl";	// colour with depth
 	
 	private SceneObject root;	
 	private Matrix4f worldMatrix;
@@ -61,7 +61,7 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 	private Triangle blueTriangle;
 	
 	public DepthBuffer() {
-		super("COMP3170 Week 8");
+		super("COMP3170 Week 8 Depth Buffer");
 		
 		// create an OpenGL 4 canvas and add this as a listener
 		// enabling full-screen super-sampled anti-aliasing		

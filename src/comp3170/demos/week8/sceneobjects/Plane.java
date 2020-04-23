@@ -12,7 +12,7 @@ public class Plane extends SceneObject {
 	private float[] vertices;
 	private int vertexBuffer;
 
-	private float[] colour = { 0.5f, 0.5f, 0.5f }; // grey
+	private float[] colour = { 0.5f, 0.5f, 0.5f, 1.0f}; // grey
 
 	public Plane(Shader shader, int nLines) {
 		

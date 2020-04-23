@@ -25,10 +25,11 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
+import comp3170.demos.week8.sceneobjects.Plane;
 import comp3170.demos.week8.sceneobjects.Quad;
 import comp3170.demos.week8.sceneobjects.Triangle;
 
-public class ZFighting extends JFrame implements GLEventListener {
+public class AlphaBlending extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader shader;
@@ -56,8 +57,8 @@ public class ZFighting extends JFrame implements GLEventListener {
 	private Quad redQuad;
 	private Quad blueQuad;
 	
-	public ZFighting() {
-		super("COMP3170 Week 8 ZFighting");
+	public AlphaBlending() {
+		super("COMP3170 Week 8 Simple Transparency");
 		
 		// create an OpenGL 4 canvas and add this as a listener
 		// enabling full-screen super-sampled anti-aliasing		
@@ -105,6 +106,11 @@ public class ZFighting extends JFrame implements GLEventListener {
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		
+		// enable alpha blending 
+		
+		gl.glEnable(GL.GL_BLEND);		
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		
 		// Compile the shader
 		try {
 			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
@@ -126,15 +132,25 @@ public class ZFighting extends JFrame implements GLEventListener {
 		
 		// construct objects and attach to the scene-graph
 		this.root = new SceneObject();
-		
-		redQuad = new Quad(shader, Color.RED);
-		redQuad.setParent(this.root);
-		redQuad.localMatrix.scale(2,2,2);
 
-		blueQuad = new Quad(shader, Color.BLUE);
-		blueQuad.setParent(this.root);
-		blueQuad.localMatrix.translate(0.1f,0,0);
-		blueQuad.localMatrix.scale(2,2,2);
+		Plane plane = new Plane(shader, 10);
+		plane.setParent(this.root);
+		plane.localMatrix.scale(5,5,5);
+		
+		
+		// semi-transparent colours with alpha = 0.5
+		Color red = new Color(1,0,0,0.5f); 
+		Color blue = new Color(0,0,1,0.5f);
+
+		Triangle redTriangle = new Triangle(shader, red);
+		redTriangle.setParent(this.root);
+		redTriangle.localMatrix.scale(2,2,2);
+		
+	
+		Triangle blueTriangle = new Triangle(shader, blue);
+		blueTriangle.setParent(this.root);
+		blueTriangle.localMatrix.rotateY(TAU/8);
+		blueTriangle.localMatrix.scale(2,2,2);
 		
 		// camera rectangle
 		
@@ -143,7 +159,7 @@ public class ZFighting extends JFrame implements GLEventListener {
 
 		this.camera = new SceneObject();
 		this.camera.setParent(this.cameraPivot);
-		this.camera.localMatrix.translate(0, 0, 5);
+		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
 		
 	}
 	
@@ -152,6 +168,7 @@ public class ZFighting extends JFrame implements GLEventListener {
 	private float cameraYaw = 0;
 	private float cameraPitch = 0;
 	private float cameraDistance = 5;
+	private float cameraHeight = 1;
 	
 	private final float TRIANGLE_TURN = TAU/24;	
 	private final float TRIANGLE_MOVE = 0.1f;	
@@ -189,7 +206,7 @@ public class ZFighting extends JFrame implements GLEventListener {
 		this.cameraPivot.localMatrix.rotateY(cameraYaw);
 		this.cameraPivot.localMatrix.rotateX(cameraPitch);
 		this.camera.localMatrix.identity();
-		this.camera.localMatrix.translate(0, 0, cameraDistance);
+		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
 		
 		
 	}
@@ -261,7 +278,7 @@ public class ZFighting extends JFrame implements GLEventListener {
 	}
 
 	public static void main(String[] args) throws IOException, GLException {
-		new ZFighting();
+		new AlphaBlending();
 	}
 
 

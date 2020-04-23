@@ -32,13 +32,12 @@ public class Triangle extends SceneObject {
 	private int barycentricBuffer;
 
 	
-	private float[] colour = { 1.0f, 1.0f, 1.0f }; // white
+	private float[] colour = { 1.0f, 1.0f, 1.0f, 1.0f }; // white
 	
 	public Triangle(Shader shader, Color colour) {
-		
-		// read the RGB values into this.colour
-		colour.getRGBColorComponents(this.colour);
-				
+
+		// read the RGBA values into this.colour
+		colour.getComponents(this.colour);				
 		this.vertexBuffer = shader.createBuffer(this.vertices);
 		this.barycentricBuffer = shader.createBuffer(this.barycentric);
 	}
