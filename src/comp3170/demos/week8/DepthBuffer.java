@@ -28,7 +28,7 @@ import comp3170.Shader;
 import comp3170.demos.week8.sceneobjects.Plane;
 import comp3170.demos.week8.sceneobjects.Triangle;
 
-public class Week8 extends JFrame implements GLEventListener {
+public class DepthBuffer extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader shader;
@@ -60,7 +60,7 @@ public class Week8 extends JFrame implements GLEventListener {
 	private Triangle redTriangle;
 	private Triangle blueTriangle;
 	
-	public Week8() {
+	public DepthBuffer() {
 		super("COMP3170 Week 8");
 		
 		// create an OpenGL 4 canvas and add this as a listener
@@ -299,7 +299,7 @@ public class Week8 extends JFrame implements GLEventListener {
 	}
 
 	public static void main(String[] args) throws IOException, GLException {
-		new Week8();
+		new DepthBuffer();
 	}
 
 

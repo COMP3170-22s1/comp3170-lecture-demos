@@ -61,7 +61,9 @@ public class Plane extends SceneObject {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		shader.setAttribute("a_position", this.vertexBuffer);
-		shader.setUniform("u_colour", this.colour);
+		if (shader.hasUniform("u_colour")) {
+			shader.setUniform("u_colour", this.colour);
+		}
 
 		// draw as lines
 		// note that the number of vertices is this.vertices.length / 3

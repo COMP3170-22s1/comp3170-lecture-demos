@@ -63,7 +63,9 @@ public class Quad extends SceneObject {
 		// draw the triangle
 		
 		shader.setAttribute("a_position", this.vertexBuffer);
-		shader.setUniform("u_colour", this.colour);
+		if (shader.hasUniform("u_colour")) {
+			shader.setUniform("u_colour", this.colour);
+		}
 
 		gl.glDrawArrays(GL.GL_TRIANGLES, 0, this.vertices.length / 3);
 

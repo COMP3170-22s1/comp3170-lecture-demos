@@ -20,6 +20,17 @@ public class Triangle extends SceneObject {
 	};
 
 	private int vertexBuffer;
+
+	// the barycentric coordinates of each vertex
+	
+	private float[] barycentric = {
+			 1, 0, 0,
+			 0, 1, 0,
+		     0, 0, 1,	    
+	};
+
+	private int barycentricBuffer;
+
 	
 	private float[] colour = { 1.0f, 1.0f, 1.0f }; // white
 	
@@ -27,28 +38,9 @@ public class Triangle extends SceneObject {
 		
 		// read the RGB values into this.colour
 		colour.getRGBColorComponents(this.colour);
-		
-		// Calculate the face normal
-
-		Vector3f m = new Vector3f();	// midpoint
-
-		Vector3f[] v = new Vector3f[3];
-		for (int i = 0; i < 3; i++) {
-			v[i] = new Vector3f(
-					vertices[i * 3],
-					vertices[i * 3 + 1],
-					vertices[i * 3 + 2]);
-			
-			m.add(v[i]);
-		}
-		
-		m.mul(1.0f/3);
-
-		Vector3f n = new Vector3f();	// normal
-		Vector3f a = new Vector3f();	// normal
-		Vector3f b = new Vector3f();	// normal
-		
+				
 		this.vertexBuffer = shader.createBuffer(this.vertices);
+		this.barycentricBuffer = shader.createBuffer(this.barycentric);
 	}
 
 	@Override
@@ -58,8 +50,15 @@ public class Triangle extends SceneObject {
 		// draw the triangle
 		
 		shader.setAttribute("a_position", this.vertexBuffer);
-		shader.setUniform("u_colour", this.colour);
+		
+		if (shader.hasUniform("u_colour")) {
+			shader.setUniform("u_colour", this.colour);
+		}
 
+		if (shader.hasAttribute("a_barycentric")) {
+			shader.setAttribute("a_barycentric", this.barycentricBuffer);
+		}
+		
 		gl.glDrawArrays(GL.GL_TRIANGLES, 0, this.vertices.length / 3);
 
 	}

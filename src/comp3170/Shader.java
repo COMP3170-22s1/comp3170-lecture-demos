@@ -95,6 +95,28 @@ public class Shader {
 	}
 
 	/**
+	 * Check if the shader has a particular attribute
+	 * 
+	 * @param name
+	 * @return true if the shader has an attribute with the name provide
+	 */
+
+	public boolean hasAttribute(String name) {
+		return this.attributes.containsKey(name);
+	}
+
+	/**
+	 * Check if the shader has a particular uniform
+	 * 
+	 * @param name
+	 * @return true if the shader has a uniform with the name provide
+	 */
+
+	public boolean hasUniform(String name) {
+		return this.uniforms.containsKey(name);
+	}
+
+	/**
 	 * Get the handle for an attribute
 	 * 
 	 * @param name
