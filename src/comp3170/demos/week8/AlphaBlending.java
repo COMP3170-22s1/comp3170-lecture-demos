@@ -54,8 +54,6 @@ public class AlphaBlending extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 	private SceneObject cameraPivot;
-	private Quad redQuad;
-	private Quad blueQuad;
 	
 	public AlphaBlending() {
 		super("COMP3170 Week 8 Simple Transparency");
@@ -66,7 +64,7 @@ public class AlphaBlending extends JFrame implements GLEventListener {
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
 		capabilities.setSampleBuffers(true);
-		capabilities.setNumSamples(16);
+		capabilities.setNumSamples(4);
 
 		this.canvas = new GLCanvas(capabilities);
 		this.canvas.addGLEventListener(this);

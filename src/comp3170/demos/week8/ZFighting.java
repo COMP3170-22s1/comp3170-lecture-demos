@@ -65,7 +65,7 @@ public class ZFighting extends JFrame implements GLEventListener {
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
 		capabilities.setSampleBuffers(true);
-		capabilities.setNumSamples(16);
+		capabilities.setNumSamples(4);
 
 		this.canvas = new GLCanvas(capabilities);
 		this.canvas.addGLEventListener(this);
