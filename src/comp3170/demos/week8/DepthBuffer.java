@@ -42,7 +42,6 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 	final private String DEPTH_FRAGMENT_SHADER = "depthFragment.glsl";	// colour with depth
 	
-	private SceneObject root;	
 	private Matrix4f worldMatrix;
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
@@ -52,10 +51,11 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 	private int screenHeight = 1000;
 	
 	private InputManager input;
-	private SceneObject camera;
 	private Animator animator;
 	private long oldTime;
 
+	private SceneObject root;	
+	private SceneObject camera;
 	private SceneObject cameraPivot;
 	private Triangle redTriangle;
 	private Triangle blueTriangle;
