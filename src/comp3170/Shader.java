@@ -328,6 +328,50 @@ public class Shader {
 	}
 
 	/**
+	 * Set a uniform of type mat2 to a Matrix2f value
+	 * 
+	 * @param uniformName	the uniform to set
+	 * @param matrix		the matrix value to send
+	 */
+	
+	public void setUniform(String uniformName, Matrix2f matrix) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int uniform = getUniform(uniformName);
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_MAT2) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got Matrix2f", typeName(type)));			
+		}
+
+		// Ideally this buffer should be allocated once are reused, to reduce memory management
+		
+		gl.glUniformMatrix2fv(uniform, 1, false, matrix.get(matrixBuffer));
+	}
+
+	/**
+	 * Set a uniform of type mat3 to a Matrix3f value
+	 * 
+	 * @param uniformName	the uniform to set
+	 * @param matrix		the matrix value to send
+	 */
+	
+	public void setUniform(String uniformName, Matrix3f matrix) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int uniform = getUniform(uniformName);
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_MAT3) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got Matrix3f", typeName(type)));			
+		}
+
+		// Ideally this buffer should be allocated once are reused, to reduce memory management
+		
+		gl.glUniformMatrix3fv(uniform, 1, false, matrix.get(matrixBuffer));
+	}
+
+	/**
 	 * Set a uniform of type mat4 to a Matrix4 value
 	 * 
 	 * @param uniformName	the uniform to set
@@ -341,7 +385,7 @@ public class Shader {
 
 		if (type != GL_FLOAT_MAT4) {
 			throw new IllegalArgumentException(
-					String.format("Expected %s got Matrix4d", typeName(type)));			
+					String.format("Expected %s got Matrix4f", typeName(type)));			
 		}
 
 		// Ideally this buffer should be allocated once are reused, to reduce memory management
