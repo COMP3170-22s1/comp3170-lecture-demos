@@ -199,7 +199,57 @@ public class Shader {
 		return buffers[0];
 	}
 
+	/**
+	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
+	 * it
+	 * 
+	 * @param data The data as an array of Vector3f
+	 * @return
+	 */
+	public int createBuffer(Vector3f[] data) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int[] buffers = new int[1];
+		gl.glGenBuffers(buffers.length, buffers, 0);
+
+		FloatBuffer buffer = Buffers.newDirectFloatBuffer(3 * data.length);
+		for (int i = 0; i < data.length; i++) {
+			buffer.put(data[i].x);
+			buffer.put(data[i].y);
+			buffer.put(data[i].z);
+		}
+		
+		gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+		gl.glBufferData(GL_ARRAY_BUFFER, 3 * data.length * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
+
+		return buffers[0];
+	}
 	
+	/**
+	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
+	 * it
+	 * 
+	 * @param data The data as an array of Vector4f
+	 * @return
+	 */
+	public int createBuffer(Vector4f[] data) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int[] buffers = new int[1];
+		gl.glGenBuffers(buffers.length, buffers, 0);
+
+		FloatBuffer buffer = Buffers.newDirectFloatBuffer(4 * data.length);
+		for (int i = 0; i < data.length; i++) {
+			buffer.put(data[i].x);
+			buffer.put(data[i].y);
+			buffer.put(data[i].z);
+			buffer.put(data[i].w);
+		}
+		
+		gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+		gl.glBufferData(GL_ARRAY_BUFFER, 4 * data.length * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
+
+		return buffers[0];
+	}
+
 	/**
 	 * Connect a buffer to a shader attribute
 	 * 
