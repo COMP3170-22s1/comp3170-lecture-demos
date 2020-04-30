@@ -258,7 +258,7 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		
 		// clear the depth buffer
-		gl.glClearDepth(1);
+		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
 		this.shader.enable();
