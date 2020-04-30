@@ -37,7 +37,13 @@ public class Shader {
 	private Map<String, Integer> uniforms;
 	private Map<String, Integer> uniformTypes;
 
-	private FloatBuffer matrixBuffer = Buffers.newDirectFloatBuffer(16);
+	private FloatBuffer matrix2Buffer = Buffers.newDirectFloatBuffer(4);
+	private FloatBuffer matrix3Buffer = Buffers.newDirectFloatBuffer(9);
+	private FloatBuffer matrix4Buffer = Buffers.newDirectFloatBuffer(16);
+
+	private FloatBuffer vector2Buffer = Buffers.newDirectFloatBuffer(2);
+	private FloatBuffer vector3Buffer = Buffers.newDirectFloatBuffer(3);
+	private FloatBuffer vector4Buffer = Buffers.newDirectFloatBuffer(16);
 
 	/**
 	 * Compile and link a vertex and fragment shader
@@ -328,6 +334,66 @@ public class Shader {
 	}
 
 	/**
+	 * Set a uniform of type vec2 to a Vector2f value
+	 * 
+	 * @param uniformName	the uniform to set
+	 * @param vector		the vector value to send
+	 */
+	
+	public void setUniform(String uniformName, Vector2f vector) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int uniform = getUniform(uniformName);
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_VEC2) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got Vector2f", typeName(type)));			
+		}
+
+		gl.glUniform2fv(uniform, 1, vector.get(vector2Buffer));
+	}
+
+	/**
+	 * Set a uniform of type vec3 to a Vector3f value
+	 * 
+	 * @param uniformName	the uniform to set
+	 * @param vector		the vector value to send
+	 */
+	
+	public void setUniform(String uniformName, Vector3f vector) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int uniform = getUniform(uniformName);
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_VEC3) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got Vector3f", typeName(type)));			
+		}
+
+		gl.glUniform3fv(uniform, 1, vector.get(vector3Buffer));
+	}
+
+	/**
+	 * Set a uniform of type vec4 to a Vector4f value
+	 * 
+	 * @param uniformName	the uniform to set
+	 * @param vector		the vector value to send
+	 */
+	
+	public void setUniform(String uniformName, Vector4f vector) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int uniform = getUniform(uniformName);
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_FLOAT_VEC4) {
+			throw new IllegalArgumentException(
+					String.format("Expected %s got Vector4f", typeName(type)));			
+		}
+
+		gl.glUniform4fv(uniform, 1, vector.get(vector4Buffer));
+	}
+
+	/**
 	 * Set a uniform of type mat2 to a Matrix2f value
 	 * 
 	 * @param uniformName	the uniform to set
@@ -344,9 +410,7 @@ public class Shader {
 					String.format("Expected %s got Matrix2f", typeName(type)));			
 		}
 
-		// Ideally this buffer should be allocated once are reused, to reduce memory management
-		
-		gl.glUniformMatrix2fv(uniform, 1, false, matrix.get(matrixBuffer));
+		gl.glUniformMatrix2fv(uniform, 1, false, matrix.get(matrix2Buffer));
 	}
 
 	/**
@@ -366,9 +430,7 @@ public class Shader {
 					String.format("Expected %s got Matrix3f", typeName(type)));			
 		}
 
-		// Ideally this buffer should be allocated once are reused, to reduce memory management
-		
-		gl.glUniformMatrix3fv(uniform, 1, false, matrix.get(matrixBuffer));
+		gl.glUniformMatrix3fv(uniform, 1, false, matrix.get(matrix3Buffer));
 	}
 
 	/**
@@ -388,32 +450,9 @@ public class Shader {
 					String.format("Expected %s got Matrix4f", typeName(type)));			
 		}
 
-		// Ideally this buffer should be allocated once are reused, to reduce memory management
-		
-		gl.glUniformMatrix4fv(uniform, 1, false, matrix.get(matrixBuffer));
+		gl.glUniformMatrix4fv(uniform, 1, false, matrix.get(matrix4Buffer));
 	}
 
-	/**
-	 * Set a uniform of type mat4 to a Matrix4 value
-	 * 
-	 * @param uniformName	the uniform to set
-	 * @param matrix		the matrix value to send
-	 */
-	
-	public void setUniform(String uniformName, Matrix4d matrix) {
-		GL4 gl = (GL4) GLContext.getCurrentGL();
-		int uniform = getUniform(uniformName);
-		int type = uniformTypes.get(uniformName);
-
-		if (type != GL_FLOAT_MAT4) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Matrix4d", typeName(type)));			
-		}
-
-		// Ideally this buffer should be allocated once are reused, to reduce memory management
-		
-		gl.glUniformMatrix4fv(uniform, 1, false, matrix.get(matrixBuffer));
-	}
 
 	
 	private String typeName(int type) {
