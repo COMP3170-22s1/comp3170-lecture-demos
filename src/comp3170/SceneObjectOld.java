@@ -6,14 +6,14 @@ import java.util.List;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
 
-public class SceneObject {
+public class SceneObjectOld {
 
 	public Matrix4f localMatrix;
 	private Matrix4f worldMatrix;
-	private List<SceneObject> children;
-	private SceneObject parent;
+	private List<SceneObjectOld> children;
+	private SceneObjectOld parent;
 	
-	public SceneObject() {
+	public SceneObjectOld() {
 		this.localMatrix = new Matrix4f();
 		this.localMatrix.identity();
 		
@@ -21,7 +21,7 @@ public class SceneObject {
 		this.worldMatrix.identity();
 			
 		this.parent = null;
-		this.children = new ArrayList<SceneObject>();
+		this.children = new ArrayList<SceneObjectOld>();
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class SceneObject {
 	 * @param parent
 	 */
 	
-	public void setParent(SceneObject parent) {
+	public void setParent(SceneObjectOld parent) {
 		if (this.parent != null) {
 			this.parent.children.remove(this);
 		}
@@ -53,7 +53,7 @@ public class SceneObject {
 	public Matrix4f getWorldMatrix(Matrix4f matrix) {
 		localMatrix.get(matrix);
 		
-		SceneObject obj = this.parent;
+		SceneObjectOld obj = this.parent;
 		
 		while (obj != null) {
 			matrix.mulLocal(obj.localMatrix);
@@ -94,7 +94,7 @@ public class SceneObject {
 		drawSelf(shader);
 	
 		// draw the children 
-		for (SceneObject child : children) {
+		for (SceneObjectOld child : children) {
 			child.draw(shader, worldMatrix);
 		}
 		

@@ -23,7 +23,7 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
-import comp3170.SceneObject;
+import comp3170.SceneObjectOld;
 import comp3170.Shader;
 import comp3170.demos.week8.sceneobjects.Plane;
 import comp3170.demos.week8.sceneobjects.Triangle;
@@ -40,7 +40,7 @@ public class VertexColours extends JFrame implements GLEventListener {
 	final private String VERTEX_SHADER = "colourVertex.glsl";
 	final private String FRAGMENT_SHADER = "colourFragment.glsl";
 	
-	private SceneObject root;	
+	private SceneObjectOld root;	
 	private Matrix4f worldMatrix;
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
@@ -50,11 +50,11 @@ public class VertexColours extends JFrame implements GLEventListener {
 	private int screenHeight = 1000;
 	
 	private InputManager input;
-	private SceneObject camera;
+	private SceneObjectOld camera;
 	private Animator animator;
 	private long oldTime;
 
-	private SceneObject cameraPivot;
+	private SceneObjectOld cameraPivot;
 	
 	public VertexColours() {
 		super("COMP3170 Week 8 Vertex Colours");
@@ -125,7 +125,7 @@ public class VertexColours extends JFrame implements GLEventListener {
 		this.projectionMatrix = new Matrix4f();
 		
 		// construct objects and attach to the scene-graph
-		this.root = new SceneObject();
+		this.root = new SceneObjectOld();
 		
 		Color[] colours = new Color[] {Color.RED, Color.GREEN, Color.BLUE};
 		TriangleWithVertexColours triangle = new TriangleWithVertexColours(shader, colours);
@@ -134,10 +134,10 @@ public class VertexColours extends JFrame implements GLEventListener {
 		
 		// camera rectangle
 		
-		this.cameraPivot = new SceneObject();
+		this.cameraPivot = new SceneObjectOld();
 		this.cameraPivot.setParent(this.root);
 
-		this.camera = new SceneObject();
+		this.camera = new SceneObjectOld();
 		this.camera.setParent(this.cameraPivot);
 		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
 		

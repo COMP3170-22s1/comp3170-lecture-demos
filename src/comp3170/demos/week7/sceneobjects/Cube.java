@@ -4,10 +4,10 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
-import comp3170.SceneObject;
+import comp3170.SceneObjectOld;
 import comp3170.Shader;
 
-public class Cube extends SceneObject {
+public class Cube extends SceneObjectOld {
 
 	// (-1,1,1)    (1,1,1)
 	//       +-----+

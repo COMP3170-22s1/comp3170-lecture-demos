@@ -23,7 +23,7 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
-import comp3170.SceneObject;
+import comp3170.SceneObjectOld;
 import comp3170.Shader;
 import comp3170.demos.week8.sceneobjects.Plane;
 import comp3170.demos.week8.sceneobjects.Triangle;
@@ -54,9 +54,9 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private SceneObject root;	
-	private SceneObject camera;
-	private SceneObject cameraPivot;
+	private SceneObjectOld root;	
+	private SceneObjectOld camera;
+	private SceneObjectOld cameraPivot;
 	private Triangle redTriangle;
 	private Triangle blueTriangle;
 	
@@ -135,7 +135,7 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 		this.projectionMatrix = new Matrix4f();
 		
 		// construct objects and attach to the scene-graph
-		this.root = new SceneObject();
+		this.root = new SceneObjectOld();
 		
 		Plane plane = new Plane(shader, 10);
 		plane.setParent(this.root);
@@ -153,10 +153,10 @@ public class DepthBuffer extends JFrame implements GLEventListener {
 		
 		// camera rectangle
 		
-		this.cameraPivot = new SceneObject();
+		this.cameraPivot = new SceneObjectOld();
 		this.cameraPivot.setParent(this.root);
 
-		this.camera = new SceneObject();
+		this.camera = new SceneObjectOld();
 		this.camera.setParent(this.cameraPivot);
 		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
 		

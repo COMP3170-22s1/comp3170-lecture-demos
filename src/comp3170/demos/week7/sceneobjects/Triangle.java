@@ -6,10 +6,10 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
-import comp3170.SceneObject;
+import comp3170.SceneObjectOld;
 import comp3170.Shader;
 
-public class Triangle extends SceneObject {
+public class Triangle extends SceneObjectOld {
 
 	private float[] vertices = {
 		 0, 1, 0,
