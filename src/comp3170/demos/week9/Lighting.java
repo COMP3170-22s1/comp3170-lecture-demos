@@ -255,11 +255,11 @@ public class Lighting extends JFrame implements GLEventListener {
 		}
 		
 		if (this.input.isKeyDown(KeyEvent.VK_PAGE_UP)) {
-			this.cameraDistance -= CAMERA_ZOOM * dt;
+			this.cameraFOV -= CAMERA_ZOOM * dt;
 		}
 		
 		if (this.input.isKeyDown(KeyEvent.VK_PAGE_DOWN)) {
-			this.cameraDistance += CAMERA_ZOOM * dt;
+			this.cameraFOV += CAMERA_ZOOM * dt;
 		}
 
 		this.cameraPivot.localMatrix.identity();

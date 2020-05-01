@@ -195,6 +195,14 @@ public class Cylinder extends SceneObject {
 	}
 	
 	
+	public void setLightDir(Vector3f lightDir) {
+		this.lightDir.set(lightDir);
+	}
+
+	public void setViewDir(Vector3f viewDir) {
+		this.viewDir.set(viewDir);
+	}
+	
 	@Override
 	protected void drawSelf(Shader shader) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
