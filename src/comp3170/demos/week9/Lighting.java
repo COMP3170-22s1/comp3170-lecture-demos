@@ -211,7 +211,7 @@ public class Lighting extends JFrame implements GLEventListener {
 		axes.setParent(this.root);
 		axes.localMatrix.translate(2,0.1f,2);
 
-		cylinderBottom = new Cylinder(specularFragmentLightingShader);
+		cylinderBottom = new Cylinder(diffuseFragmentLightingShader);
 		cylinderBottom.setParent(this.root);
 
 		cylinderTop = new Cylinder(diffuseVertexLightingShader);
