@@ -24,32 +24,57 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
+import comp3170.demos.week9.sceneobjects.Axes;
 import comp3170.demos.week9.sceneobjects.Cylinder;
 import comp3170.demos.week9.sceneobjects.Plane;
-import comp3170.demos.week9.sceneobjects.Triangle;
 
 public class Lighting extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
-	private Shader diffuseVertexLightingShader;
-	private Shader diffuseFragmentLightingShader;
-	private Shader wireframeShader;
-	private Shader simpleShader;
-	private Shader normalShader;
 
 	final private float TAU = (float) (Math.PI * 2);
 	
-	final private File DIRECTORY = new File("src/comp3170/demos/week9"); 
+	final private File DIRECTORY = new File("src/comp3170/demos/week9");
+	
+	// simple uniform colour shader
+	private Shader simpleShader;
 	final private String SIMPLE_VERTEX_SHADER = "simpleVertex.glsl";
 	final private String SIMPLE_FRAGMENT_SHADER = "simpleFragment.glsl";
+	
+	// vertex coloured shader
+	private Shader colourShader;
+	final private String COLOUR_VERTEX_SHADER = "coloursVertex.glsl";
+	final private String COLOUR_FRAGMENT_SHADER = "coloursFragment.glsl";
+	
+	// normal colouring
+	private Shader normalShader;
 	final private String NORMAL_VERTEX_SHADER = "normalVertex.glsl";
 	final private String NORMAL_FRAGMENT_SHADER = "normalFragment.glsl";
+	
+	// wireframe
+	private Shader wireframeShader;
 	final private String WIREFRAME_VERTEX_SHADER = "wireframeVertex.glsl";
 	final private String WIREFRAME_FRAGMENT_SHADER = "wireframeFragment.glsl";
+	
+	// diffuse lighting in vertex shader
+	private Shader diffuseVertexLightingShader;
 	final private String DIFFUSE_VERTEX_LIGHTING_VERTEX_SHADER = "diffuseVertexLightingVertex.glsl";
 	final private String DIFFUSE_VERTEX_LIGHTING_FRAGMENT_SHADER = "diffuseVertexLightingFragment.glsl";
+	
+	// diffuse lighting in fragment shader
+	private Shader diffuseFragmentLightingShader;
 	final private String DIFFUSE_FRAGMENT_LIGHTING_VERTEX_SHADER = "diffuseFragmentLightingVertex.glsl";
 	final private String DIFFUSE_FRAGMENT_LIGHTING_FRAGMENT_SHADER = "diffuseFragmentLightingFragment.glsl";
+	
+	// specular lighting in vertex shader
+	private Shader specularVertexLightingShader;
+	final private String SPECULAR_VERTEX_LIGHTING_VERTEX_SHADER = "specularVertexLightingVertex.glsl";
+	final private String SPECULAR_VERTEX_LIGHTING_FRAGMENT_SHADER = "specularVertexLightingFragment.glsl";
+
+	// specular lighting in fragement shader
+	private Shader specularFragmentLightingShader;
+	final private String SPECULAR_FRAGMENT_LIGHTING_VERTEX_SHADER = "specularFragmentLightingVertex.glsl";
+	final private String SPECULAR_FRAGMENT_LIGHTING_FRAGMENT_SHADER = "specularFragmentLightingFragment.glsl";
 	
 	private Matrix4f mvpMatrix;
 	private Matrix4f viewMatrix;
@@ -117,6 +142,7 @@ public class Lighting extends JFrame implements GLEventListener {
 		// enable depth testing
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
+		gl.glEnable(GL.GL_CULL_FACE);
 		
 		// Compile the shader
 		try {
@@ -127,6 +153,10 @@ public class Lighting extends JFrame implements GLEventListener {
 			vertexShader = new File(DIRECTORY, SIMPLE_VERTEX_SHADER);
 			fragmentShader = new File(DIRECTORY, SIMPLE_FRAGMENT_SHADER);
 			this.simpleShader = new Shader(vertexShader, fragmentShader);
+
+			vertexShader = new File(DIRECTORY, COLOUR_VERTEX_SHADER);
+			fragmentShader = new File(DIRECTORY, COLOUR_FRAGMENT_SHADER);
+			this.colourShader = new Shader(vertexShader, fragmentShader);
 
 			vertexShader = new File(DIRECTORY, NORMAL_VERTEX_SHADER);
 			fragmentShader = new File(DIRECTORY, NORMAL_FRAGMENT_SHADER);
@@ -139,6 +169,14 @@ public class Lighting extends JFrame implements GLEventListener {
 			vertexShader = new File(DIRECTORY, DIFFUSE_FRAGMENT_LIGHTING_VERTEX_SHADER);
 			fragmentShader = new File(DIRECTORY, DIFFUSE_FRAGMENT_LIGHTING_FRAGMENT_SHADER);
 			this.diffuseFragmentLightingShader = new Shader(vertexShader, fragmentShader);
+
+			vertexShader = new File(DIRECTORY, SPECULAR_VERTEX_LIGHTING_VERTEX_SHADER);
+			fragmentShader = new File(DIRECTORY, SPECULAR_VERTEX_LIGHTING_FRAGMENT_SHADER);
+			this.specularVertexLightingShader = new Shader(vertexShader, fragmentShader);
+
+			vertexShader = new File(DIRECTORY, SPECULAR_FRAGMENT_LIGHTING_VERTEX_SHADER);
+			fragmentShader = new File(DIRECTORY, SPECULAR_FRAGMENT_LIGHTING_FRAGMENT_SHADER);
+			this.specularFragmentLightingShader = new Shader(vertexShader, fragmentShader);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -160,13 +198,17 @@ public class Lighting extends JFrame implements GLEventListener {
 		Plane plane = new Plane(simpleShader, 10);
 		plane.setParent(this.root);
 		plane.localMatrix.scale(5,5,5);
+		
+		Axes axes = new Axes(colourShader);
+		axes.setParent(this.root);
+		axes.localMatrix.translate(2,0.1f,2);
 
-		this.cylinderBottom = new Cylinder(diffuseFragmentLightingShader);
+		this.cylinderBottom = new Cylinder(specularVertexLightingShader);
 		cylinderBottom.setParent(this.root);
 
 		this.cylinderTop = new Cylinder(diffuseVertexLightingShader);
-		cylinderTop.setParent(this.root);
-		cylinderTop.localMatrix.translate(0,1,0);
+//		cylinderTop.setParent(this.root);
+//		cylinderTop.localMatrix.translate(0,1.1f,0);
 
 		// camera rectangle
 		
@@ -186,10 +228,10 @@ public class Lighting extends JFrame implements GLEventListener {
 	private float cameraDistance = 5;
 	private float cameraHeight = 1;
 
-	float camerFOVY = TAU / 8;
-	float camerAspect = (float)screenWidth / screenHeight;
-	float cameraNear = 1f;
-	float cameraFar = 20.0f;
+	private float cameraFOV = 4;
+	private float cameraAspect = (float)screenWidth / screenHeight;
+	private float cameraNear = 1f;
+	private float cameraFar = 20.0f;
 	
 	public void update(float dt) {
 
@@ -268,7 +310,8 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.viewMatrix.invert();
 		
 		// set the projection matrix
-		this.projectionMatrix.setPerspective(camerFOVY, camerAspect, cameraNear, cameraFar);
+		float width = cameraAspect * cameraFOV;
+		this.projectionMatrix.setOrtho(-width/2, width/2, -cameraFOV/2, cameraFOV/2, cameraNear, cameraFar);
 		
 		// draw the objects in the scene graph recursively
 		this.mvpMatrix.identity();
@@ -287,6 +330,7 @@ public class Lighting extends JFrame implements GLEventListener {
 		
 		this.screenWidth = width;
 		this.screenHeight = height;
+		cameraAspect= ((float)width) / height;
 		
 	}
 
