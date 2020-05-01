@@ -2,6 +2,7 @@ package comp3170.demos.week9.sceneobjects;
 
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
@@ -28,18 +29,18 @@ public class Cylinder extends SceneObject {
 	private int barycentricBuffer;
 
 	private float[] colour = { 1.0f, 1.0f, 1.0f}; // white
-	private float specularity = 2;
+	private float specularity = 10;
 	
 	private Matrix3f normalMatrix;
-	private Vector3f lightDir;
-	private Vector3f viewDir;
+	private Vector4f lightDir;
+	private Vector4f viewDir;
 	
 	
 	public Cylinder(Shader shader) {
 		super(shader);
 	
-		this.lightDir = new Vector3f(1,0,0);
-		this.viewDir = new Vector3f(0,0,1);
+		this.lightDir = new Vector4f();
+		this.viewDir = new Vector4f();
 		this.normalMatrix = new Matrix3f();
 			
 		createVerticesAndNormals();
@@ -195,11 +196,11 @@ public class Cylinder extends SceneObject {
 	}
 	
 	
-	public void setLightDir(Vector3f lightDir) {
+	public void setLightDir(Vector4f lightDir) {
 		this.lightDir.set(lightDir);
 	}
 
-	public void setViewDir(Vector3f viewDir) {
+	public void setViewDir(Vector4f viewDir) {
 		this.viewDir.set(viewDir);
 	}
 	

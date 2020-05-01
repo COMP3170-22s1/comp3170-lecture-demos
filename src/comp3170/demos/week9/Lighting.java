@@ -9,6 +9,8 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
@@ -26,6 +28,7 @@ import comp3170.SceneObject;
 import comp3170.Shader;
 import comp3170.demos.week9.sceneobjects.Axes;
 import comp3170.demos.week9.sceneobjects.Cylinder;
+import comp3170.demos.week9.sceneobjects.Light;
 import comp3170.demos.week9.sceneobjects.Plane;
 
 public class Lighting extends JFrame implements GLEventListener {
@@ -79,6 +82,7 @@ public class Lighting extends JFrame implements GLEventListener {
 	private Matrix4f mvpMatrix;
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
+	private Matrix4f lightMatrix;
 	
 	// screen size in pixels
 	private int screenWidth = 1000;
@@ -93,6 +97,9 @@ public class Lighting extends JFrame implements GLEventListener {
 	private SceneObject cameraPivot;
 	private Cylinder cylinderBottom;
 	private Cylinder cylinderTop;
+
+	private SceneObject lightPivot;
+	private Light light;
 	
 	public Lighting() {
 		super("COMP3170 Week 9 Lighting");
@@ -191,6 +198,7 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.mvpMatrix = new Matrix4f();
 		this.viewMatrix = new Matrix4f();
 		this.projectionMatrix = new Matrix4f();
+		this.lightMatrix = new Matrix4f();
 		
 		// construct objects and attach to the scene-graph
 		this.root = new SceneObject();
@@ -203,14 +211,14 @@ public class Lighting extends JFrame implements GLEventListener {
 		axes.setParent(this.root);
 		axes.localMatrix.translate(2,0.1f,2);
 
-		this.cylinderBottom = new Cylinder(specularFragmentLightingShader);
+		cylinderBottom = new Cylinder(specularFragmentLightingShader);
 		cylinderBottom.setParent(this.root);
 
-		this.cylinderTop = new Cylinder(diffuseVertexLightingShader);
+		cylinderTop = new Cylinder(diffuseVertexLightingShader);
 //		cylinderTop.setParent(this.root);
 //		cylinderTop.localMatrix.translate(0,1.1f,0);
 
-		// camera rectangle
+		// camera and light
 		
 		this.cameraPivot = new SceneObject();
 		this.cameraPivot.setParent(this.root);
@@ -218,20 +226,34 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.camera = new SceneObject();
 		this.camera.setParent(this.cameraPivot);
 		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
+
+		this.lightPivot = new SceneObject();
+		this.lightPivot.setParent(this.root);
 		
+		this.light = new Light(simpleShader);
+		this.light.setParent(this.lightPivot);
+		this.light.localMatrix.translate(0, 0, lightDistance);
+		this.light.localMatrix.scale(0.2f,0.2f,0.2f);
+
 	}
 	
 	private final float CAMERA_TURN = TAU/8;	
 	private final float CAMERA_ZOOM = 1;	
 	private float cameraYaw = 0;
 	private float cameraPitch = 0;
-	private float cameraDistance = 5;
+	private float cameraDistance = 10;
 	private float cameraHeight = 1;
 
 	private float cameraFOV = 4;
 	private float cameraAspect = (float)screenWidth / screenHeight;
-	private float cameraNear = 1f;
+	private float cameraNear = 0.1f;
 	private float cameraFar = 20.0f;
+	private Vector4f viewDir = new Vector4f();
+	
+	private float lightDistance = 5;
+	private float lightYaw = TAU/4;
+	private float lightPitch = 0;
+	private Vector4f lightDir = new Vector4f();
 	
 	public void update(float dt) {
 
@@ -244,7 +266,6 @@ public class Lighting extends JFrame implements GLEventListener {
 		if (this.input.isKeyDown(KeyEvent.VK_DOWN)) {
 			this.cameraPitch += CAMERA_TURN * dt;
 		}
-
 		
 		if (this.input.isKeyDown(KeyEvent.VK_LEFT)) {
 			this.cameraYaw -= CAMERA_TURN * dt;
@@ -265,18 +286,45 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.cameraPivot.localMatrix.identity();
 		this.cameraPivot.localMatrix.rotateY(cameraYaw);
 		this.cameraPivot.localMatrix.rotateX(cameraPitch);
-		this.camera.localMatrix.identity();
-		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
 
+		// calculate the view direction
+		// note: this assumes the camera pivot is at the root
+
+		this.viewDir.set(0,0,-1,0);
+		this.camera.getWorldMatrix(this.viewMatrix);
+		this.viewDir.mul(this.viewMatrix);
+		this.cylinderTop.setViewDir(viewDir);
+		this.cylinderBottom.setViewDir(viewDir);
+		
+		// rotate the light 
+
+		if (this.input.isKeyDown(KeyEvent.VK_W)) {
+			this.lightPitch -= CAMERA_TURN * dt;
+		}
+		
+		if (this.input.isKeyDown(KeyEvent.VK_S)) {
+			this.lightPitch += CAMERA_TURN * dt;
+		}
+		
 		if (this.input.isKeyDown(KeyEvent.VK_A)) {
-			this.cylinderBottom.localMatrix.rotateY(CAMERA_TURN * dt);
-			this.cylinderTop.localMatrix.rotateY(CAMERA_TURN * dt);
+			this.lightYaw -= CAMERA_TURN * dt;
+		}
+		
+		if (this.input.isKeyDown(KeyEvent.VK_D)) {
+			this.lightYaw += CAMERA_TURN * dt;
 		}
 
-		if (this.input.isKeyDown(KeyEvent.VK_D)) {
-			this.cylinderBottom.localMatrix.rotateY(-CAMERA_TURN * dt);
-			this.cylinderTop.localMatrix.rotateY(-CAMERA_TURN * dt);
-		}
+		this.lightPivot.localMatrix.identity();
+		this.lightPivot.localMatrix.rotateY(lightYaw);
+		this.lightPivot.localMatrix.rotateX(lightPitch);
+
+		// calculate the light direction
+		
+		this.lightDir.set(0,0,1,0);
+		this.light.getWorldMatrix(this.lightMatrix);
+		this.lightDir.mul(this.lightMatrix);
+		this.cylinderTop.setLightDir(this.lightDir);
+		this.cylinderBottom.setLightDir(this.lightDir);
 
 		input.clear();
 	}

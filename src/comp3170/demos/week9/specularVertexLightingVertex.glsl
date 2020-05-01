@@ -6,8 +6,8 @@ in vec3 a_normal;	// model coordinates
 uniform mat4 u_mvpMatrix;		// model -> NDC
 uniform mat3 u_normalMatrix;	// model normal -> world
 
-uniform vec3 u_lightDir; 		// in world coordinates
-uniform vec3 u_viewDir; 		// in world coordinates
+uniform vec4 u_lightDir; 		// in world coordinates
+uniform vec4 u_viewDir; 		// in world coordinates
 uniform vec3 u_specularMaterial;	// RGB
 
 uniform float u_specularity;	// Phong coefficient 
@@ -22,16 +22,18 @@ void main() {
 
     // make sure the lightDir, viewDir and normal have length 1
     normal = normalize(normal);
-    vec3 lightDir = normalize(u_lightDir);    
-    vec3 viewDir = normalize(u_viewDir);    
+    vec3 lightDir = normalize(u_lightDir.xyz);    
+    vec3 viewDir = normalize(u_viewDir.xyz);    
     
-    // calculate the reflection vector
-    vec3 reflected = reflect(lightDir, normal);  
+    vec3 specular = vec3(0);
+    if (dot(lightDir, normal) > 0) {     	   
+	    // calculate the reflection vector
+	    vec3 reflected = reflect(lightDir, normal);  
     
-    // Phong model specular lighting equation (assuming the light is white)
-    vec3 specular = u_specularMaterial * pow(max(0,dot(reflected, viewDir)), u_specularity);
-    
-    // interpolate to fragment colour
-    v_colour = specular;    
+	    // Phong model specular lighting equation (assuming the light is white)
+	    specular = u_specularMaterial * pow(max(0,dot(reflected, viewDir)), u_specularity);    
+    }
+	// interpolate to fragment colour
+    v_colour = specular;
 }
 
