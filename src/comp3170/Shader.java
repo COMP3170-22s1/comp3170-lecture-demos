@@ -207,21 +207,16 @@ public class Shader {
 	 * @return
 	 */
 	public int createBuffer(Vector3f[] data) {
-		GL4 gl = (GL4) GLContext.getCurrentGL();
-		int[] buffers = new int[1];
-		gl.glGenBuffers(buffers.length, buffers, 0);
-
-		FloatBuffer buffer = Buffers.newDirectFloatBuffer(3 * data.length);
+		// this is a hack, but I can't get it to work otherwise
+		float[] array = new float[3 * data.length];
+		int j = 0;
 		for (int i = 0; i < data.length; i++) {
-			buffer.put(data[i].x);
-			buffer.put(data[i].y);
-			buffer.put(data[i].z);
+			array[j++] = data[i].x;
+			array[j++] = data[i].y;
+			array[j++] = data[i].z;
 		}
 		
-		gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-		gl.glBufferData(GL_ARRAY_BUFFER, 3 * data.length * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
-
-		return buffers[0];
+		return createBuffer(array);
 	}
 	
 	/**
@@ -232,22 +227,17 @@ public class Shader {
 	 * @return
 	 */
 	public int createBuffer(Vector4f[] data) {
-		GL4 gl = (GL4) GLContext.getCurrentGL();
-		int[] buffers = new int[1];
-		gl.glGenBuffers(buffers.length, buffers, 0);
-
-		FloatBuffer buffer = Buffers.newDirectFloatBuffer(4 * data.length);
+		// this is a hack, but I can't get it to work otherwise
+		float[] array = new float[3 * data.length];
+		int j = 0;
 		for (int i = 0; i < data.length; i++) {
-			buffer.put(data[i].x);
-			buffer.put(data[i].y);
-			buffer.put(data[i].z);
-			buffer.put(data[i].w);
+			array[j++] = data[i].x;
+			array[j++] = data[i].y;
+			array[j++] = data[i].z;
+			array[j++] = data[i].w;
 		}
 		
-		gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-		gl.glBufferData(GL_ARRAY_BUFFER, 4 * data.length * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
-
-		return buffers[0];
+		return createBuffer(array);
 	}
 
 	/**
