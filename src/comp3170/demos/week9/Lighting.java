@@ -32,18 +32,24 @@ public class Lighting extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader diffuseVertexLightingShader;
+	private Shader diffuseFragmentLightingShader;
 	private Shader wireframeShader;
 	private Shader simpleShader;
+	private Shader normalShader;
 
 	final private float TAU = (float) (Math.PI * 2);
 	
 	final private File DIRECTORY = new File("src/comp3170/demos/week9"); 
 	final private String SIMPLE_VERTEX_SHADER = "simpleVertex.glsl";
 	final private String SIMPLE_FRAGMENT_SHADER = "simpleFragment.glsl";
+	final private String NORMAL_VERTEX_SHADER = "normalVertex.glsl";
+	final private String NORMAL_FRAGMENT_SHADER = "normalFragment.glsl";
 	final private String WIREFRAME_VERTEX_SHADER = "wireframeVertex.glsl";
 	final private String WIREFRAME_FRAGMENT_SHADER = "wireframeFragment.glsl";
 	final private String DIFFUSE_VERTEX_LIGHTING_VERTEX_SHADER = "diffuseVertexLightingVertex.glsl";
 	final private String DIFFUSE_VERTEX_LIGHTING_FRAGMENT_SHADER = "diffuseVertexLightingFragment.glsl";
+	final private String DIFFUSE_FRAGMENT_LIGHTING_VERTEX_SHADER = "diffuseFragmentLightingVertex.glsl";
+	final private String DIFFUSE_FRAGMENT_LIGHTING_FRAGMENT_SHADER = "diffuseFragmentLightingFragment.glsl";
 	
 	private Matrix4f mvpMatrix;
 	private Matrix4f viewMatrix;
@@ -60,6 +66,8 @@ public class Lighting extends JFrame implements GLEventListener {
 	private SceneObject root;	
 	private SceneObject camera;
 	private SceneObject cameraPivot;
+	private Cylinder cylinderBottom;
+	private Cylinder cylinderTop;
 	
 	public Lighting() {
 		super("COMP3170 Week 9 Lighting");
@@ -120,9 +128,17 @@ public class Lighting extends JFrame implements GLEventListener {
 			fragmentShader = new File(DIRECTORY, SIMPLE_FRAGMENT_SHADER);
 			this.simpleShader = new Shader(vertexShader, fragmentShader);
 
+			vertexShader = new File(DIRECTORY, NORMAL_VERTEX_SHADER);
+			fragmentShader = new File(DIRECTORY, NORMAL_FRAGMENT_SHADER);
+			this.normalShader = new Shader(vertexShader, fragmentShader);
+
 			vertexShader = new File(DIRECTORY, DIFFUSE_VERTEX_LIGHTING_VERTEX_SHADER);
 			fragmentShader = new File(DIRECTORY, DIFFUSE_VERTEX_LIGHTING_FRAGMENT_SHADER);
 			this.diffuseVertexLightingShader = new Shader(vertexShader, fragmentShader);
+
+			vertexShader = new File(DIRECTORY, DIFFUSE_FRAGMENT_LIGHTING_VERTEX_SHADER);
+			fragmentShader = new File(DIRECTORY, DIFFUSE_FRAGMENT_LIGHTING_FRAGMENT_SHADER);
+			this.diffuseFragmentLightingShader = new Shader(vertexShader, fragmentShader);
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -145,12 +161,13 @@ public class Lighting extends JFrame implements GLEventListener {
 		plane.setParent(this.root);
 		plane.localMatrix.scale(5,5,5);
 
-		Triangle triangle = new Triangle(simpleShader);
-		triangle.setParent(this.root);
-		
-		Cylinder cylinder = new Cylinder(diffuseVertexLightingShader);
-		cylinder.setParent(this.root);
-				
+		this.cylinderBottom = new Cylinder(diffuseFragmentLightingShader);
+		cylinderBottom.setParent(this.root);
+
+		this.cylinderTop = new Cylinder(diffuseVertexLightingShader);
+		cylinderTop.setParent(this.root);
+		cylinderTop.localMatrix.translate(0,1,0);
+
 		// camera rectangle
 		
 		this.cameraPivot = new SceneObject();
@@ -208,7 +225,17 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.cameraPivot.localMatrix.rotateX(cameraPitch);
 		this.camera.localMatrix.identity();
 		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
-		
+
+		if (this.input.isKeyDown(KeyEvent.VK_A)) {
+			this.cylinderBottom.localMatrix.rotateY(CAMERA_TURN * dt);
+			this.cylinderTop.localMatrix.rotateY(CAMERA_TURN * dt);
+		}
+
+		if (this.input.isKeyDown(KeyEvent.VK_D)) {
+			this.cylinderBottom.localMatrix.rotateY(-CAMERA_TURN * dt);
+			this.cylinderTop.localMatrix.rotateY(-CAMERA_TURN * dt);
+		}
+
 		input.clear();
 	}
 	

@@ -27,7 +27,7 @@ public class Cylinder extends SceneObject {
 	private Vector3f[] barycentric;
 	private int barycentricBuffer;
 
-	private float[] colour = { 1.0f, 1.0f, 0.0f}; // yellow
+	private float[] colour = { 1.0f, 1.0f, 1.0f}; // white
 
 	private Matrix3f normalMatrix;
 	
@@ -201,7 +201,7 @@ public class Cylinder extends SceneObject {
 		}
 
 		if (shader.hasAttribute("a_normal")) {
-			shader.setAttribute("a_normal", faceNormalBuffer);
+			shader.setAttribute("a_normal", vertexNormalBuffer);
 		}
 
 		if (shader.hasUniform("u_normalMatrix")) {
@@ -211,7 +211,7 @@ public class Cylinder extends SceneObject {
 		}
 		
 		
-		if (shader.hasUniform("u_diffuseMaterail")) {
+		if (shader.hasUniform("u_diffuseMaterial")) {
 			shader.setUniform("u_diffuseMaterial", this.colour);
 		}
 		
