@@ -28,9 +28,9 @@ void main() {
     vec3 reflected = reflect(lightDir, normal);  
     
     // assuming the light is white
-    vec3 specular = u_specularMaterial * pow(dot(reflected, viewDir), u_specularity);
+    vec3 specular = u_specularMaterial * pow(max(0,dot(reflected, viewDir)), u_specularity);
     
     // interpolate to fragment colour
-    v_colour = normal;    
+    v_colour = vec3(specular);    
 }
 
