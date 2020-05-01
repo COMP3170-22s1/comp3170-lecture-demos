@@ -2,7 +2,6 @@ package comp3170.demos.week9.sceneobjects;
 
 import org.joml.Matrix3f;
 import org.joml.Vector3f;
-import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
@@ -25,6 +24,9 @@ public class Cylinder extends SceneObject {
 	private Vector3f[] vertexNormals;
 	private int vertexNormalBuffer;
 
+	private Vector3f[] barycentric;
+	private int barycentricBuffer;
+
 	private float[] colour = { 1.0f, 1.0f, 0.0f}; // yellow
 
 	private Matrix3f normalMatrix;
@@ -34,6 +36,16 @@ public class Cylinder extends SceneObject {
 	
 		this.normalMatrix = new Matrix3f();
 			
+		createVerticesAndNormals();
+        createBarycentric();
+               
+		this.vertexBuffer = shader.createBuffer(this.vertices);
+		this.faceNormalBuffer = shader.createBuffer(this.faceNormals);
+		this.vertexNormalBuffer = shader.createBuffer(this.vertexNormals);
+		this.barycentricBuffer = shader.createBuffer(this.barycentric);
+	}
+
+	private void createVerticesAndNormals() {
 		int nTriangles = 2 * N_DIVISIONS + 2 * N_DIVISIONS;
         this.vertices = new Vector3f[3 * nTriangles];
         this.faceNormals = new Vector3f[3 * nTriangles];
@@ -160,32 +172,54 @@ public class Cylinder extends SceneObject {
         	vertexNormals[nvn++] = new Vector3f(0, -1, 0);
         	vertexNormals[nvn++] = new Vector3f(0, -1, 0);
         }
-        
-               
-		this.vertexBuffer = shader.createBuffer(this.vertices);
-		this.faceNormalBuffer = shader.createBuffer(this.faceNormals);
-		this.vertexNormalBuffer = shader.createBuffer(this.vertexNormals);
 	}
 
+	private void createBarycentric() {
+		this.barycentric = new Vector3f[vertices.length];
+
+		Vector3f b0 = new Vector3f(1,0,0);
+		Vector3f b1 = new Vector3f(0,1,0);
+		Vector3f b2 = new Vector3f(0,0,1);
+		
+		for (int i = 0; i < vertices.length; i += 3) {
+			barycentric[i] =   b0;
+			barycentric[i+1] = b1;
+			barycentric[i+2] = b2;
+		}
+	}
+	
+	
 	@Override
 	protected void drawSelf(Shader shader) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		// send this matrix to the shader
 		shader.setUniform("u_mvpMatrix", this.mvpMatrix);
-		
-		getWorldMatrix(this.worldMatrix);
-		this.worldMatrix.normal(this.normalMatrix);			
-		shader.setUniform("u_normalMatrix", normalMatrix);
-		
-		// normals and vertices on a sphere are the same
 		shader.setAttribute("a_position", this.vertexBuffer);
-		shader.setAttribute("a_normal", this.faceNormalBuffer);
+
+		if (shader.hasAttribute("a_barycentric")) {
+			shader.setAttribute("a_barycentric", barycentricBuffer);
+		}
+
+		if (shader.hasAttribute("a_normal")) {
+			shader.setAttribute("a_normal", faceNormalBuffer);
+		}
+
+		if (shader.hasUniform("u_normalMatrix")) {
+			getWorldMatrix(this.worldMatrix);
+			this.worldMatrix.normal(this.normalMatrix);			
+			shader.setUniform("u_normalMatrix", normalMatrix);
+		}
 		
-		shader.setUniform("u_diffuseMaterial", this.colour);
-		shader.setUniform("u_lightDir", new float[] {1, 1, 0});
 		
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, this.vertices.length / 3);
+		if (shader.hasUniform("u_diffuseMaterail")) {
+			shader.setUniform("u_diffuseMaterial", this.colour);
+		}
+		
+		if (shader.hasUniform("u_lightDir")) {
+			shader.setUniform("u_lightDir", new float[] {1, 1, 0});
+		}
+		
+		gl.glDrawArrays(GL.GL_TRIANGLES, 0, this.vertices.length);
 
 	}
 

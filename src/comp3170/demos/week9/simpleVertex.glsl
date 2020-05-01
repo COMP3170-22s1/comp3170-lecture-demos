@@ -1,14 +1,10 @@
 #version 410
 
-in vec3 a_position;
-in vec3 a_barycentric;
+in vec3 a_position;	
 
 uniform mat4 u_mvpMatrix;
 
-out vec3 v_barycentric;
-
 void main() {
     gl_Position = u_mvpMatrix * vec4(a_position,1);
-    v_barycentric = a_barycentric;
 }
 

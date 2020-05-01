@@ -23,20 +23,23 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
-import comp3170.SceneObjectOld;
 import comp3170.Shader;
-import comp3170.demos.week8.sceneobjects.Triangle;
 import comp3170.demos.week9.sceneobjects.Cylinder;
+import comp3170.demos.week9.sceneobjects.Plane;
+import comp3170.demos.week9.sceneobjects.Triangle;
 
 public class Lighting extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader diffuseVertexLightingShader;
 	private Shader wireframeShader;
+	private Shader simpleShader;
 
 	final private float TAU = (float) (Math.PI * 2);
 	
 	final private File DIRECTORY = new File("src/comp3170/demos/week9"); 
+	final private String SIMPLE_VERTEX_SHADER = "simpleVertex.glsl";
+	final private String SIMPLE_FRAGMENT_SHADER = "simpleFragment.glsl";
 	final private String WIREFRAME_VERTEX_SHADER = "wireframeVertex.glsl";
 	final private String WIREFRAME_FRAGMENT_SHADER = "wireframeFragment.glsl";
 	final private String DIFFUSE_VERTEX_LIGHTING_VERTEX_SHADER = "diffuseVertexLightingVertex.glsl";
@@ -57,11 +60,9 @@ public class Lighting extends JFrame implements GLEventListener {
 	private SceneObject root;	
 	private SceneObject camera;
 	private SceneObject cameraPivot;
-	private Triangle redTriangle;
-	private Triangle blueTriangle;
 	
 	public Lighting() {
-		super("COMP3170 Week 8 Depth Buffer");
+		super("COMP3170 Week 9 Lighting");
 		
 		// create an OpenGL 4 canvas and add this as a listener
 		// enabling full-screen super-sampled anti-aliasing		
@@ -115,6 +116,10 @@ public class Lighting extends JFrame implements GLEventListener {
 			File fragmentShader = new File(DIRECTORY, WIREFRAME_FRAGMENT_SHADER);
 			this.wireframeShader = new Shader(vertexShader, fragmentShader);
 			
+			vertexShader = new File(DIRECTORY, SIMPLE_VERTEX_SHADER);
+			fragmentShader = new File(DIRECTORY, SIMPLE_FRAGMENT_SHADER);
+			this.simpleShader = new Shader(vertexShader, fragmentShader);
+
 			vertexShader = new File(DIRECTORY, DIFFUSE_VERTEX_LIGHTING_VERTEX_SHADER);
 			fragmentShader = new File(DIRECTORY, DIFFUSE_VERTEX_LIGHTING_FRAGMENT_SHADER);
 			this.diffuseVertexLightingShader = new Shader(vertexShader, fragmentShader);
@@ -136,10 +141,16 @@ public class Lighting extends JFrame implements GLEventListener {
 		// construct objects and attach to the scene-graph
 		this.root = new SceneObject();
 		
+		Plane plane = new Plane(simpleShader, 10);
+		plane.setParent(this.root);
+		plane.localMatrix.scale(5,5,5);
+
+		Triangle triangle = new Triangle(simpleShader);
+		triangle.setParent(this.root);
+		
 		Cylinder cylinder = new Cylinder(diffuseVertexLightingShader);
 		cylinder.setParent(this.root);
-		
-		
+				
 		// camera rectangle
 		
 		this.cameraPivot = new SceneObject();
@@ -160,8 +171,8 @@ public class Lighting extends JFrame implements GLEventListener {
 
 	float camerFOVY = TAU / 8;
 	float camerAspect = (float)screenWidth / screenHeight;
-	float cameraNear = 0.1f;
-	float cameraFar = 10.0f;
+	float cameraNear = 1f;
+	float cameraFar = 20.0f;
 	
 	public void update(float dt) {
 
@@ -197,24 +208,6 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.cameraPivot.localMatrix.rotateX(cameraPitch);
 		this.camera.localMatrix.identity();
 		this.camera.localMatrix.translate(0, cameraHeight, cameraDistance);
-		
-		// adjust the view volume
-		
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD1)) {
-			this.cameraNear -= CAMERA_ZOOM * dt;
-		}
-
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD4)) {
-			this.cameraNear += CAMERA_ZOOM * dt;
-		}
-		
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD2)) {
-			this.cameraFar -= CAMERA_ZOOM * dt;
-		}
-
-		if (this.input.isKeyDown(KeyEvent.VK_NUMPAD5)) {
-			this.cameraFar += CAMERA_ZOOM * dt;
-		}
 		
 		input.clear();
 	}
