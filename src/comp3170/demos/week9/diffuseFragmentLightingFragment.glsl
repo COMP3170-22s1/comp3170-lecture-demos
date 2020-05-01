@@ -12,7 +12,7 @@ void main() {
     vec3 normal = normalize(v_normal);
     vec3 lightDir = normalize(u_lightDir);    
     
-    // assuming the light is white
+    // Lambert diffuse lighting equation (assuming the light is white)
     vec3 diffuse = u_diffuseMaterial * max(0, dot(lightDir, normal));
 
     colour = vec4(diffuse, 1);

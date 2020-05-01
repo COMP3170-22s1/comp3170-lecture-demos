@@ -28,7 +28,7 @@ public class Cylinder extends SceneObject {
 	private int barycentricBuffer;
 
 	private float[] colour = { 1.0f, 1.0f, 1.0f}; // white
-	private float specularity = 1;
+	private float specularity = 2;
 	
 	private Matrix3f normalMatrix;
 	private Vector3f lightDir;
@@ -100,9 +100,9 @@ public class Cylinder extends SceneObject {
 
         	// vertex normals point straight out
 
+        	vertexNormals[nvn++] = new Vector3f(x1, 0, z1);
+        	vertexNormals[nvn++] = new Vector3f(x1, 0, z1);
         	vertexNormals[nvn++] = new Vector3f(x0, 0, z0);
-        	vertexNormals[nvn++] = new Vector3f(x1, 0, z1);
-        	vertexNormals[nvn++] = new Vector3f(x1, 0, z1);
         	
         	// Upper triangle
         	
@@ -127,9 +127,9 @@ public class Cylinder extends SceneObject {
 
         	// vertex normals point straight out
 
+        	vertexNormals[nvn++] = new Vector3f(x0, 0, z0);
+        	vertexNormals[nvn++] = new Vector3f(x0, 0, z0);
         	vertexNormals[nvn++] = new Vector3f(x1, 0, z1);
-        	vertexNormals[nvn++] = new Vector3f(x0, 0, z0);
-        	vertexNormals[nvn++] = new Vector3f(x0, 0, z0);
         	
         }
         
@@ -207,8 +207,8 @@ public class Cylinder extends SceneObject {
 		}
 
 		if (shader.hasAttribute("a_normal")) {
-//			shader.setAttribute("a_normal", vertexNormalBuffer);
-			shader.setAttribute("a_normal", faceNormalBuffer);
+			shader.setAttribute("a_normal", vertexNormalBuffer);
+//			shader.setAttribute("a_normal", faceNormalBuffer);
 		}
 
 		if (shader.hasUniform("u_normalMatrix")) {

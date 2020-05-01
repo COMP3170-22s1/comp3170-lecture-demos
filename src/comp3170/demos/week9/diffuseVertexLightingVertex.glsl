@@ -21,7 +21,7 @@ void main() {
     normal = normalize(normal);
     vec3 lightDir = normalize(u_lightDir);    
     
-    // assuming the light is white
+    // Lambert diffuse lighting equation (assuming the light is white)
     vec3 diffuse = u_diffuseMaterial * max(0, dot(lightDir, normal));
     
     // interpolate to fragment colour

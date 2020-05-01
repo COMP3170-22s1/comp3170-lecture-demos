@@ -25,12 +25,13 @@ void main() {
     vec3 lightDir = normalize(u_lightDir);    
     vec3 viewDir = normalize(u_viewDir);    
     
+    // calculate the reflection vector
     vec3 reflected = reflect(lightDir, normal);  
     
-    // assuming the light is white
+    // Phong model specular lighting equation (assuming the light is white)
     vec3 specular = u_specularMaterial * pow(max(0,dot(reflected, viewDir)), u_specularity);
     
     // interpolate to fragment colour
-    v_colour = vec3(specular);    
+    v_colour = specular;    
 }
 
