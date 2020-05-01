@@ -28,12 +28,18 @@ public class Cylinder extends SceneObject {
 	private int barycentricBuffer;
 
 	private float[] colour = { 1.0f, 1.0f, 1.0f}; // white
-
+	private float specularity = 1;
+	
 	private Matrix3f normalMatrix;
+	private Vector3f lightDir;
+	private Vector3f viewDir;
+	
 	
 	public Cylinder(Shader shader) {
 		super(shader);
 	
+		this.lightDir = new Vector3f(1,0,0);
+		this.viewDir = new Vector3f(0,0,1);
 		this.normalMatrix = new Matrix3f();
 			
 		createVerticesAndNormals();
@@ -73,9 +79,9 @@ public class Cylinder extends SceneObject {
 
         	// Lower triangle
         	
-        	p0 = new Vector3f(x0, y0, z0);
+        	p0 = new Vector3f(x1, y1, z1);
         	p1 = new Vector3f(x1, y0, z1);
-        	p2 = new Vector3f(x1, y1, z1);
+        	p2 = new Vector3f(x0, y0, z0);
 
         	vertices[nv++] = p0;
         	vertices[nv++] = p1;
@@ -100,9 +106,9 @@ public class Cylinder extends SceneObject {
         	
         	// Upper triangle
         	
-        	p0 = new Vector3f(x1, y1, z1);
+        	p0 = new Vector3f(x0, y0, z0);
         	p1 = new Vector3f(x0, y1, z0);
-        	p2 = new Vector3f(x0, y0, z0);
+        	p2 = new Vector3f(x1, y1, z1);
 
         	vertices[nv++] = p0;
         	vertices[nv++] = p1;
@@ -143,8 +149,8 @@ public class Cylinder extends SceneObject {
         	// top
         	
         	vertices[nv++] = new Vector3f(0, y1, 0);
-        	vertices[nv++] = new Vector3f(x0, y1, z0);
         	vertices[nv++] = new Vector3f(x1, y1, z1);
+        	vertices[nv++] = new Vector3f(x0, y1, z0);
 
         	// all normals point straight up
         	
@@ -159,8 +165,8 @@ public class Cylinder extends SceneObject {
         	// bottom
         	
         	vertices[nv++] = new Vector3f(0, y0, 0);
-        	vertices[nv++] = new Vector3f(x1, y0, z1);
         	vertices[nv++] = new Vector3f(x0, y0, z0);
+        	vertices[nv++] = new Vector3f(x1, y0, z1);
 
         	// all normals point straight down
         
@@ -201,7 +207,8 @@ public class Cylinder extends SceneObject {
 		}
 
 		if (shader.hasAttribute("a_normal")) {
-			shader.setAttribute("a_normal", vertexNormalBuffer);
+//			shader.setAttribute("a_normal", vertexNormalBuffer);
+			shader.setAttribute("a_normal", faceNormalBuffer);
 		}
 
 		if (shader.hasUniform("u_normalMatrix")) {
@@ -214,10 +221,23 @@ public class Cylinder extends SceneObject {
 		if (shader.hasUniform("u_diffuseMaterial")) {
 			shader.setUniform("u_diffuseMaterial", this.colour);
 		}
-		
-		if (shader.hasUniform("u_lightDir")) {
-			shader.setUniform("u_lightDir", new float[] {1, 1, 0});
+
+		if (shader.hasUniform("u_specularMaterial")) {
+			shader.setUniform("u_specularMaterial", this.colour);
 		}
+
+		if (shader.hasUniform("u_specularity")) {
+			shader.setUniform("u_specularity", specularity);
+		}
+
+		if (shader.hasUniform("u_lightDir")) {
+			shader.setUniform("u_lightDir", this.lightDir);
+		}
+
+		if (shader.hasUniform("u_viewDir")) {
+			shader.setUniform("u_viewDir", this.viewDir);
+		}
+
 		
 		gl.glDrawArrays(GL.GL_TRIANGLES, 0, this.vertices.length);
 
