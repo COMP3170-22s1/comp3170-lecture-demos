@@ -283,6 +283,26 @@ public class Shader {
 	}
 
 	/**
+	 * Set the value of a uniform to an int
+	 * 
+	 * @param uniformName	The GLSL uniform 
+	 * @param value			The int value
+	 */
+	public void setUniform(String uniformName, int value) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int uniform = getUniform(uniformName);
+		int type = uniformTypes.get(uniformName);
+
+		if (type != GL_INT) {		
+			throw new IllegalArgumentException(
+					String.format("Expected %s got int", typeName(type)));
+		}
+
+		gl.glUniform1i(uniform, value);
+	}
+	
+	
+	/**
 	 * Set the value of a uniform to a float
 	 * 
 	 * @param uniformName	The GLSL uniform 
