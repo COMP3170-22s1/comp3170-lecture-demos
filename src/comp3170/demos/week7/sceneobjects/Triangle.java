@@ -72,8 +72,8 @@ public class Triangle extends SceneObjectOld {
 		normalVertices[4] = n.y;
 		normalVertices[5] = n.z;
 		
-		this.vertexBuffer = shader.createBuffer(this.vertices);
-		this.normalVertexBuffer = shader.createBuffer(this.normalVertices);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
+		this.normalVertexBuffer = shader.createBuffer(this.normalVertices, GL4.GL_FLOAT_VEC3);
 	}
 
 	@Override

@@ -40,8 +40,8 @@ public class TriangleWithVertexColours extends SceneObjectOld {
 			this.colours[j++] = colour[i].getBlue() / 255.0f;		
 			this.colours[j++] = colour[i].getAlpha() / 255.0f;		
 		}
-		this.vertexBuffer = shader.createBuffer(this.vertices);
-		this.colourBuffer = shader.createBuffer(this.colours);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
+		this.colourBuffer = shader.createBuffer(this.colours, GL4.GL_FLOAT_VEC4);
 	}
 
 	@Override

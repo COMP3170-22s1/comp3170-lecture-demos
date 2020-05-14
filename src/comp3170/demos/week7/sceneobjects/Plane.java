@@ -53,7 +53,7 @@ public class Plane extends SceneObjectOld {
 			vertices[j++] = 1;		// z
 		}		
 		
-		this.vertexBuffer = shader.createBuffer(this.vertices);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
 	}
 
 	@Override

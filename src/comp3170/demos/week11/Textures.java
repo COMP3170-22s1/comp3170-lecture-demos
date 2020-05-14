@@ -9,7 +9,6 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -26,9 +25,6 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
-import comp3170.demos.week9.sceneobjects.Axes;
-import comp3170.demos.week9.sceneobjects.Cylinder;
-import comp3170.demos.week9.sceneobjects.Light;
 import comp3170.demos.week9.sceneobjects.Plane;
 
 public class Textures extends JFrame implements GLEventListener {
@@ -61,8 +57,6 @@ public class Textures extends JFrame implements GLEventListener {
 	private SceneObject root;	
 	private SceneObject camera;
 	private SceneObject cameraPivot;
-	private Cylinder cylinderBottom;
-	private Cylinder cylinderTop;
 
 	public Textures() {
 		super("COMP3170 Week 11 Textures");
@@ -179,11 +173,7 @@ public class Textures extends JFrame implements GLEventListener {
 	private float cameraFar = 20.0f;
 	private Vector4f viewDir = new Vector4f();
 	
-	private float lightDistance = 5;
-	private float lightYaw = TAU/4;
-	private float lightPitch = 0;
-	private Vector4f lightDir = new Vector4f();
-	
+
 	public void update(float dt) {
 
 		// rotate the camera 
@@ -222,38 +212,6 @@ public class Textures extends JFrame implements GLEventListener {
 		this.viewDir.set(0,0,-1,0);
 		this.camera.getWorldMatrix(this.viewMatrix);
 		this.viewDir.mul(this.viewMatrix);
-		this.cylinderTop.setViewDir(viewDir);
-		this.cylinderBottom.setViewDir(viewDir);
-		
-		// rotate the light 
-
-		if (this.input.isKeyDown(KeyEvent.VK_W)) {
-			this.lightPitch -= CAMERA_TURN * dt;
-		}
-		
-		if (this.input.isKeyDown(KeyEvent.VK_S)) {
-			this.lightPitch += CAMERA_TURN * dt;
-		}
-		
-		if (this.input.isKeyDown(KeyEvent.VK_A)) {
-			this.lightYaw -= CAMERA_TURN * dt;
-		}
-		
-		if (this.input.isKeyDown(KeyEvent.VK_D)) {
-			this.lightYaw += CAMERA_TURN * dt;
-		}
-
-		this.lightPivot.localMatrix.identity();
-		this.lightPivot.localMatrix.rotateY(lightYaw);
-		this.lightPivot.localMatrix.rotateX(lightPitch);
-
-		// calculate the light direction
-		
-		this.lightDir.set(0,0,1,0);
-		this.light.getWorldMatrix(this.lightMatrix);
-		this.lightDir.mul(this.lightMatrix);
-		this.cylinderTop.setLightDir(this.lightDir);
-		this.cylinderBottom.setLightDir(this.lightDir);
 
 		input.clear();
 	}

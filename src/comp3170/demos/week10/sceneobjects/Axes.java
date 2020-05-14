@@ -37,8 +37,8 @@ public class Axes extends SceneObject {
 	public Axes(Shader shader) {
 		super(shader);
 		
-		this.vertexBuffer = shader.createBuffer(this.vertices);
-		this.colourBuffer = shader.createBuffer(this.colours);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
+		this.colourBuffer = shader.createBuffer(this.colours, GL4.GL_FLOAT_VEC3);
 	}
 
 	@Override

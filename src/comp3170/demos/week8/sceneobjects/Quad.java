@@ -33,7 +33,7 @@ public class Quad extends SceneObjectOld {
 		// read the RGBA values into this.colour
 		colour.getComponents(this.colour);
 
-		this.vertexBuffer = shader.createBuffer(this.vertices);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
 	}
 
 	@Override

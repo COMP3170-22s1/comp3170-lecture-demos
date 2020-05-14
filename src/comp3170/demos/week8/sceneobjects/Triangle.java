@@ -38,8 +38,8 @@ public class Triangle extends SceneObjectOld {
 
 		// read the RGBA values into this.colour
 		colour.getComponents(this.colour);				
-		this.vertexBuffer = shader.createBuffer(this.vertices);
-		this.barycentricBuffer = shader.createBuffer(this.barycentric);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
+		this.barycentricBuffer = shader.createBuffer(this.barycentric, GL4.GL_FLOAT_VEC3);
 	}
 
 	@Override

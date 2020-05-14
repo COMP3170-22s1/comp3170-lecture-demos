@@ -55,7 +55,7 @@ public class Cube extends SceneObjectOld {
 	private float[] colour = { 0.5f, 0.5f, 0.5f }; // grey
 
 	public Cube(Shader shader) {
-		this.vertexBuffer = shader.createBuffer(this.vertices);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
 	}
 
 	@Override

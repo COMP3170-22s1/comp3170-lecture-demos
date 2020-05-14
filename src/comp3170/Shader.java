@@ -1,24 +1,135 @@
 package comp3170;
 
-
-
-
-import static com.jogamp.opengl.GL.*;
-import static com.jogamp.opengl.GL4.*;
+import static com.jogamp.opengl.GL.GL_ARRAY_BUFFER;
+import static com.jogamp.opengl.GL.GL_ELEMENT_ARRAY_BUFFER;
+import static com.jogamp.opengl.GL.GL_FLOAT;
+import static com.jogamp.opengl.GL.GL_STATIC_DRAW;
+import static com.jogamp.opengl.GL.GL_UNSIGNED_INT;
+import static com.jogamp.opengl.GL2ES2.GL_ACTIVE_ATTRIBUTES;
+import static com.jogamp.opengl.GL2ES2.GL_ACTIVE_ATTRIBUTE_MAX_LENGTH;
+import static com.jogamp.opengl.GL2ES2.GL_ACTIVE_UNIFORMS;
+import static com.jogamp.opengl.GL2ES2.GL_ACTIVE_UNIFORM_MAX_LENGTH;
+import static com.jogamp.opengl.GL2ES2.GL_BOOL;
+import static com.jogamp.opengl.GL2ES2.GL_BOOL_VEC2;
+import static com.jogamp.opengl.GL2ES2.GL_BOOL_VEC3;
+import static com.jogamp.opengl.GL2ES2.GL_BOOL_VEC4;
+import static com.jogamp.opengl.GL2ES2.GL_COMPILE_STATUS;
+import static com.jogamp.opengl.GL2ES2.GL_FLOAT_MAT2;
+import static com.jogamp.opengl.GL2ES2.GL_FLOAT_MAT3;
+import static com.jogamp.opengl.GL2ES2.GL_FLOAT_MAT4;
+import static com.jogamp.opengl.GL2ES2.GL_FLOAT_VEC2;
+import static com.jogamp.opengl.GL2ES2.GL_FLOAT_VEC3;
+import static com.jogamp.opengl.GL2ES2.GL_FLOAT_VEC4;
+import static com.jogamp.opengl.GL2ES2.GL_FRAGMENT_SHADER;
+import static com.jogamp.opengl.GL2ES2.GL_INFO_LOG_LENGTH;
+import static com.jogamp.opengl.GL2ES2.GL_INT;
+import static com.jogamp.opengl.GL2ES2.GL_INT_SAMPLER_2D_MULTISAMPLE;
+import static com.jogamp.opengl.GL2ES2.GL_INT_SAMPLER_2D_MULTISAMPLE_ARRAY;
+import static com.jogamp.opengl.GL2ES2.GL_INT_VEC2;
+import static com.jogamp.opengl.GL2ES2.GL_INT_VEC3;
+import static com.jogamp.opengl.GL2ES2.GL_INT_VEC4;
+import static com.jogamp.opengl.GL2ES2.GL_LINK_STATUS;
+import static com.jogamp.opengl.GL2ES2.GL_SAMPLER_2D;
+import static com.jogamp.opengl.GL2ES2.GL_SAMPLER_2D_MULTISAMPLE;
+import static com.jogamp.opengl.GL2ES2.GL_SAMPLER_2D_MULTISAMPLE_ARRAY;
+import static com.jogamp.opengl.GL2ES2.GL_SAMPLER_2D_SHADOW;
+import static com.jogamp.opengl.GL2ES2.GL_SAMPLER_3D;
+import static com.jogamp.opengl.GL2ES2.GL_SAMPLER_CUBE;
+import static com.jogamp.opengl.GL2ES2.GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE;
+import static com.jogamp.opengl.GL2ES2.GL_UNSIGNED_INT_SAMPLER_2D_MULTISAMPLE_ARRAY;
+import static com.jogamp.opengl.GL2ES2.GL_VERTEX_SHADER;
+import static com.jogamp.opengl.GL2ES3.GL_FLOAT_MAT2x3;
+import static com.jogamp.opengl.GL2ES3.GL_FLOAT_MAT2x4;
+import static com.jogamp.opengl.GL2ES3.GL_FLOAT_MAT3x2;
+import static com.jogamp.opengl.GL2ES3.GL_FLOAT_MAT3x4;
+import static com.jogamp.opengl.GL2ES3.GL_FLOAT_MAT4x2;
+import static com.jogamp.opengl.GL2ES3.GL_FLOAT_MAT4x3;
+import static com.jogamp.opengl.GL2ES3.GL_IMAGE_2D;
+import static com.jogamp.opengl.GL2ES3.GL_IMAGE_2D_ARRAY;
+import static com.jogamp.opengl.GL2ES3.GL_IMAGE_3D;
+import static com.jogamp.opengl.GL2ES3.GL_IMAGE_BUFFER;
+import static com.jogamp.opengl.GL2ES3.GL_IMAGE_CUBE;
+import static com.jogamp.opengl.GL2ES3.GL_INT_IMAGE_2D;
+import static com.jogamp.opengl.GL2ES3.GL_INT_IMAGE_2D_ARRAY;
+import static com.jogamp.opengl.GL2ES3.GL_INT_IMAGE_3D;
+import static com.jogamp.opengl.GL2ES3.GL_INT_IMAGE_BUFFER;
+import static com.jogamp.opengl.GL2ES3.GL_INT_IMAGE_CUBE;
+import static com.jogamp.opengl.GL2ES3.GL_INT_SAMPLER_2D;
+import static com.jogamp.opengl.GL2ES3.GL_INT_SAMPLER_2D_ARRAY;
+import static com.jogamp.opengl.GL2ES3.GL_INT_SAMPLER_3D;
+import static com.jogamp.opengl.GL2ES3.GL_INT_SAMPLER_BUFFER;
+import static com.jogamp.opengl.GL2ES3.GL_INT_SAMPLER_CUBE;
+import static com.jogamp.opengl.GL2ES3.GL_SAMPLER_2D_ARRAY;
+import static com.jogamp.opengl.GL2ES3.GL_SAMPLER_2D_ARRAY_SHADOW;
+import static com.jogamp.opengl.GL2ES3.GL_SAMPLER_BUFFER;
+import static com.jogamp.opengl.GL2ES3.GL_SAMPLER_CUBE_SHADOW;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_ATOMIC_COUNTER;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_IMAGE_2D;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_IMAGE_2D_ARRAY;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_IMAGE_3D;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_IMAGE_BUFFER;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_IMAGE_CUBE;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_SAMPLER_2D;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_SAMPLER_2D_ARRAY;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_SAMPLER_3D;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_SAMPLER_BUFFER;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_SAMPLER_CUBE;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_VEC2;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_VEC3;
+import static com.jogamp.opengl.GL2ES3.GL_UNSIGNED_INT_VEC4;
+import static com.jogamp.opengl.GL2GL3.GL_DOUBLE;
+import static com.jogamp.opengl.GL2GL3.GL_INT_SAMPLER_1D;
+import static com.jogamp.opengl.GL2GL3.GL_INT_SAMPLER_1D_ARRAY;
+import static com.jogamp.opengl.GL2GL3.GL_INT_SAMPLER_2D_RECT;
+import static com.jogamp.opengl.GL2GL3.GL_SAMPLER_1D;
+import static com.jogamp.opengl.GL2GL3.GL_SAMPLER_1D_ARRAY;
+import static com.jogamp.opengl.GL2GL3.GL_SAMPLER_1D_ARRAY_SHADOW;
+import static com.jogamp.opengl.GL2GL3.GL_SAMPLER_1D_SHADOW;
+import static com.jogamp.opengl.GL2GL3.GL_SAMPLER_2D_RECT;
+import static com.jogamp.opengl.GL2GL3.GL_SAMPLER_2D_RECT_SHADOW;
+import static com.jogamp.opengl.GL2GL3.GL_UNSIGNED_INT_SAMPLER_1D;
+import static com.jogamp.opengl.GL2GL3.GL_UNSIGNED_INT_SAMPLER_1D_ARRAY;
+import static com.jogamp.opengl.GL2GL3.GL_UNSIGNED_INT_SAMPLER_2D_RECT;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT2;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT2x3;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT2x4;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT3;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT3x2;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT3x4;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT4;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT4x2;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_MAT4x3;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_VEC2;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_VEC3;
+import static com.jogamp.opengl.GL3.GL_DOUBLE_VEC4;
+import static com.jogamp.opengl.GL3.GL_IMAGE_1D;
+import static com.jogamp.opengl.GL3.GL_IMAGE_1D_ARRAY;
+import static com.jogamp.opengl.GL3.GL_IMAGE_2D_MULTISAMPLE;
+import static com.jogamp.opengl.GL3.GL_IMAGE_2D_MULTISAMPLE_ARRAY;
+import static com.jogamp.opengl.GL3.GL_IMAGE_2D_RECT;
+import static com.jogamp.opengl.GL3.GL_INT_IMAGE_1D;
+import static com.jogamp.opengl.GL3.GL_INT_IMAGE_1D_ARRAY;
+import static com.jogamp.opengl.GL3.GL_INT_IMAGE_2D_MULTISAMPLE;
+import static com.jogamp.opengl.GL3.GL_INT_IMAGE_2D_MULTISAMPLE_ARRAY;
+import static com.jogamp.opengl.GL3.GL_INT_IMAGE_2D_RECT;
+import static com.jogamp.opengl.GL3.GL_UNSIGNED_INT_IMAGE_1D;
+import static com.jogamp.opengl.GL3.GL_UNSIGNED_INT_IMAGE_1D_ARRAY;
+import static com.jogamp.opengl.GL3.GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE;
+import static com.jogamp.opengl.GL3.GL_UNSIGNED_INT_IMAGE_2D_MULTISAMPLE_ARRAY;
+import static com.jogamp.opengl.GL3.GL_UNSIGNED_INT_IMAGE_2D_RECT;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.joml.Matrix2f;
 import org.joml.Matrix3f;
-import org.joml.Matrix4d;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -31,11 +142,13 @@ import com.jogamp.opengl.GLContext;
 
 public class Shader {
 
-	public int program;
+	private int program;
+	private int vao;
 	private Map<String, Integer> attributes;
 	private Map<String, Integer> attributeTypes;
 	private Map<String, Integer> uniforms;
 	private Map<String, Integer> uniformTypes;
+	private Map<Integer, Integer> bufferTypes;
 
 	private FloatBuffer matrix2Buffer = Buffers.newDirectFloatBuffer(4);
 	private FloatBuffer matrix3Buffer = Buffers.newDirectFloatBuffer(9);
@@ -93,6 +206,14 @@ public class Shader {
 			String message = String.format("Link failed:\n", logString);
 			throw new GLException(message);
 		}
+
+		// create VAO
+
+		int buffer[] = new int[1];
+		gl.glGenVertexArrays(1, buffer, 0);
+		this.vao = buffer[0];
+
+		this.bufferTypes = new HashMap<Integer, Integer>();
 
 		// record attribute and uniforms
 
@@ -159,6 +280,7 @@ public class Shader {
 	public void enable() {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		gl.glUseProgram(this.program);
+		gl.glBindVertexArray(this.vao);
 	}
 
 	/**
@@ -166,9 +288,10 @@ public class Shader {
 	 * it
 	 * 
 	 * @param data The data as an array of floats
+	 * @parem type The type of data in this buffer
 	 * @return
 	 */
-	public int createBuffer(float[] data) {
+	public int createBuffer(float[] data, int type) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int[] buffers = new int[1];
 		gl.glGenBuffers(buffers.length, buffers, 0);
@@ -177,6 +300,13 @@ public class Shader {
 		gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
 		gl.glBufferData(GL_ARRAY_BUFFER, data.length * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
 
+		this.bufferTypes.put(buffers[0], type);
+		if (data.length % typeSize(type) != 0) {
+			System.err.println(
+					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
+					typeName(type), typeSize(type)));
+		}
+
 		return buffers[0];
 	}
 
@@ -184,19 +314,45 @@ public class Shader {
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
 	 * it from a FloatBuffer
 	 * 
-	 * @param buffer 	A FloatBuffer containing the data
-	 * @param numElements	The number of elements in the buffer 
+	 * @param buffer A FloatBuffer containing the data
+	 * @param type The type of data in this buffer
 	 * @return
 	 */
-	public int createBuffer(FloatBuffer buffer, int numElements) {
+	public int createBuffer(FloatBuffer buffer, int type) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int[] buffers = new int[1];
 		gl.glGenBuffers(buffers.length, buffers, 0);
 
 		gl.glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-		gl.glBufferData(GL_ARRAY_BUFFER, numElements * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
+		gl.glBufferData(GL_ARRAY_BUFFER, buffer.limit() * Buffers.SIZEOF_FLOAT, buffer, GL_STATIC_DRAW);
+
+		this.bufferTypes.put(buffers[0], type);
+		if (buffer.limit() % typeSize(type) != 0) {
+			System.err.println(
+					String.format("Warning: buffer of type %s has length which is not a mutliple of %d.",
+					typeName(type), typeSize(type)));
+		}
 
 		return buffers[0];
+	}
+
+	/**
+	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
+	 * it
+	 * 
+	 * @param data The data as an array of Vector2f
+	 * @return
+	 */
+	public int createBuffer(Vector2f[] data) {
+		// this is a hack, but I can't get it to work otherwise
+		float[] array = new float[2 * data.length];
+		int j = 0;
+		for (int i = 0; i < data.length; i++) {
+			array[j++] = data[i].x;
+			array[j++] = data[i].y;
+		}
+
+		return createBuffer(array, GL_FLOAT_VEC2);
 	}
 
 	/**
@@ -215,20 +371,20 @@ public class Shader {
 			array[j++] = data[i].y;
 			array[j++] = data[i].z;
 		}
-		
-		return createBuffer(array);
+
+		return createBuffer(array, GL_FLOAT_VEC3);
 	}
-	
+
 	/**
 	 * Create a new VBO (vertex buffer object) in graphics memory and copy data into
-	 * it
+	 * it. 
 	 * 
 	 * @param data The data as an array of Vector4f
 	 * @return
 	 */
 	public int createBuffer(Vector4f[] data) {
 		// this is a hack, but I can't get it to work otherwise
-		float[] array = new float[3 * data.length];
+		float[] array = new float[4 * data.length];
 		int j = 0;
 		for (int i = 0; i < data.length; i++) {
 			array[j++] = data[i].x;
@@ -236,10 +392,89 @@ public class Shader {
 			array[j++] = data[i].z;
 			array[j++] = data[i].w;
 		}
-		
-		return createBuffer(array);
+
+		return createBuffer(array, GL_FLOAT_VEC4);
 	}
 
+	/**
+	 * Create a new index buffer and initialise it
+	 * 
+	 * @param indices The indices as an array of ints
+	 * @return
+	 */
+	public int createIndexBuffer(int[] indices) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int[] buffers = new int[1];
+		gl.glGenBuffers(buffers.length, buffers, 0);
+
+		IntBuffer buffer = Buffers.newDirectIntBuffer(indices);
+		gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[0]);
+		gl.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.length * Buffers.SIZEOF_INT, buffer, GL_STATIC_DRAW);
+
+		this.bufferTypes.put(buffers[0], GL_INT);
+
+		return buffers[0];
+	}
+	
+	/**
+	 * Create a render texture with the specified dimensions
+	 * 
+	 * @param width
+	 * @param height
+	 * @return
+	 */
+
+	public static int createRenderTexture(int width, int height) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+		int[] renderTexture = new int[1];
+		gl.glGenTextures(1, renderTexture, 0);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, renderTexture[0]);
+		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, width, height, 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, null);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+		
+		return renderTexture[0];
+	}
+	
+	/**
+	 * Create a framebuffer that writes colours to the renderTexture given.
+	 * 
+	 * @param renderTexture	A rendertexture in which to store the colour buffer
+	 * @return
+	 * @throws GLException
+	 */
+	
+	public static int createFrameBuffer(int renderTexture) throws GLException {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+
+		int[] width = new int[1];
+		int[] height = new int[1];
+		gl.glGetTexLevelParameteriv(GL.GL_TEXTURE_2D, 0, GL4.GL_TEXTURE_WIDTH, width, 0);
+		gl.glGetTexLevelParameteriv(GL.GL_TEXTURE_2D, 0, GL4.GL_TEXTURE_HEIGHT, height, 0);
+		
+		int[] framebufferName = new int[1];
+		gl.glGenFramebuffers(1, framebufferName, 0);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, framebufferName[0]);		
+		
+		int[] depthrenderbuffer = new int[1];
+		gl.glGenRenderbuffers(1, depthrenderbuffer, 0);
+		gl.glBindRenderbuffer(GL.GL_RENDERBUFFER, depthrenderbuffer[0]);
+		gl.glRenderbufferStorage(GL.GL_RENDERBUFFER, GL4.GL_DEPTH_COMPONENT, width[0], height[0]);
+		gl.glFramebufferRenderbuffer(GL.GL_FRAMEBUFFER, GL.GL_DEPTH_ATTACHMENT, GL.GL_RENDERBUFFER, depthrenderbuffer[0]);
+
+		gl.glFramebufferTexture(GL.GL_FRAMEBUFFER, GL.GL_COLOR_ATTACHMENT0, renderTexture, 0);
+
+		int[] drawBuffers = new int[] { GL4.GL_COLOR_ATTACHMENT0 };
+		gl.glDrawBuffers(drawBuffers.length, drawBuffers, 0);
+		
+		if (gl.glCheckFramebufferStatus(GL.GL_FRAMEBUFFER) != GL.GL_FRAMEBUFFER_COMPLETE) {
+			GLException.checkGLErrors();
+			throw new GLException("Failed to create framebuffer");
+		}
+
+		return framebufferName[0];
+	}
+	
 	/**
 	 * Connect a buffer to a shader attribute
 	 * 
@@ -248,36 +483,18 @@ public class Shader {
 	 */
 	public void setAttribute(String attributeName, int buffer) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
-		gl.glBindBuffer(GL_ARRAY_BUFFER, buffer);
 		int attribute = getAttribute(attributeName);
 		int type = attributeTypes.get(attributeName);
 
-		
-		int size;
-		int elementType;
-				
-		switch (type) {
-		case GL_FLOAT:
-			size = 1;
-			elementType = GL_FLOAT;
-			break;
-		case GL_FLOAT_VEC2:
-			size = 2;
-			elementType = GL_FLOAT;
-			break;
-		case GL_FLOAT_VEC3:
-			size = 3;
-			elementType = GL_FLOAT;
-			break;
-		case GL_FLOAT_VEC4:
-			size = 4;
-			elementType = GL_FLOAT;
-			break;
-		default:
-			throw new UnsupportedOperationException(String.format("Unsupported GLSL attribute type: %s", typeName(type)));
+		if (bufferTypes.get(buffer) != type) {
+			throw new IllegalArgumentException(String.format("Expected buffer of type %s, got %s.", typeName(type),
+					typeName(bufferTypes.get(buffer))));
 		}
 
-		
+		int size = typeSize(type);
+		int elementType = elementType(type);
+
+		gl.glBindBuffer(GL_ARRAY_BUFFER, buffer);
 		gl.glVertexAttribPointer(attribute, size, elementType, false, 0, 0);
 		gl.glEnableVertexAttribArray(attribute);
 	}
@@ -285,42 +502,46 @@ public class Shader {
 	/**
 	 * Set the value of a uniform to an int
 	 * 
-	 * @param uniformName	The GLSL uniform 
-	 * @param value			The int value
+	 * @param uniformName The GLSL uniform
+	 * @param value       The int value
 	 */
 	public void setUniform(String uniformName, int value) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
-		if (type != GL_INT) {		
-			throw new IllegalArgumentException(
-					String.format("Expected %s got int", typeName(type)));
+		switch (type) {
+		case GL_UNSIGNED_INT:
+			gl.glUniform1ui(uniform, value);
+			break;
+		case GL_INT:
+		case GL_SAMPLER_2D:
+			gl.glUniform1i(uniform, value);
+			break;			
+		default:
+			throw new IllegalArgumentException(String.format("Expected %s got int", typeName(type)));			
 		}
-
-		gl.glUniform1i(uniform, value);
+	
 	}
-	
-	
+
+	/**
 	/**
 	 * Set the value of a uniform to a float
 	 * 
-	 * @param uniformName	The GLSL uniform 
-	 * @param value			The float value
+	 * @param uniformName The GLSL uniform
+	 * @param value       The float value
 	 */
 	public void setUniform(String uniformName, float value) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
-		if (type != GL_FLOAT) {		
-			throw new IllegalArgumentException(
-					String.format("Expected %s got float", typeName(type)));
+		if (type != GL_FLOAT) {
+			throw new IllegalArgumentException(String.format("Expected %s got float", typeName(type)));
 		}
 
 		gl.glUniform1f(uniform, value);
 	}
-	
 
 	/**
 	 * Set the value of a uniform to an array of floats
@@ -337,30 +558,7 @@ public class Shader {
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
-		int expectedArgs = -1;
-		switch (type) {
-		case GL_FLOAT:
-			expectedArgs = 1;
-			break;
-		case GL_FLOAT_VEC2:
-			expectedArgs = 2;
-			break;
-		case GL_FLOAT_VEC3:
-			expectedArgs = 3;
-			break;
-		case GL_FLOAT_VEC4:
-			expectedArgs = 4;
-			break;
-		case GL_FLOAT_MAT2:
-			expectedArgs = 4;
-			break;
-		case GL_FLOAT_MAT3:
-			expectedArgs = 9;
-			break;
-		case GL_FLOAT_MAT4:
-			expectedArgs = 16;
-			break;
-		}
+		int expectedArgs = typeSize(type);
 
 		if (value.length != expectedArgs) {
 			throw new IllegalArgumentException(
@@ -396,18 +594,17 @@ public class Shader {
 	/**
 	 * Set a uniform of type vec2 to a Vector2f value
 	 * 
-	 * @param uniformName	the uniform to set
-	 * @param vector		the vector value to send
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
 	 */
-	
+
 	public void setUniform(String uniformName, Vector2f vector) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
 		if (type != GL_FLOAT_VEC2) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Vector2f", typeName(type)));			
+			throw new IllegalArgumentException(String.format("Expected %s got Vector2f", typeName(type)));
 		}
 
 		gl.glUniform2fv(uniform, 1, vector.get(vector2Buffer));
@@ -416,18 +613,17 @@ public class Shader {
 	/**
 	 * Set a uniform of type vec3 to a Vector3f value
 	 * 
-	 * @param uniformName	the uniform to set
-	 * @param vector		the vector value to send
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
 	 */
-	
+
 	public void setUniform(String uniformName, Vector3f vector) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
 		if (type != GL_FLOAT_VEC3) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Vector3f", typeName(type)));			
+			throw new IllegalArgumentException(String.format("Expected %s got Vector3f", typeName(type)));
 		}
 
 		gl.glUniform3fv(uniform, 1, vector.get(vector3Buffer));
@@ -436,18 +632,17 @@ public class Shader {
 	/**
 	 * Set a uniform of type vec4 to a Vector4f value
 	 * 
-	 * @param uniformName	the uniform to set
-	 * @param vector		the vector value to send
+	 * @param uniformName the uniform to set
+	 * @param vector      the vector value to send
 	 */
-	
+
 	public void setUniform(String uniformName, Vector4f vector) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
 		if (type != GL_FLOAT_VEC4) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Vector4f", typeName(type)));			
+			throw new IllegalArgumentException(String.format("Expected %s got Vector4f", typeName(type)));
 		}
 
 		gl.glUniform4fv(uniform, 1, vector.get(vector4Buffer));
@@ -456,18 +651,17 @@ public class Shader {
 	/**
 	 * Set a uniform of type mat2 to a Matrix2f value
 	 * 
-	 * @param uniformName	the uniform to set
-	 * @param matrix		the matrix value to send
+	 * @param uniformName the uniform to set
+	 * @param matrix      the matrix value to send
 	 */
-	
+
 	public void setUniform(String uniformName, Matrix2f matrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
 		if (type != GL_FLOAT_MAT2) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Matrix2f", typeName(type)));			
+			throw new IllegalArgumentException(String.format("Expected %s got Matrix2f", typeName(type)));
 		}
 
 		gl.glUniformMatrix2fv(uniform, 1, false, matrix.get(matrix2Buffer));
@@ -476,18 +670,17 @@ public class Shader {
 	/**
 	 * Set a uniform of type mat3 to a Matrix3f value
 	 * 
-	 * @param uniformName	the uniform to set
-	 * @param matrix		the matrix value to send
+	 * @param uniformName the uniform to set
+	 * @param matrix      the matrix value to send
 	 */
-	
+
 	public void setUniform(String uniformName, Matrix3f matrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
 		if (type != GL_FLOAT_MAT3) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Matrix3f", typeName(type)));			
+			throw new IllegalArgumentException(String.format("Expected %s got Matrix3f", typeName(type)));
 		}
 
 		gl.glUniformMatrix3fv(uniform, 1, false, matrix.get(matrix3Buffer));
@@ -496,25 +689,69 @@ public class Shader {
 	/**
 	 * Set a uniform of type mat4 to a Matrix4 value
 	 * 
-	 * @param uniformName	the uniform to set
-	 * @param matrix		the matrix value to send
+	 * @param uniformName the uniform to set
+	 * @param matrix      the matrix value to send
 	 */
-	
+
 	public void setUniform(String uniformName, Matrix4f matrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		int uniform = getUniform(uniformName);
 		int type = uniformTypes.get(uniformName);
 
 		if (type != GL_FLOAT_MAT4) {
-			throw new IllegalArgumentException(
-					String.format("Expected %s got Matrix4f", typeName(type)));			
+			throw new IllegalArgumentException(String.format("Expected %s got Matrix4f", typeName(type)));
 		}
 
 		gl.glUniformMatrix4fv(uniform, 1, false, matrix.get(matrix4Buffer));
 	}
 
-
+	// ===================
+	// PRIVATE METHODS
+	// ===================
 	
+	
+	private int typeSize(int type) {
+		switch (type) {
+		case GL_FLOAT:
+			return 1;
+		case GL_FLOAT_VEC2:
+			return 2;
+		case GL_FLOAT_VEC3:
+			return 3;
+		case GL_FLOAT_VEC4:
+			return 4;
+		case GL_FLOAT_MAT2:
+			return 4;
+		case GL_FLOAT_MAT3:
+			return 9;
+		case GL_FLOAT_MAT4:
+			return 16;
+		default:
+			throw new UnsupportedOperationException(
+					String.format("Unsupported GLSL attribute type: %s", typeName(type)));
+		}
+
+	}
+
+	private int elementType(int type) {
+		switch (type) {
+		case GL_INT:
+			return GL_INT;
+		case GL_FLOAT:
+		case GL_FLOAT_VEC2:
+		case GL_FLOAT_VEC3:
+		case GL_FLOAT_VEC4:
+		case GL_FLOAT_MAT2:
+		case GL_FLOAT_MAT3:
+		case GL_FLOAT_MAT4:
+			return GL_FLOAT;
+		default:
+			throw new UnsupportedOperationException(
+					String.format("Unsupported GLSL attribute type: %s", typeName(type)));
+		}
+
+	}
+
 	private String typeName(int type) {
 		switch (type) {
 		case GL_FLOAT:
@@ -861,7 +1098,7 @@ public class Shader {
 			gl.glGetActiveAttrib(this.program, i, maxNameSize, nameLenBuffer, 0, sizeBuffer, 0, typeBuffer, 0,
 					nameBuffer, 0);
 			String name = new String(nameBuffer, 0, nameLenBuffer[0]);
-			
+
 			this.attributes.put(name, gl.glGetAttribLocation(this.program, name));
 			this.attributeTypes.put(name, typeBuffer[0]);
 		}
@@ -893,7 +1130,7 @@ public class Shader {
 			gl.glGetActiveUniform(this.program, i, maxNameSize, nameLenBuffer, 0, sizeBuffer, 0, typeBuffer, 0,
 					nameBuffer, 0);
 			String name = new String(nameBuffer, 0, nameLenBuffer[0]);
-			
+
 			this.uniforms.put(name, gl.glGetUniformLocation(this.program, name));
 			this.uniformTypes.put(name, typeBuffer[0]);
 		}
@@ -906,7 +1143,7 @@ public class Shader {
 	 * @return
 	 * @throws IOException
 	 */
-	public static String[] readSource(File shaderFile) throws IOException {
+	private static String[] readSource(File shaderFile) throws IOException {
 		ArrayList<String> source = new ArrayList<String>();
 		BufferedReader in = null;
 
@@ -939,7 +1176,7 @@ public class Shader {
 	 * @throws IOException
 	 */
 
-	public static int compileShader(int type, File sourceFile) throws GLException, IOException {
+	private static int compileShader(int type, File sourceFile) throws GLException, IOException {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		String[] source = readSource(sourceFile);
@@ -982,7 +1219,7 @@ public class Shader {
 	 * @param type
 	 * @return
 	 */
-	public static String shaderType(int type) {
+	private static String shaderType(int type) {
 		switch (type) {
 		case GL_VERTEX_SHADER:
 			return "Vertex shader";
@@ -991,6 +1228,5 @@ public class Shader {
 		}
 		return "Unknown shader";
 	}
-
-
+	
 }

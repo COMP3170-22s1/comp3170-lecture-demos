@@ -72,7 +72,7 @@ public class Light extends SceneObject {
 	public Light(Shader shader) {
 		super(shader);
 	
-		this.vertexBuffer = shader.createBuffer(this.vertices);
+		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
 	}
 	
 	@Override
