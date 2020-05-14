@@ -20,11 +20,14 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
+import comp3170.demos.week11.sceneobjects.Quad;
 import comp3170.demos.week9.sceneobjects.Plane;
 
 public class Textures extends JFrame implements GLEventListener {
@@ -34,6 +37,9 @@ public class Textures extends JFrame implements GLEventListener {
 	final private float TAU = (float) (Math.PI * 2);
 	
 	final private File TEXTURE_DIRECTORY = new File("src/comp3170/demos/week11/textures");
+	final private String BRICK_TEXTURE = "bricks.jpg";
+	private int brickTexture;
+	
 	final private File SHADER_DIRECTORY = new File("src/comp3170/demos/week11/shaders");
 	
 	// simple uniform colour shader
@@ -41,10 +47,14 @@ public class Textures extends JFrame implements GLEventListener {
 	final private String SIMPLE_VERTEX_SHADER = "simpleVertex.glsl";
 	final private String SIMPLE_FRAGMENT_SHADER = "simpleFragment.glsl";
 		
+	// texture shader
+	private Shader textureShader;
+	final private String TEXTURE_VERTEX_SHADER = "textureVertex.glsl";
+	final private String TEXTURE_FRAGMENT_SHADER = "textureFragment.glsl";
+		
 	private Matrix4f mvpMatrix;
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
-	private Matrix4f lightMatrix;
 	
 	// screen size in pixels
 	private int screenWidth = 1000;
@@ -110,20 +120,20 @@ public class Textures extends JFrame implements GLEventListener {
 		
 		// Compile the shaders
 		this.simpleShader = loadShader(SIMPLE_VERTEX_SHADER, SIMPLE_FRAGMENT_SHADER);
+		this.textureShader = loadShader(TEXTURE_VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
 		
 		// allocate matrices
 		
 		this.mvpMatrix = new Matrix4f();
 		this.viewMatrix = new Matrix4f();
 		this.projectionMatrix = new Matrix4f();
-		this.lightMatrix = new Matrix4f();
 		
 		// construct objects and attach to the scene-graph
 		this.root = new SceneObject();
 		
-		Plane plane = new Plane(simpleShader, 10);
-		plane.setParent(this.root);
-		plane.localMatrix.scale(5,5,5);
+		brickTexture = loadTexture(BRICK_TEXTURE);
+		Quad quad = new Quad(textureShader, brickTexture);
+		quad.setParent(this.root);
 		
 		// camera and light
 		
@@ -159,13 +169,37 @@ public class Textures extends JFrame implements GLEventListener {
 		// Unreachable
 		return null;
 	}
+	
+	private int loadTexture(String textureFile) {
+		GL4 gl = (GL4) GLContext.getCurrentGL();
+			
+		int textureID = 0;
+		try {
+			Texture tex = TextureIO.newTexture(new File(TEXTURE_DIRECTORY, textureFile), true);
+			textureID = tex.getTextureObject();			
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);			
+		}
+		
+		gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+		gl.glGenerateMipmap(GL.GL_TEXTURE_2D);
+
+		return textureID;
+	}
+	
 
 	private final float CAMERA_TURN = TAU/8;	
 	private final float CAMERA_ZOOM = 1;	
 	private float cameraYaw = 0;
 	private float cameraPitch = 0;
 	private float cameraDistance = 10;
-	private float cameraHeight = 1;
+	private float cameraHeight = 0;
 
 	private float cameraFOV = 4;
 	private float cameraAspect = (float)screenWidth / screenHeight;
