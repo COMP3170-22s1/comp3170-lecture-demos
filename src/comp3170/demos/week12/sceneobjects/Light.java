@@ -20,7 +20,6 @@ public class Light extends SceneObject {
 
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
-	private Matrix4f lightMatrix;
 	private int shadowBuffer;
 
 	public Light() {
@@ -28,7 +27,6 @@ public class Light extends SceneObject {
 
 		this.viewMatrix = new Matrix4f();
 		this.projectionMatrix = new Matrix4f();
-		this.lightMatrix = new Matrix4f();
 
 		// Set up render to texture
 
@@ -64,11 +62,11 @@ public class Light extends SceneObject {
 		this.projectionMatrix.setPerspective(FOVY, ASPECT, NEAR, FAR);
 
 		// draw the objects in the scene graph recursively
-		this.lightMatrix.identity();
-		this.lightMatrix.mul(projectionMatrix);
-		this.lightMatrix.mul(viewMatrix);
+		lightMatrix.identity();
+		lightMatrix.mul(projectionMatrix);
+		lightMatrix.mul(viewMatrix);
 
-		return this.lightMatrix;
+		return lightMatrix;
 	}
 
 	public int getSize() {

@@ -166,25 +166,25 @@ public class Shadows extends JFrame implements GLEventListener {
 		
 		// objects in both scenes
 		
-		Ground ground = new Ground(depthShader);
-		ground.setParent(this.scene1);
-		ground.localMatrix.scale(4,4,4);
-		ground.setLight(this.light);
+		Ground ground1 = new Ground(depthShader);
+		ground1.setParent(this.scene1);
+		ground1.localMatrix.scale(4,4,4);
+		ground1.setLight(this.light);
 		
-		ground = new Ground(shadowShader);
-		ground.setParent(this.scene2);
-		ground.localMatrix.scale(4,4,4);
-		ground.setLight(this.light);
+		Ground ground2 = new Ground(shadowShader);
+		ground2.setParent(this.scene2);
+		ground2.localMatrix.scale(4,4,4);
+		ground2.setLight(this.light);
 		
-		Cube cube = new Cube(depthShader);
-		cube.setParent(this.scene1);
-		cube.localMatrix.translate(0,1,0);
-		cube.setLight(this.light);
+		Cube cube1 = new Cube(depthShader);
+		cube1.setParent(this.scene1);
+		cube1.localMatrix.translate(0,1,0);
+		cube1.setLight(this.light);
 
-		cube = new Cube(shadowShader);
-		cube.setParent(this.scene2);
-		cube.localMatrix.translate(0,1,0);
-		cube.setLight(this.light);
+		Cube cube2 = new Cube(shadowShader);
+		cube2.setParent(this.scene2);
+		cube2.localMatrix.translate(0,1,0);
+		cube2.setLight(this.light);
 		
 		int shadowBuffer = light.getShadowBuffer();
 		try {
@@ -333,12 +333,13 @@ public class Shadows extends JFrame implements GLEventListener {
 
 		// Pass 1: Render from light's point of view
 
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, this.frameBuffer);
 		int size = light.getSize();
 		gl.glViewport(0, 0, size, size);
 
 		// set the background colour to black
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 
 		// clear the depth buffer
