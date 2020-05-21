@@ -24,10 +24,11 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
-import comp3170.demos.week12.sceneobjects.Axes;
 import comp3170.demos.week12.sceneobjects.Cube;
 import comp3170.demos.week12.sceneobjects.Ground;
+import comp3170.demos.week12.sceneobjects.Light;
 import comp3170.demos.week12.sceneobjects.Quad;
+import comp3170.demos.week12.sceneobjects.ShadowObject;
 
 public class Shadows extends JFrame implements GLEventListener {
 
@@ -83,11 +84,11 @@ public class Shadows extends JFrame implements GLEventListener {
 
 	private Quad renderQuad;
 
-	private SceneObject light;
+	private Light light;
 
 	private Ground ground;
 
-	private Cube cube;
+	private ShadowObject cube;
 
 	public Shadows() {
 		super("Shadows");
@@ -140,6 +141,7 @@ public class Shadows extends JFrame implements GLEventListener {
 		this.textureShader = loadShader(TEXTURE_VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
 		this.coloursShader = loadShader(COLOURS_VERTEX_SHADER, COLOURS_FRAGMENT_SHADER);
 		this.depthShader = loadShader(DEPTH_VERTEX_SHADER, DEPTH_FRAGMENT_SHADER);
+		this.shadowShader = loadShader(SHADOW_VERTEX_SHADER, SHADOW_FRAGMENT_SHADER);
 
 		// allocate matrices
 		
@@ -164,7 +166,7 @@ public class Shadows extends JFrame implements GLEventListener {
 		this.lightPivot = new SceneObject();
 		this.lightPivot.setParent(this.root);
 
-		this.light = new SceneObject();
+		this.light = new Light();
 		this.light.setParent(this.lightPivot);
 		this.light.localMatrix.translate(0, lightDistance, 0);
 		
@@ -180,24 +182,13 @@ public class Shadows extends JFrame implements GLEventListener {
 		this.cube.localMatrix.translate(0,1,0);
 		this.cube.setLight(this.light);
 		
-		// Set up render to texture
-		
+		int shadowBuffer = light.getShadowBuffer();
 		try {
-			int[] rt = new int[1];
-			gl.glGenTextures(1, rt, 0);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, rt[0]);
-			gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL4.GL_RGBA32F, renderTextureSize, renderTextureSize, 0, GL4.GL_RGBA, GL.GL_FLOAT, null);
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-			gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-			this.renderTexture = rt[0];
-								
-			this.frameBuffer = Shader.createFrameBuffer(renderTexture);
+			this.frameBuffer = Shader.createFrameBuffer(shadowBuffer);
 		} catch (GLException e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		
-		this.renderQuad = new Quad(textureShader, this.renderTexture);
 
 	}
 
@@ -234,11 +225,6 @@ public class Shadows extends JFrame implements GLEventListener {
 	private float lightDistance = 10;
 	private float lightYaw = 0;
 	private float lightPitch = 0;
-
-	private float lightFOVY = TAU / 4;
-	private float lightAspect = 1.0f;
-	private float lightNear = 0.1f;
-	private float lightFar = 40.0f;
 
 	private void update(float dt) {
 
@@ -354,20 +340,12 @@ public class Shadows extends JFrame implements GLEventListener {
 		gl.glClearDepth(1);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
-		// set the view matrix
-		this.light.getWorldMatrix(this.viewMatrix);
-		this.viewMatrix.invert();
-
-		// set the projection matrix
-
-		this.projectionMatrix.setPerspective(lightFOVY, lightAspect, lightNear, lightFar);
+		// set the shaders
+		this.cube.setShader(this.depthShader);
+		this.ground.setShader(this.depthShader);
 		
-		// set 
-
 		// draw the objects in the scene graph recursively
-		this.mvpMatrix.identity();
-		this.mvpMatrix.mul(projectionMatrix);
-		this.mvpMatrix.mul(viewMatrix);
+		this.light.getLightMatrix(this.mvpMatrix);
 		this.root.draw(mvpMatrix);
 
 		// Pass 2: render to screen
@@ -391,6 +369,10 @@ public class Shadows extends JFrame implements GLEventListener {
 
 		this.projectionMatrix.setPerspective(cameraFOVY, cameraAspect, cameraNear, cameraFar);
 
+		// set the shaders
+		this.cube.setShader(this.simpleShader);
+		this.ground.setShader(this.simpleShader);
+		
 		// draw the objects in the scene graph recursively
 		this.mvpMatrix.identity();
 		this.mvpMatrix.mul(projectionMatrix);

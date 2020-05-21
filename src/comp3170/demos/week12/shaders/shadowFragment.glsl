@@ -17,7 +17,7 @@ void main() {
 	 		
 	// compare to the value from the shadow buffer
 	vec2 uv = (u_lightMatrix * v_position).xy; 
-	float minDist = texture(u_shadowBuffer, uv);
+	float minDist = texture(u_shadowBuffer, uv).x;
 	
 	if (dist > minDist) {
 		// in shadow
