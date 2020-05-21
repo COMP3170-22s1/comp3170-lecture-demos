@@ -36,6 +36,14 @@ public class SceneObject {
 	}
 	
 	/**
+	 * Change the shader 
+	 * @param shader
+	 */
+	public void setShader(Shader shader) {
+		this.shader = shader;
+	}
+	
+	/**
 	 * Set the parent of this object in the scene graph
 	 * 
 	 * @param parent
