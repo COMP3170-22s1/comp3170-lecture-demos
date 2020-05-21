@@ -72,23 +72,16 @@ public class Shadows extends JFrame implements GLEventListener {
 
 	// Scene objects
 
-	private SceneObject root;
+	private SceneObject scene1;
+	private SceneObject scene2;
 	private SceneObject camera;
 	private SceneObject cameraPivot;
 	private SceneObject lightPivot;
 
-	private int renderTexture;
-	private int renderTextureSize = 1024;
-
 	private int frameBuffer;
-
-	private Quad renderQuad;
 
 	private Light light;
 
-	private Ground ground;
-
-	private ShadowObject cube;
 
 	public Shadows() {
 		super("Shadows");
@@ -150,12 +143,13 @@ public class Shadows extends JFrame implements GLEventListener {
 		this.projectionMatrix = new Matrix4f();
 		
 		// construct objects and attach to the scene-graph
-		this.root = new SceneObject();
+		this.scene1 = new SceneObject();
+		this.scene2 = new SceneObject();
 		
 		// camera
 		
 		this.cameraPivot = new SceneObject();
-		this.cameraPivot.setParent(this.root);
+		this.cameraPivot.setParent(this.scene2);
 
 		this.camera = new SceneObject();
 		this.camera.setParent(this.cameraPivot);
@@ -164,23 +158,33 @@ public class Shadows extends JFrame implements GLEventListener {
 		// light
 		
 		this.lightPivot = new SceneObject();
-		this.lightPivot.setParent(this.root);
+		this.lightPivot.setParent(this.scene1);
 
 		this.light = new Light();
 		this.light.setParent(this.lightPivot);
 		this.light.localMatrix.translate(0, lightDistance, 0);
 		
-		// objects in scenes
+		// objects in both scenes
 		
-		this.ground = new Ground(depthShader);
-		this.ground.setParent(this.root);
-		this.ground.localMatrix.scale(4,4,4);
-		this.ground.setLight(this.light);
+		Ground ground = new Ground(depthShader);
+		ground.setParent(this.scene1);
+		ground.localMatrix.scale(4,4,4);
+		ground.setLight(this.light);
 		
-		this.cube = new Cube(depthShader);
-		this.cube.setParent(this.root);
-		this.cube.localMatrix.translate(0,1,0);
-		this.cube.setLight(this.light);
+		ground = new Ground(shadowShader);
+		ground.setParent(this.scene2);
+		ground.localMatrix.scale(4,4,4);
+		ground.setLight(this.light);
+		
+		Cube cube = new Cube(depthShader);
+		cube.setParent(this.scene1);
+		cube.localMatrix.translate(0,1,0);
+		cube.setLight(this.light);
+
+		cube = new Cube(shadowShader);
+		cube.setParent(this.scene2);
+		cube.localMatrix.translate(0,1,0);
+		cube.setLight(this.light);
 		
 		int shadowBuffer = light.getShadowBuffer();
 		try {
@@ -330,7 +334,8 @@ public class Shadows extends JFrame implements GLEventListener {
 		// Pass 1: Render from light's point of view
 
 		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, this.frameBuffer);
-		gl.glViewport(0, 0, renderTextureSize, renderTextureSize);
+		int size = light.getSize();
+		gl.glViewport(0, 0, size, size);
 
 		// set the background colour to black
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -340,13 +345,9 @@ public class Shadows extends JFrame implements GLEventListener {
 		gl.glClearDepth(1);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 
-		// set the shaders
-		this.cube.setShader(this.depthShader);
-		this.ground.setShader(this.depthShader);
-		
 		// draw the objects in the scene graph recursively
 		this.light.getLightMatrix(this.mvpMatrix);
-		this.root.draw(mvpMatrix);
+		this.scene1.draw(mvpMatrix);
 
 		// Pass 2: render to screen
 		
@@ -369,15 +370,11 @@ public class Shadows extends JFrame implements GLEventListener {
 
 		this.projectionMatrix.setPerspective(cameraFOVY, cameraAspect, cameraNear, cameraFar);
 
-		// set the shaders
-		this.cube.setShader(this.simpleShader);
-		this.ground.setShader(this.simpleShader);
-		
 		// draw the objects in the scene graph recursively
 		this.mvpMatrix.identity();
 		this.mvpMatrix.mul(projectionMatrix);
 		this.mvpMatrix.mul(viewMatrix);
-		this.root.draw(mvpMatrix);
+		this.scene2.draw(mvpMatrix);
 
 	}
 

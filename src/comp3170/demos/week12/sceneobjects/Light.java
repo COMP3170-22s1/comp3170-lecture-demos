@@ -16,11 +16,12 @@ public class Light extends SceneObject {
 	private final float ASPECT = 1.0f;
 	private final float NEAR = 0.1f;
 	private final float FAR = 40.0f;
+	private final int SIZE = 1024;
+
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
 	private Matrix4f lightMatrix;
 	private int shadowBuffer;
-	private int size = 1024;
 
 	public Light() {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
@@ -34,7 +35,7 @@ public class Light extends SceneObject {
 		int[] rt = new int[1];
 		gl.glGenTextures(1, rt, 0);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, rt[0]);
-		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL4.GL_RGBA32F, size, size, 0, GL4.GL_RGBA, GL.GL_FLOAT, null);
+		gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL4.GL_RGBA32F, SIZE, SIZE, 0, GL4.GL_RGBA, GL.GL_FLOAT, null);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
 		this.shadowBuffer = rt[0];
@@ -68,6 +69,10 @@ public class Light extends SceneObject {
 		this.lightMatrix.mul(viewMatrix);
 
 		return this.lightMatrix;
+	}
+
+	public int getSize() {
+		return SIZE;
 	}
 
 }
