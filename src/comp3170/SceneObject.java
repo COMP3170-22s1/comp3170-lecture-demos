@@ -3,7 +3,9 @@ package comp3170;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.joml.Matrix3f;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 public class SceneObject {
@@ -80,9 +82,23 @@ public class SceneObject {
 		}
 		return matrix;
 	}
+
+	/**
+	 * Get the normal transformation matrix for this object.
+	 * 
+	 * Note that you must pre-allocate a matrix in which to store the result
+	 * 
+	 * @param matrix	The matrix in which to store the result
+	 * @return
+	 */
+	public Matrix3f getNormalMatrix(Matrix3f matrix) {
+		getWorldMatrix(this.worldMatrix);
+		this.worldMatrix.normal(matrix);
+		return matrix;
+	}
 	
 	/**
-	 * Write the position of this object into the position vector given 
+	 * Write the position of this object into the 4D position homogeneous vector given 
 	 * @return
 	 */
 	public Vector4f getPosition(Vector4f position) {
@@ -92,6 +108,22 @@ public class SceneObject {
 		
 		return position;		
 	}
+	
+	private Vector4f position = new Vector4f();
+	
+	/**
+	 * Write the position of this object into the 3D position vector given 
+	 * @return
+	 */
+	public Vector3f getPosition(Vector3f position) {
+		getWorldMatrix(this.worldMatrix);
+		this.position.set(0,0,0,1);
+		this.position.mul(this.worldMatrix);		
+		position.set(this.position.x, this.position.y, this.position.z);
+		
+		return position;		
+	}
+	
 	
 	/**
 	 * Draw this object. 

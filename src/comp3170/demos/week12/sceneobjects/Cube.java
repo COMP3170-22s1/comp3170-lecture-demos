@@ -1,5 +1,7 @@
 package comp3170.demos.week12.sceneobjects;
 
+import java.awt.Color;
+
 import org.joml.Vector3f;
 
 import com.jogamp.opengl.GL;
@@ -52,6 +54,10 @@ public class Cube extends ShadowObject {
 		this.vertexBuffer = shader.createBuffer(this.vertices);
 	}
 
+	public void setColour(Color colour) {
+		colour.getComponents(this.colour);
+	}
+	
 	@Override
 	protected void drawSelf(Shader shader) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
