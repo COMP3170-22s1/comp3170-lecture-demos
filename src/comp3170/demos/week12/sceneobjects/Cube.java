@@ -24,6 +24,7 @@ public class Cube extends ShadowObject {
 	};
 	private int vertexBuffer;
 
+	
 	private int[] indices = {
 		// bottom
 		0,2,3,

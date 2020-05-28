@@ -21,7 +21,7 @@ void main() {
 	// look up the point in the shadow buffer
 	vec4 minDist = texture(u_shadowBuffer, shadowPos.xy);
 	
-	if (shadowPos.z >= minDist.z) {
+	if (shadowPos.z > minDist.z) {
 		// in shadow
 		colour = vec4(0,0,0,1);
 	}
