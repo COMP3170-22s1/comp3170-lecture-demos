@@ -39,6 +39,9 @@ public class Textures extends JFrame implements GLEventListener {
 	final private File TEXTURE_DIRECTORY = new File("src/comp3170/demos/week11/textures");
 	final private String BRICK_TEXTURE = "bricks.jpg";
 	private int brickTexture;
+	final private String CHECKERS_TEXTURE = "checkerboard.png";
+	private int checkersTexture;
+
 	
 	final private File SHADER_DIRECTORY = new File("src/comp3170/demos/week11/shaders");
 	
@@ -132,8 +135,10 @@ public class Textures extends JFrame implements GLEventListener {
 		this.root = new SceneObject();
 		
 		brickTexture = loadTexture(BRICK_TEXTURE);
-		Quad quad = new Quad(textureShader, brickTexture);
+		checkersTexture = loadTexture(CHECKERS_TEXTURE);
+		Quad quad = new Quad(textureShader, checkersTexture);
 		quad.setParent(this.root);
+		quad.localMatrix.scale(10,10,10);
 		
 		// camera and light
 		
@@ -185,7 +190,8 @@ public class Textures extends JFrame implements GLEventListener {
 		
 		gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+//		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR_MIPMAP_LINEAR);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
 		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
 		gl.glGenerateMipmap(GL.GL_TEXTURE_2D);
@@ -201,7 +207,7 @@ public class Textures extends JFrame implements GLEventListener {
 	private float cameraDistance = 10;
 	private float cameraHeight = 0;
 
-	private float cameraFOV = 4;
+	private float cameraFOV = TAU/6;
 	private float cameraAspect = (float)screenWidth / screenHeight;
 	private float cameraNear = 0.1f;
 	private float cameraFar = 20.0f;
@@ -279,8 +285,7 @@ public class Textures extends JFrame implements GLEventListener {
 		this.viewMatrix.invert();
 		
 		// set the projection matrix
-		float width = cameraAspect * cameraFOV;
-		this.projectionMatrix.setOrtho(-width/2, width/2, -cameraFOV/2, cameraFOV/2, cameraNear, cameraFar);
+		this.projectionMatrix.setPerspective(cameraFOV, cameraAspect, cameraNear, cameraFar);
 		
 		// draw the objects in the scene graph recursively
 		this.mvpMatrix.identity();

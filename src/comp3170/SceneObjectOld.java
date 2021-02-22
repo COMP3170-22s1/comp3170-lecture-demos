@@ -3,7 +3,6 @@ package comp3170;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Matrix4d;
 import org.joml.Matrix4f;
 
 public class SceneObjectOld {

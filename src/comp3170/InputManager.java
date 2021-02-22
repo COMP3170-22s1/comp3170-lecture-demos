@@ -1,8 +1,5 @@
 package comp3170;
 
-
-
-
 import java.awt.Component;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

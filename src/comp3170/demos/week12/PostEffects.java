@@ -24,10 +24,9 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
-import comp3170.demos.week12.sceneobjects.Cube;
-import comp3170.demos.week12.sceneobjects.Light;
 import comp3170.demos.week12.sceneobjects.Plane;
 import comp3170.demos.week12.sceneobjects.Quad;
+import comp3170.demos.week12.sceneobjects.Triangle;
 
 public class PostEffects extends JFrame implements GLEventListener {
 
@@ -80,7 +79,7 @@ public class PostEffects extends JFrame implements GLEventListener {
 	
 	private int frameBuffer;
 	private Quad renderQuad;
-	private int renderSize = 1000;
+	private int renderSize = 256;
 
 	public PostEffects() {
 		super("PostEffects");
@@ -156,17 +155,20 @@ public class PostEffects extends JFrame implements GLEventListener {
 		Plane plane = new Plane(simpleShader, 10);
 		plane.setParent(this.scene);
 		plane.localMatrix.scale(5,5,5);
+
+		Triangle triangle = new Triangle(simpleShader);
+		triangle.setParent(this.scene);
 		
-		Cube cube1 = new Cube(simpleShader);
-		cube1.setParent(this.scene);
-		cube1.localMatrix.translate(0,1,0);
+//		Cube cube1 = new Cube(simpleShader);
+//		cube1.setParent(this.scene);
+//		cube1.localMatrix.translate(0,1,0);
 
 		// set up framebuffer that renders to a renderTexture
 		// and a quad with the post-effect shader
 		
 		try {
 			int renderTexture = Shader.createRenderTexture(renderSize, renderSize);
-			this.renderQuad = new Quad(blurShader, renderTexture); 
+			this.renderQuad = new Quad(textureShader, renderTexture); 
 			this.frameBuffer = Shader.createFrameBuffer(renderTexture);
 		} catch (GLException e) {
 			e.printStackTrace();
@@ -195,7 +197,7 @@ public class PostEffects extends JFrame implements GLEventListener {
 	private float cameraYaw = 0;
 	private float cameraPitch = 0;
 	private float cameraDistance = 5;
-	private float cameraHeight = 1;
+	private float cameraHeight = 0.5f;
 
 	private float cameraFOVY = TAU / 6;
 	private float cameraAspect = (float) screenWidth / screenHeight;

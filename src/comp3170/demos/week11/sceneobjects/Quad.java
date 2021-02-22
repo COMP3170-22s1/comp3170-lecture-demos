@@ -27,9 +27,9 @@ public class Quad extends SceneObject {
 	
 	private float[] uvs = new float[] {
 		0,0,
-		1,0,
-		0,1,
-		1,1,
+		100,0,
+		0,100,
+		100,100,
 	};
 	
 	private int uvBuffer;

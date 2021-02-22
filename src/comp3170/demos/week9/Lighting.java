@@ -79,6 +79,12 @@ public class Lighting extends JFrame implements GLEventListener {
 	final private String SPECULAR_FRAGMENT_LIGHTING_VERTEX_SHADER = "specularFragmentLightingVertex.glsl";
 	final private String SPECULAR_FRAGMENT_LIGHTING_FRAGMENT_SHADER = "specularFragmentLightingFragment.glsl";
 	
+	// diffuse & specular lighting in vertex shader
+	private Shader combinedVertexLightingShader;
+	final private String COMBINED_VERTEX_LIGHTING_VERTEX_SHADER = "combinedVertexLightingVertex.glsl";
+	final private String COMBINED_VERTEX_LIGHTING_FRAGMENT_SHADER = "combinedVertexLightingFragment.glsl";
+
+	
 	private Matrix4f mvpMatrix;
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
@@ -211,10 +217,11 @@ public class Lighting extends JFrame implements GLEventListener {
 		axes.setParent(this.root);
 		axes.localMatrix.translate(2,0.1f,2);
 
-		cylinderBottom = new Cylinder(diffuseFragmentLightingShader);
+		cylinderBottom = new Cylinder(normalShader);
 		cylinderBottom.setParent(this.root);
-
-		cylinderTop = new Cylinder(diffuseVertexLightingShader);
+		cylinderBottom.localMatrix.scale(1,2,1);
+		
+		cylinderTop = new Cylinder(normalShader);
 //		cylinderTop.setParent(this.root);
 //		cylinderTop.localMatrix.translate(0,1.1f,0);
 
