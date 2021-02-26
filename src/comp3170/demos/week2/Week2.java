@@ -25,7 +25,7 @@ import comp3170.Shader;
 
 public class Week2 extends JFrame implements GLEventListener {
 
-	public double TAU = 2 * Math.PI;
+	public double TAU = 2 * Math.PI;		// https://tauday.com/tau-manifesto
 	
 	private int width = 800;
 	private int height = 800;
@@ -88,15 +88,20 @@ public class Week2 extends JFrame implements GLEventListener {
 			System.exit(1);
 		}
 
-		// vertices of a triangle as (x,y) pairs
+		// calculate the vertices of a hexagon as (x,y) pairs
+
 		this.vertices = new float[7 * 2];
 		
-		vertices[0] = 0;
-		vertices[1] = 0;
+		// the centre
+
+		int n = 0;
+		vertices[n++] = 0;	// x
+		vertices[n++] = 0;	// y
+		
+		// the outer ring
 		
 		float radius = 0.8f;
 		
-		int n = 2;
 		for (int i = 1; i <= 6; i++) {
 			double angle = i * TAU / 6;
 			vertices[n++] = (float) (radius * Math.cos(angle));	// x 
