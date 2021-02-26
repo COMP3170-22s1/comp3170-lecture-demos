@@ -41,7 +41,7 @@ public class Week1 extends JFrame implements GLEventListener {
 
 
 	public Week1() {
-		super("Week 2 example");
+		super("Week 1 example");
 		
 		// create an OpenGL canvas and add this as a listener
 		
