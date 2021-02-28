@@ -2,8 +2,8 @@
 package comp3170.demos.week3;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -45,7 +44,7 @@ public class Week3 extends JFrame implements GLEventListener {
 	private long oldTime;
 
 	public Week3() {
-		super("Week 2 example");
+		super("Week 3 example");
 
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
@@ -70,6 +69,8 @@ public class Week3 extends JFrame implements GLEventListener {
 		this.oldTime = System.currentTimeMillis();		
 	}
 
+	private static final int NSQUARES = 100;
+	
 	@Override
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
@@ -92,13 +93,17 @@ public class Week3 extends JFrame implements GLEventListener {
 
 	    this.squares = new ArrayList<Square>();
 
-	    Square square = new Square(shader);
-	    square.setPosition(0.2f, -0.5f);
-	    square.setColour(1f, 0f, 0f);
-	    square.setAngle(TAU / 30);
-	    square.setScale(0.1f, 0.2f);
-	    
-	    squares.add(square);
+	    for (int i = 0; i < NSQUARES; i++) {
+			Square square = new Square(shader);
+			float x = (float) Math.random() * 2 - 1;
+			float y = (float) Math.random() * 2 - 1;
+			square.setPosition(x, y);
+			Color colour = Color.getHSBColor((float) Math.random(), 1, 1);
+			square.setColour(colour);
+			square.setAngle(0);
+			square.setScale(0.1f, 0.1f);
+			squares.add(square);
+	    }
 	}
 
 	private static final float ROTATION_SPEED = TAU / 6;
@@ -144,8 +149,6 @@ public class Week3 extends JFrame implements GLEventListener {
 		// TODO Auto-generated method stub
 		
 	}
-
-
 	
 	public static void main(String[] args) { 
 		new Week3();

@@ -2,6 +2,8 @@ package comp3170.demos.week3;
 
 import static com.jogamp.opengl.GL.GL_TRIANGLES;
 
+import java.awt.Color;
+
 import org.joml.Matrix3f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
@@ -118,10 +120,10 @@ public class Square {
 		return colour;
 	}
 	
-	public void setColour(float r, float g, float b) {
-		colour.x = r;
-		colour.y = g;
-		colour.z = b;
+	public void setColour(Color color) {		
+		colour.x = color.getRed() / 255f;
+		colour.y = color.getBlue() / 255f;
+		colour.z = color.getGreen() / 255f;
 	}
 	
 	public void draw(Shader shader) {
