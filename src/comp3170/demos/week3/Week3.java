@@ -20,13 +20,14 @@ import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.Shader;
 
 public class Week3 extends JFrame implements GLEventListener {
 
-	public float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
+	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 	
 	private int width = 800;
 	private int height = 800;
@@ -39,6 +40,9 @@ public class Week3 extends JFrame implements GLEventListener {
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 
 	private ArrayList<Square> squares;
+
+	private Animator animator;
+	private long oldTime;
 
 	public Week3() {
 		super("Week 2 example");
@@ -60,6 +64,10 @@ public class Week3 extends JFrame implements GLEventListener {
 			}
 		});	
 		
+		// set up Animator		
+		this.animator = new Animator(canvas);
+		this.animator.start();
+		this.oldTime = System.currentTimeMillis();		
 	}
 
 	@Override
@@ -93,9 +101,24 @@ public class Week3 extends JFrame implements GLEventListener {
 	    squares.add(square);
 	}
 
+	private static final float ROTATION_SPEED = TAU / 6;
+	
+	private void update() {
+		long time = System.currentTimeMillis();
+		float deltaTime = (time - oldTime) / 1000f;
+		oldTime = time;
+		
+		for (Square sq : squares) {
+			sq.rotate(ROTATION_SPEED * deltaTime);
+		}
+	}
+	
 	@Override
 	public void display(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
+		
+		// update the scene
+		update();	
 
         // clear the colour buffer
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
