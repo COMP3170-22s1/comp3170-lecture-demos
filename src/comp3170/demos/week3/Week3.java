@@ -139,9 +139,9 @@ public class Week3 extends JFrame implements GLEventListener {
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable arg0, int arg1, int arg2, int arg3, int arg4) {
-		// TODO Auto-generated method stub
-		
+	public void reshape(GLAutoDrawable d, int x, int y, int width, int height) {
+		this.width = width;
+		this.height = height;		
 	}
 
 	@Override
