@@ -9,8 +9,11 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JFrame;
+
+import org.joml.Vector2f;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -38,10 +41,13 @@ public class Week3 extends JFrame implements GLEventListener {
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 
-	private ArrayList<Square> squares;
+	private List<Square> squares;
 
 	private Animator animator;
 	private long oldTime;
+
+	private Camera camera;
+
 
 	public Week3() {
 		super("Week 3 example");
@@ -91,6 +97,8 @@ public class Week3 extends JFrame implements GLEventListener {
 			System.exit(1);
 		}
 
+		// Set up the scene
+		
 	    this.squares = new ArrayList<Square>();
 
 	    for (int i = 0; i < NSQUARES; i++) {
@@ -104,6 +112,14 @@ public class Week3 extends JFrame implements GLEventListener {
 			square.setScale(0.1f, 0.1f);
 			squares.add(square);
 	    }
+	    
+	    // Set up the camera
+
+	    this.camera = new Camera(shader);
+	    this.camera.setPosition(0,0);
+	    this.camera.setAngle(0);
+	    this.camera.setZoom(1f);
+	    this.camera.setAspect((float)width / (float) height);
 	}
 
 	private static final float ROTATION_SPEED = TAU / 6;
@@ -129,12 +145,16 @@ public class Week3 extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();
+		this.shader.enable();		
+		
+		
 		
 		// draw the squares
 		for (Square sq : squares) {
 			sq.draw(shader);
 		}
+		
+		camera.draw(shader);
 		
 	}
 
