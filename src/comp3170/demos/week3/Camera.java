@@ -67,6 +67,11 @@ public class Camera {
 		position.y = y;
 	}
 
+	public void translate(float dx, float dy) {
+		position.x += dx;
+		position.y += dy;
+	}
+
 	public void translate(Vector2f movement) {
 		position.x += movement.x;
 		position.y += movement.y;

@@ -4,6 +4,7 @@ package comp3170.demos.week3;
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -25,6 +26,7 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
+import comp3170.InputManager;
 import comp3170.Shader;
 
 public class Week3 extends JFrame implements GLEventListener {
@@ -47,6 +49,8 @@ public class Week3 extends JFrame implements GLEventListener {
 	private long oldTime;
 
 	private Camera camera;
+
+	private InputManager input;
 
 
 	public Week3() {
@@ -73,6 +77,12 @@ public class Week3 extends JFrame implements GLEventListener {
 		this.animator = new Animator(canvas);
 		this.animator.start();
 		this.oldTime = System.currentTimeMillis();		
+		
+		// set up Input manager
+		this.input = new InputManager();
+		input.addListener(this);
+		input.addListener(this.canvas);
+
 	}
 
 	private static final int NSQUARES = 100;
@@ -123,6 +133,9 @@ public class Week3 extends JFrame implements GLEventListener {
 	}
 
 	private static final float ROTATION_SPEED = TAU / 6;
+	private static final float CAMERA_ROTATION_SPEED = TAU / 6;
+	private static final float CAMERA_MOVEMENT_SPEED = 0.1f;
+	private static final float CAMERA_ZOOM_SPEED = 1.5f;
 	
 	private void update() {
 		long time = System.currentTimeMillis();
@@ -132,6 +145,34 @@ public class Week3 extends JFrame implements GLEventListener {
 		for (Square sq : squares) {
 			sq.rotate(ROTATION_SPEED * deltaTime);
 		}
+		
+		if (input.isKeyDown(KeyEvent.VK_LEFT)) {
+			camera.rotate(-CAMERA_ROTATION_SPEED * deltaTime);
+		}
+
+		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
+			camera.rotate(CAMERA_ROTATION_SPEED * deltaTime);
+		}
+
+		if (input.isKeyDown(KeyEvent.VK_W)) {
+			camera.translate(0, CAMERA_MOVEMENT_SPEED * deltaTime);
+		}
+		if (input.isKeyDown(KeyEvent.VK_S)) {
+			camera.translate(0, -CAMERA_MOVEMENT_SPEED * deltaTime);
+		}
+		if (input.isKeyDown(KeyEvent.VK_A)) {
+			camera.translate(-CAMERA_MOVEMENT_SPEED * deltaTime, 0);
+		}
+		if (input.isKeyDown(KeyEvent.VK_D)) {
+			camera.translate(CAMERA_MOVEMENT_SPEED * deltaTime, 0);
+		}
+		if (input.isKeyDown(KeyEvent.VK_PAGE_UP)) {
+			camera.zoom((float) Math.pow(1.0f / CAMERA_ZOOM_SPEED, deltaTime));
+		}
+		if (input.isKeyDown(KeyEvent.VK_PAGE_DOWN)) {
+			camera.zoom((float) Math.pow(CAMERA_ZOOM_SPEED, deltaTime));
+		}
+
 	}
 	
 	@Override
