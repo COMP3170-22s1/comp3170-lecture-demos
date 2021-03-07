@@ -1,4 +1,4 @@
-package comp3170.demos.week3;
+package comp3170.demos.week4.camera;
 
 import org.joml.Matrix3f;
 import org.joml.Vector2f;
@@ -20,14 +20,16 @@ public class Camera {
 	private Matrix3f modelMatrix;
 	private Matrix3f translationMatrix;
 	private Matrix3f rotationMatrix;
-	private Matrix3f perspectiveMatrix;
+	private Matrix3f scalenMatrix;
 	private float[] vertices;
 	private int vertexBuffer;
+	private float width;
+	private float height;
 		
 	public Camera(Shader shader) {
-		// verices for a 1x1 square with origin in the centre
+		// verices for a 2x2 square with origin in the centre
 		// 
-		//  (-0.5,0.5)   (0.5,0.5)
+		//  (-1,1)         (1,1)
 		//       2-----------3
 		//       | \         |
 		//       |   \       |
@@ -35,13 +37,13 @@ public class Camera {
 		//       |       \   |
 		//       |         \ |
 		//       0-----------1
-		//  (-0.5,-0.5)  (0.5,-0.5)		
+		//  (-1,-1)    (1,-1)		
 		
 		this.vertices = new float[] {
-			-0.5f, -0.5f,
-			 0.5f, -0.5f,
-			 0.5f,  0.5f,
-			-0.5f,  0.5f,
+			-1f, -1f,
+			 1f, -1f,
+			 1f,  1f,
+			-1f,  1f,
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
@@ -49,13 +51,13 @@ public class Camera {
 	    
 	    this.position = new Vector2f(0,0);
         this.angle = 0;
-        this.zoom = 1;
+        this.zoom = 40; // pixels per world unit 
         this.aspect = 1;
 
 	    this.modelMatrix = new Matrix3f();	    	    
 	    this.translationMatrix = new Matrix3f();    
 	    this.rotationMatrix = new Matrix3f();
-	    this.perspectiveMatrix = new Matrix3f();      	
+	    this.scalenMatrix = new Matrix3f();      	
     }
 	
 	public Vector2f getPosition() {
@@ -101,12 +103,10 @@ public class Camera {
 		zoom *= factor;		
 	}	
 
-	public float getAspect() {
-		return aspect;
-	}
-
-	public void setAspect(float aspect) {
-		this.aspect = aspect;
+	public void setSize(float width, float height) {
+		this.width = width;
+		this.height = height;
+		this.aspect = width / height;
 	}
 
 	private Matrix3f getModelMatrix() {
@@ -132,20 +132,20 @@ public class Camera {
 		// MS = [ 0   sy  0 ]
 		//      [ 0   0   1 ]
 
-		perspectiveMatrix.m00(zoom * aspect);
-		perspectiveMatrix.m11(zoom);	
+		scalenMatrix.m00(width / zoom);
+		scalenMatrix.m11(height / zoom);	
 		
 		// M = MT * MR * MS
 
 		modelMatrix.identity();
 		modelMatrix.mul(translationMatrix);
 		modelMatrix.mul(rotationMatrix);
-		modelMatrix.mul(perspectiveMatrix);
+		modelMatrix.mul(scalenMatrix);
 
 		return modelMatrix;
 	}
 	
-	public Matrix3f getViewMatrix() {
+	public Matrix3f getViewMatrix(Matrix3f dest) {
 		//      [ 1  0  Tx ]
 		// MT = [ 0  1  Ty ]
 		//      [ 0  0  1  ]
@@ -169,18 +169,18 @@ public class Camera {
 		modelMatrix.mul(rotationMatrix);
 
 		// view matrix is the inverse of the camera's model matrix
-		return modelMatrix.invert();		
+		return modelMatrix.invert(dest);		
 	}
 	
-	public Matrix3f getPerspectiveMatrix() {
+	public Matrix3f getProjectionMatrix(Matrix3f dest) {
 		//      [ sx  0   0 ]
 		// MS = [ 0   sy  0 ]
 		//      [ 0   0   1 ]
 
-		perspectiveMatrix.m00(zoom * aspect);
-		perspectiveMatrix.m11(zoom);		
+		scalenMatrix.m00(width / zoom);
+		scalenMatrix.m11(height / zoom);	
 
-		return perspectiveMatrix.invert();
+		return scalenMatrix.invert(dest);
 		
 	}
 	
