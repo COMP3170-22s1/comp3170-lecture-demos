@@ -12,7 +12,7 @@ import com.jogamp.opengl.GLContext;
 import comp3170.Shader;
 
 public class SceneObject {
-	private Shader shader;
+	protected Shader shader;
 
 	protected List<SceneObject> children;
 	private SceneObject parent;
@@ -21,7 +21,7 @@ public class SceneObject {
 	private float angle;
 	private Vector2f scale;
 	
-	private Matrix3f modelMatrix;
+	protected Matrix3f modelMatrix;
 	private Matrix3f translationMatrix;
 	private Matrix3f rotationMatrix;
 	private Matrix3f scaleMatrix;
