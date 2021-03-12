@@ -6,9 +6,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
-import comp3170.GLException;
 import comp3170.SceneObject;
-import comp3170.Shader;
 
 public class Light extends SceneObject {
 	private final float TAU = (float) (Math.PI * 2);

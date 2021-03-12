@@ -4,7 +4,6 @@ package comp3170.demos.week3;
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -13,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFrame;
-
-import org.joml.Vector2f;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -26,7 +23,6 @@ import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
-import comp3170.InputManager;
 import comp3170.Shader;
 import comp3170.demos.week4.camera.Square;
 

@@ -199,12 +199,13 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		this.shader.enable();		
 		
 		
+		camera.setSize(width, height);
+
 		if (showCamera) {
 			viewMatrix.identity();
 			projectionMatrix.identity();
 		}
 		else {
-			camera.setSize(width, height);
 			camera.getViewMatrix(viewMatrix);
 			camera.getProjectionMatrix(projectionMatrix);
 		}

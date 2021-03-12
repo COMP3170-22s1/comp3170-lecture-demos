@@ -25,8 +25,6 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObjectOld;
 import comp3170.Shader;
-import comp3170.demos.week8.sceneobjects.Plane;
-import comp3170.demos.week8.sceneobjects.Triangle;
 import comp3170.demos.week8.sceneobjects.TriangleWithVertexColours;
 
 public class VertexColours extends JFrame implements GLEventListener {

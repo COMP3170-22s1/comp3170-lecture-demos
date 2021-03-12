@@ -27,8 +27,6 @@ import comp3170.Shader;
 import comp3170.demos.week12.sceneobjects.Cube;
 import comp3170.demos.week12.sceneobjects.Ground;
 import comp3170.demos.week12.sceneobjects.Light;
-import comp3170.demos.week12.sceneobjects.Quad;
-import comp3170.demos.week12.sceneobjects.ShadowObject;
 
 public class Shadows extends JFrame implements GLEventListener {
 

@@ -28,7 +28,6 @@ import comp3170.InputManager;
 import comp3170.SceneObject;
 import comp3170.Shader;
 import comp3170.demos.week11.sceneobjects.Quad;
-import comp3170.demos.week9.sceneobjects.Plane;
 
 public class Textures extends JFrame implements GLEventListener {
 

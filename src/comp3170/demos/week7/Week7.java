@@ -26,7 +26,6 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObjectOld;
 import comp3170.Shader;
-import comp3170.demos.week7.sceneobjects.Cube;
 import comp3170.demos.week7.sceneobjects.Plane;
 import comp3170.demos.week7.sceneobjects.Triangle;
 
