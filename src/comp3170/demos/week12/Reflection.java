@@ -100,9 +100,7 @@ public class Reflection extends JFrame implements GLEventListener {
 		this.oldTime = System.currentTimeMillis();
 
 		// set up Input manager
-		this.input = new InputManager();
-		input.addListener(this);
-		input.addListener(this.canvas);
+		this.input = new InputManager(canvas);
 
 		// set up the JFrame
 		// make it twice as wide as the view width
