@@ -25,11 +25,25 @@ public class SceneObject {
 	private Matrix3f translationMatrix;
 	private Matrix3f rotationMatrix;
 	private Matrix3f scaleMatrix;
-	
+
+	// no shader constructor, for objects that don't draw anything
+	public SceneObject() {
+		this(null);
+	}
+
 	public SceneObject(Shader shader) {
 		this.shader = shader;
 		this.parent = null;
 		this.children = new ArrayList<SceneObject>();
+		
+		this.position = new Vector2f(0,0);
+		this.angle = 0;
+		this.scale = new Vector2f(1,1);
+		
+		this.modelMatrix = new Matrix3f();
+		this.translationMatrix = new Matrix3f();
+		this.rotationMatrix = new Matrix3f();
+		this.scaleMatrix = new Matrix3f();
 	}
 	
 	public SceneObject getParent() {
@@ -107,5 +121,6 @@ public class SceneObject {
 		
 		return modelMatrix;
 	}
+
 	
 }

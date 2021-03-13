@@ -3,6 +3,8 @@ package comp3170.demos.week4.scenegraph;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
+import java.awt.Color;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -43,9 +45,13 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 	private InputManager input;
 
+	private Matrix3f modelMatrix;
 	private Matrix3f viewMatrix;
 	private Matrix3f projectionMatrix;
-
+	
+	private SceneObject sceneGraph;
+	private Arm[] arms;
+	
 	public SceneGraphDemo() {
 		super("Week 4 scene graph demo");
 
@@ -76,8 +82,6 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 
 	}
 
-	private static final int NSQUARES = 100;
-	
 	@Override
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
@@ -99,22 +103,62 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 		}
 
 		// Set up the scene
+		sceneGraph = new SceneObject();
 		
+		arms = new Arm[3];
+		
+	    arms[0] = new Arm(shader, 0.2f, 1);
+	    arms[0].setParent(sceneGraph);
+	    arms[0].setPosition(0, -1.0f);
+	    arms[0].setColour(Color.RED);
 	    
+	    arms[1] = new Arm(shader, 0.15f, 0.5f);
+	    arms[1].setParent(arms[0]);
+	    arms[1].setPosition(0, 0.9f);
+	    arms[1].setColour(Color.GREEN);
+
+	    arms[2] = new Arm(shader, 0.1f, 0.25f);
+	    arms[2].setParent(arms[1]);
+	    arms[2].setPosition(0, 0.4f);
+	    arms[2].setColour(Color.BLUE);
+		
+		
 	    // allocation view and projection matrices
+	    modelMatrix = new Matrix3f();
 	    viewMatrix = new Matrix3f();
 	    projectionMatrix = new Matrix3f();
 	}
 
-	private static final float ROTATION_SPEED = TAU / 6;
-	private static final float CAMERA_ROTATION_SPEED = TAU / 6;
-	private static final float CAMERA_MOVEMENT_SPEED = 0.5f;
-	private static final float CAMERA_ZOOM_SPEED = 1.5f;
+	private final float ROTATION_SPEED = TAU / 8;
 	
 	private void update() {
 		long time = System.currentTimeMillis();
 		float deltaTime = (time - oldTime) / 1000f;
 		oldTime = time;
+
+		float angle0 = arms[0].getAngle();
+		float angle1 = arms[1].getAngle();
+		float angle2 = arms[2].getAngle();
+		float rot = ROTATION_SPEED * deltaTime;
+					
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD1)) {
+			arms[0].setAngle(angle0 + rot);
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD2)) {
+			arms[0].setAngle(angle0 - rot);
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD4)) {
+			arms[1].setAngle(angle1 + rot);
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD5)) {
+			arms[1].setAngle(angle1 - rot);
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD7)) {
+			arms[2].setAngle(angle2 + rot);
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD8)) {
+			arms[2].setAngle(angle2 - rot);
+		}
 		
 		input.clear();		
 	}
@@ -131,15 +175,14 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 
 		// activate the shader
 		this.shader.enable();		
-		
-		
+				
 		viewMatrix.identity();
 		projectionMatrix.identity();
 		
 		shader.setUniform("u_viewMatrix", viewMatrix);
 		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
-		
+		sceneGraph.draw(modelMatrix);
 		
 	}
 
