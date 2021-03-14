@@ -1,10 +1,5 @@
 package comp3170.demos.week4.bezier;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.joml.Matrix3f;
-import org.joml.Vector2f;
 import org.joml.Vector3f;
 
 import com.jogamp.opengl.GL;
@@ -13,7 +8,7 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.Shader;
 
-public class BezierCurveLine {
+public class BezierCurve {
 
 	private Shader shader;    
 	private Vector3f[] vertices;
@@ -21,7 +16,7 @@ public class BezierCurveLine {
 	
 	private final int NPOINTS = 20;
 	
-	public BezierCurveLine(Shader shader, Vector3f[] points) {
+	public BezierCurve(Shader shader, Vector3f[] points) {
 		this.shader = shader;
 				
 		this.vertices = new Vector3f[NPOINTS];

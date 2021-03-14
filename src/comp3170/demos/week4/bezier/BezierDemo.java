@@ -39,7 +39,7 @@ public class BezierDemo extends JFrame implements GLEventListener {
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 
-	private BezierCurveLine curve;
+	private BezierCurve curve;
 
 
 	public BezierDemo() {
@@ -92,7 +92,7 @@ public class BezierDemo extends JFrame implements GLEventListener {
 			new Vector3f( 0.9f,  1f, 1f),				
 		};
 		
-		this.curve = new BezierCurveLine(shader, points);
+		this.curve = new BezierCurve(shader, points);
 	}
 
 	@Override
