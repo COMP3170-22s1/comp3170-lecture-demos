@@ -60,6 +60,7 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
 		canvas.addKeyListener(this);
 		canvas.addMouseListener(this);
 		canvas.addMouseMotionListener(this);
+		canvas.requestFocus();
 	}
 	
 	/**
