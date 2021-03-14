@@ -1,6 +1,6 @@
 #version 410
 
-in vec2 a_position;	// vertex position as a 2D vector in NDC 
+in vec2 a_position;	// vertex position as a 2D vector in model space 
 
 uniform mat3 u_modelMatrix; 		// model->world transformation matrix 
 uniform mat3 u_viewMatrix; 			// world->view transformation matrix 
