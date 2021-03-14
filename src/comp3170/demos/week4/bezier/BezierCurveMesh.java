@@ -13,7 +13,7 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.Shader;
 
-public class BezierCurve {
+public class BezierCurveMesh {
 
 	private Shader shader;    
 	private Vector3f[] vertices;
@@ -21,7 +21,7 @@ public class BezierCurve {
 	
 	private final int NPOINTS = 100;
 	
-	public BezierCurve(Shader shader, Vector3f[] points) {
+	public BezierCurveMesh(Shader shader, Vector3f[] points) {
 		this.shader = shader;
 				
 		this.vertices = new Vector3f[NPOINTS];
