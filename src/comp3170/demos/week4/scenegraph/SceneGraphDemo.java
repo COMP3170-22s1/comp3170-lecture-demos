@@ -13,6 +13,7 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import org.joml.Matrix3f;
+import org.joml.Vector2f;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -131,17 +132,28 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 	}
 
 	private final float ROTATION_SPEED = TAU / 8;
+	private final float MOVEMENT_SPEED = 0.1f;
+	private Vector2f armPosition = new Vector2f();
 	
 	private void update() {
 		long time = System.currentTimeMillis();
 		float deltaTime = (time - oldTime) / 1000f;
 		oldTime = time;
 
+		arms[0].getPosition(armPosition);
+		
+		if (input.isKeyDown(KeyEvent.VK_LEFT)) {
+			arms[0].setPosition(armPosition.x - MOVEMENT_SPEED * deltaTime, armPosition.y);
+		}
+		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
+			arms[0].setPosition(armPosition.x + MOVEMENT_SPEED * deltaTime, armPosition.y);
+		}
+
 		float angle0 = arms[0].getAngle();
 		float angle1 = arms[1].getAngle();
 		float angle2 = arms[2].getAngle();
 		float rot = ROTATION_SPEED * deltaTime;
-					
+		
 		if (input.isKeyDown(KeyEvent.VK_NUMPAD1)) {
 			arms[0].setAngle(angle0 + rot);
 		}

@@ -58,8 +58,8 @@ public class SceneObject {
 		this.parent.children.add(this);
 	}
 	
-	public Vector2f getPosition() {
-		return position;
+	public Vector2f getPosition(Vector2f dest) {
+		return dest.set(position);
 	}
 
 	public void setPosition(float x, float y) {
@@ -75,8 +75,8 @@ public class SceneObject {
 		this.angle = angle;
 	}
 	
-	public Vector2f getScale() {
-		return scale;
+	public Vector2f getScale(Vector2f dest) {
+		return dest.set(scale);
 	}
 
 	public void setScale(float sx, float sy) {
