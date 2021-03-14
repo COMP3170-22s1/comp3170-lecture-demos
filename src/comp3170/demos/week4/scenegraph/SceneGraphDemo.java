@@ -110,6 +110,7 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 	    arms[0] = new Arm(shader, 0.2f, 1);
 	    arms[0].setParent(sceneGraph);
 	    arms[0].setPosition(0, -1.0f);
+//	    arms[0].setScale(2, 1);		// this causes shear in child objects
 	    arms[0].setColour(Color.RED);
 	    
 	    arms[1] = new Arm(shader, 0.15f, 0.5f);
