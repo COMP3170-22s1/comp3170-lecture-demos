@@ -43,7 +43,7 @@ public class BezierDemo extends JFrame implements GLEventListener {
 
 
 	public BezierDemo() {
-		super("Week 4 bezier demo");
+		super("Week 4 Bézier demo");
 
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
