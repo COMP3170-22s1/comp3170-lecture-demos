@@ -104,6 +104,9 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 		}
 
 		// Set up the scene
+		//
+		// sceneGraph -> arm0 -> arm1 -> arm2
+		
 		sceneGraph = new SceneObject();
 		
 		arms = new Arm[3];
@@ -195,6 +198,7 @@ public class SceneGraphDemo extends JFrame implements GLEventListener {
 		shader.setUniform("u_viewMatrix", viewMatrix);
 		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
+		modelMatrix.identity();
 		sceneGraph.draw(modelMatrix);
 		
 	}

@@ -20,7 +20,7 @@ public class Camera {
 	private Matrix3f modelMatrix;
 	private Matrix3f translationMatrix;
 	private Matrix3f rotationMatrix;
-	private Matrix3f scalenMatrix;
+	private Matrix3f scaleMatrix;
 	private float[] vertices;
 	private int vertexBuffer;
 	private float width;
@@ -33,11 +33,11 @@ public class Camera {
 		//       2-----------3
 		//       | \         |
 		//       |   \       |
-		//       |     \     |
+		//       |     *     |
 		//       |       \   |
 		//       |         \ |
 		//       0-----------1
-		//  (-1,-1)    (1,-1)		
+		//  (-1,-1)        (1,-1)		
 		
 		this.vertices = new float[] {
 			-1f, -1f,
@@ -57,7 +57,7 @@ public class Camera {
 	    this.modelMatrix = new Matrix3f();	    	    
 	    this.translationMatrix = new Matrix3f();    
 	    this.rotationMatrix = new Matrix3f();
-	    this.scalenMatrix = new Matrix3f();      	
+	    this.scaleMatrix = new Matrix3f();      	
     }
 	
 	public Vector2f getPosition() {
@@ -132,15 +132,15 @@ public class Camera {
 		// MS = [ 0   sy  0 ]
 		//      [ 0   0   1 ]
 
-		scalenMatrix.m00(width / zoom);
-		scalenMatrix.m11(height / zoom);	
+		scaleMatrix.m00(width / zoom);
+		scaleMatrix.m11(height / zoom);	
 		
 		// M = MT * MR * MS
 
 		modelMatrix.identity();
 		modelMatrix.mul(translationMatrix);
 		modelMatrix.mul(rotationMatrix);
-		modelMatrix.mul(scalenMatrix);
+		modelMatrix.mul(scaleMatrix);
 
 		return modelMatrix;
 	}
@@ -177,10 +177,10 @@ public class Camera {
 		// MS = [ 0   sy  0 ]
 		//      [ 0   0   1 ]
 
-		scalenMatrix.m00(width / zoom);
-		scalenMatrix.m11(height / zoom);	
+		scaleMatrix.m00(width / zoom);
+		scaleMatrix.m11(height / zoom);	
 
-		return scalenMatrix.invert(dest);
+		return scaleMatrix.invert(dest);
 		
 	}
 	

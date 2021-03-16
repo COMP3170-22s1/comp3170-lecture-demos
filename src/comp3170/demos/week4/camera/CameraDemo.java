@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 
 import org.joml.Matrix3f;
 
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -189,16 +190,15 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		
 		// update the scene
 		update();	
-
-        // clear the colour buffer
+		
+		gl.glViewport(0, 0, width, height);
+		
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
-
+		
 		// activate the shader
 		this.shader.enable();		
 		
 		
-		camera.setSize(width, height);
-
 		if (showCamera) {
 			viewMatrix.identity();
 			projectionMatrix.identity();
@@ -226,7 +226,9 @@ public class CameraDemo extends JFrame implements GLEventListener {
 	@Override
 	public void reshape(GLAutoDrawable d, int x, int y, int width, int height) {
 		this.width = width;
-		this.height = height;		
+		this.height = height;
+			
+		camera.setSize(width, height);
 	}
 
 	@Override
