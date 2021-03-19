@@ -1,8 +1,8 @@
 #version 410
 
-in vec4 a_position;	// vertex position as a homogeneous 2D point in NDC 
+in vec4 a_position;	// vertex position as a homogeneous 2D point in model 
 
-uniform mat4 u_modelMatrix;
+uniform mat4 u_modelMatrix;	// MODEL -> WORLD (= NDC)
 uniform float u_sphericity;
 
 void main() {
