@@ -50,20 +50,28 @@ public class SimpleCube extends Shape {
 			1, 2,
 			2, 3,
 			3, 0,
+			0, 2,
 			
 			// back
 			4, 5,
 			5, 6,
 			6, 7,
 			7, 4,
+			4, 6,
 			
 			// top
 			0, 7,
 			6, 1,
+			6, 0,
 			
 			// bottom 
 			2, 5,
 			4, 3,
+			4, 2,
+			
+			// left
+			0, 4,
+			6, 2,
 			
 		};
 
