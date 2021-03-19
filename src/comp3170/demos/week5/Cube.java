@@ -16,23 +16,22 @@ public class Cube extends Shape {
 	int[] indices;
 	int indexBuffer;
 	private final float TAU = (float) (Math.PI * 2);
-	private final int NSEGMENTS = 10;
 
-	public Cube(Shader shader) {
+	public Cube(Shader shader, int nSegments) {
 		super(shader);
 
 		//
 		// Create a cube with each face divide into an n x n grid
 		//
 
-		Vector4f[] grid = new Vector4f[(NSEGMENTS + 1) * (NSEGMENTS + 1)];
+		Vector4f[] grid = new Vector4f[(nSegments + 1) * (nSegments + 1)];
 
 		int k = 0;
-		for (int i = 0; i <= NSEGMENTS; i++) {
-			float x = (float) 2 * i / NSEGMENTS - 1;	// from -1 to 1
+		for (int i = 0; i <= nSegments; i++) {
+			float x = (float) 2 * i / nSegments - 1;	// from -1 to 1
 
-			for (int j = 0; j <= NSEGMENTS; j++) {
-				float y = (float) 2 * j / NSEGMENTS - 1;		// from -1 to 1
+			for (int j = 0; j <= nSegments; j++) {
+				float y = (float) 2 * j / nSegments - 1;		// from -1 to 1
 
 				grid[k++] = new Vector4f(x, y, 1, 1);
 				
@@ -74,27 +73,27 @@ public class Cube extends Shape {
 
 		int n = 0;
 		for (int s = 0; s < sides.length; s++) { // note there is no quad for the top row
-			for (int i = 0; i < NSEGMENTS; i++) {
-				for (int j = 0; j < NSEGMENTS; j++) {
-					k = s * grid.length + i * (NSEGMENTS + 1) + j;
+			for (int i = 0; i < nSegments; i++) {
+				for (int j = 0; j < nSegments; j++) {
+					k = s * grid.length + i * (nSegments + 1) + j;
 					
 					indices[n++] = k;
-					indices[n++] = k + NSEGMENTS + 1;
+					indices[n++] = k + nSegments + 1;
 
-					indices[n++] = k + NSEGMENTS + 1;
+					indices[n++] = k + nSegments + 1;
 					indices[n++] = k + 1;
 
 					indices[n++] = k + 1;
 					indices[n++] = k;
 
-					indices[n++] = k + NSEGMENTS + 2;
+					indices[n++] = k + nSegments + 2;
 					indices[n++] = k + 1;
 
 					indices[n++] = k + 1;
-					indices[n++] = k + NSEGMENTS + 1;
+					indices[n++] = k + nSegments + 1;
 
-					indices[n++] = k + NSEGMENTS + 1;
-					indices[n++] = k + NSEGMENTS + 2;
+					indices[n++] = k + nSegments + 1;
+					indices[n++] = k + nSegments + 2;
 				}
 			}
 		}

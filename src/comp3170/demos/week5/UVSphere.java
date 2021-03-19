@@ -22,15 +22,14 @@ public class UVSphere extends Shape {
 	private int indexBuffer;
 
 	private final float TAU = (float) (Math.PI * 2);
-	private final int NSEGMENTS = 17;
 	
-	public UVSphere(Shader shader) {
+	public UVSphere(Shader shader, int nSegments) {
 		super(shader);		
 		//
 		// Create a (2n+1) * (n+1) grid of points in polar space
 		//
-		int width = 2 * NSEGMENTS;
-		int height = NSEGMENTS;
+		int width = 2 * nSegments;
+		int height = nSegments;
 		
 		this.vertices = new Vector4f[(width +1) * (height+1)];
 		

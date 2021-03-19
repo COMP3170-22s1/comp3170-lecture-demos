@@ -100,8 +100,9 @@ public class SphereDemo extends JFrame implements GLEventListener {
 
 		// Set up the scene
 		this.spheres = new Shape[] {
-			new UVSphere(shader),
-			new Cube(shader),
+			new SimpleCube(shader),
+			new UVSphere(shader, 17),
+			new Cube(shader, 10),
 		};
 		currentSphere = 0;
 		
