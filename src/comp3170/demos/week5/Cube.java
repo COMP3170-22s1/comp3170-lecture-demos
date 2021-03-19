@@ -55,6 +55,7 @@ public class Cube extends Shape {
 		for (int s = 0; s < sides.length; s++) {
 			for (int i = 0; i < grid.length; i++) {
 				vertices[k] = new Vector4f(grid[i]).mul(sides[s]).mul(scale);
+//				vertices[k] = new Vector4f(grid[i]).mul(sides[s]).mul(scale).normalize3();
 				k++;
 			}
 		}
