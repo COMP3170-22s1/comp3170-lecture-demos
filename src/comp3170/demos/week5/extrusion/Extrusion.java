@@ -114,14 +114,12 @@ public class Extrusion extends Mesh {
 			for (int j = 0; j < a; j++) {
 				// lines going around the cross-section
 				indices[k++] = a * i + j;
-				indices[k++] = (a * i + j + 1) % a; // wrap around when j = a-1
+				indices[k++] = a * i + (j + 1) % a; // wrap around when j = a-1
 
 				// lines joining to the next cross-section
 				if (i < b-1) {
-					indices[k++] = 0;
-					indices[k++] = 0;										
-//					indices[k++] = a * i + j;
-//					indices[k++] = a * i + j + a;										
+					indices[k++] = a * i + j;
+					indices[k++] = a * i + j + a;										
 				}
 			}
 		}
@@ -142,8 +140,8 @@ public class Extrusion extends Mesh {
 	    shader.setUniform("u_colour", colour);	    
 	    
 	    gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	    gl.glDrawElements(GL.GL_POINTS, indices.length, GL_UNSIGNED_INT, 0);		
-//	    gl.glDrawElements(GL.GL_LINES, indices.length, GL_UNSIGNED_INT, 0);		
+//	    gl.glDrawElements(GL.GL_POINTS, indices.length, GL_UNSIGNED_INT, 0);		
+	    gl.glDrawElements(GL.GL_LINES, indices.length, GL_UNSIGNED_INT, 0);		
 	}
 
 }

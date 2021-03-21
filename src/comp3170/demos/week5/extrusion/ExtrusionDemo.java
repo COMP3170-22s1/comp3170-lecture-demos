@@ -109,24 +109,18 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 			new Vector2f( size/2, -size/2),
 		};
 
-		// The curve is a semicircle
+		// The curve is a semicircle	
+		
+		int nPoints = 20;
+		float radius = 0.8f;
+		Vector3f[] curve = new Vector3f[nPoints];
+		Matrix3f rotate = new Matrix3f();
 
-		Vector3f[] curve = new Vector3f[] {
-			new Vector3f(-0.5f, 0, 0),
-			new Vector3f( 0.5f, 0, 0),
-		};
-		
-		
-//		int nPoints = 20;
-//		float radius = 0.8f;
-//		Vector3f[] curve = new Vector3f[nPoints];
-//		Matrix3f rotate = new Matrix3f();
-//
-//		for (int i = 0; i < nPoints; i++) {
-//			float angle = i * TAU / 2 / (nPoints-1);			// 0 to TAU/2 (inclusive)
-//			rotate.rotationZ(angle);							// rotation = Rz(angle)
-//			curve[i] = new Vector3f(radius, 0, 0).mul(rotate);	// curve[i] = Rz * (r, 0, 0, 1)
-//		}
+		for (int i = 0; i < nPoints; i++) {
+			float angle = i * TAU / 2 / (nPoints-1);			// 0 to TAU/2 (inclusive)
+			rotate.rotationZ(angle);							// rotation = Rz(angle)
+			curve[i] = new Vector3f(radius, 0, 0).mul(rotate);	// curve[i] = Rz * (r, 0, 0, 1)
+		}
 		
 		// Extrude the mesh 
 		
