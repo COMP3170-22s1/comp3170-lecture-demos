@@ -14,7 +14,7 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.Shader;
 
-abstract public class Shape {
+abstract public class Mesh {
 
 	protected Shader shader;
 	protected Vector3f colour;
@@ -23,13 +23,15 @@ abstract public class Shape {
 	protected float scale;
 	protected Matrix4f modelMatrix;
 
-	public Shape(Shader shader) {
+	public Mesh(Shader shader) {
 		this.shader = shader;
 		
 		this.position = new Vector3f();
 		this.angle = new Vector3f();
 		this.scale = 1;
 		this.modelMatrix = new Matrix4f();
+		
+		this.colour = new Vector3f(1,1,1); // default to white;
 	}
 
 	public Vector3f getPosition(Vector3f dest) {

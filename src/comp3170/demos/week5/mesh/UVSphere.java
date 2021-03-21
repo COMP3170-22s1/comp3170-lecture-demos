@@ -1,4 +1,4 @@
-package comp3170.demos.week5;
+package comp3170.demos.week5.mesh;
 
 import static com.jogamp.opengl.GL.GL_ELEMENT_ARRAY_BUFFER;
 import static com.jogamp.opengl.GL.GL_UNSIGNED_INT;
@@ -14,8 +14,9 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
 import comp3170.Shader;
+import comp3170.demos.week5.Mesh;
 
-public class UVSphere extends Shape {
+public class UVSphere extends Mesh {
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
@@ -107,7 +108,6 @@ public class UVSphere extends Shape {
 	    shader.setUniform("u_colour", colour);	    
 	    
 	    gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-//	    gl.glDrawElements(GL_POINTS, indices.length, GL_UNSIGNED_INT, 0);		
 	    gl.glDrawElements(GL.GL_LINES, indices.length, GL_UNSIGNED_INT, 0);		
 	}
 

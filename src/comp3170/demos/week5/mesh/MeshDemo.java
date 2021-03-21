@@ -1,5 +1,5 @@
 
-package comp3170.demos.week5;
+package comp3170.demos.week5.mesh;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
@@ -25,8 +25,9 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
+import comp3170.demos.week5.Mesh;
 
-public class SphereDemo extends JFrame implements GLEventListener {
+public class MeshDemo extends JFrame implements GLEventListener {
 
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 	
@@ -36,7 +37,7 @@ public class SphereDemo extends JFrame implements GLEventListener {
 	private GLCanvas canvas;
 	private Shader shader;
 	
-	final private File DIRECTORY = new File("src/comp3170/demos/week5"); 
+	final private File DIRECTORY = new File("src/comp3170/demos/week5/mesh"); 
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 
@@ -44,11 +45,11 @@ public class SphereDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 	private InputManager input;
 
-	private Shape[] spheres;
+	private Mesh[] spheres;
 	private int currentSphere;
 
-	public SphereDemo() {
-		super("Week 5 Sphere demo");
+	public MeshDemo() {
+		super("Week 5 mesh demo");
 
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
@@ -99,7 +100,7 @@ public class SphereDemo extends JFrame implements GLEventListener {
 		}
 
 		// Set up the scene
-		this.spheres = new Shape[] {
+		this.spheres = new Mesh[] {
 			new SimpleCube(shader),
 			new UVSphere(shader, 17),
 			new Cube(shader, 10),
@@ -170,7 +171,7 @@ public class SphereDemo extends JFrame implements GLEventListener {
 	}
 	
 	public static void main(String[] args) { 
-		new SphereDemo();
+		new MeshDemo();
 	}
 
 

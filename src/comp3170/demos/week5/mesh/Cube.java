@@ -1,4 +1,4 @@
-package comp3170.demos.week5;
+package comp3170.demos.week5.mesh;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -9,8 +9,9 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
 import comp3170.Shader;
+import comp3170.demos.week5.Mesh;
 
-public class Cube extends Shape {
+public class Cube extends Mesh {
 	private Vector4f[] vertices;
 	int vertexBuffer;
 	int[] indices;
