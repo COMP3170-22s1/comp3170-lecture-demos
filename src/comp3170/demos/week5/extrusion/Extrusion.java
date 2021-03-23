@@ -46,6 +46,7 @@ public class Extrusion extends Mesh {
 		
 		Matrix4f matrix = new Matrix4f();
 
+		
 		this.vertices = new Vector4f[curve.length * crossSection.length];
 		
 		int k = 0;
@@ -77,6 +78,10 @@ public class Extrusion extends Mesh {
 			// create the coordinate frame matrix
 			
 			matrix.set(iAxis4, jAxis4, kAxis4, curve4);
+
+			// We can also transform the cross section as we go.
+			// E.g. Scale the cross-section along the curve 
+//			matrix.scale(1.0f - (float)i / (curve.length-1));
 			
 			// using this matrix to transform the cross-section points into 3D
 			
@@ -140,7 +145,11 @@ public class Extrusion extends Mesh {
 	    shader.setUniform("u_colour", colour);	    
 	    
 	    gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+	    // DEBUG: just draw the vertices
 //	    gl.glDrawElements(GL.GL_POINTS, indices.length, GL_UNSIGNED_INT, 0);		
+
+	    // Draw the wireframe as lines
 	    gl.glDrawElements(GL.GL_LINES, indices.length, GL_UNSIGNED_INT, 0);		
 	}
 

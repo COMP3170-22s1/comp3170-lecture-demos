@@ -44,7 +44,7 @@ public class SimpleCube extends Mesh {
 		this.vertexBuffer = shader.createBuffer(vertices);
 
 		// indices for the lines forming each face
-		
+
 		this.indices = new int[] {
 			// front
 			0, 1,
@@ -97,6 +97,11 @@ public class SimpleCube extends Mesh {
 		shader.setUniform("u_colour", colour);
 
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+
+		// DEBUG: Just draw the vertices
+//		gl.glDrawElements(GL.GL_POINTS, indices.length, GL.GL_UNSIGNED_INT, 0);
+
+		// Draw the wireframe as lines
 		gl.glDrawElements(GL.GL_LINES, indices.length, GL.GL_UNSIGNED_INT, 0);
 	}
 

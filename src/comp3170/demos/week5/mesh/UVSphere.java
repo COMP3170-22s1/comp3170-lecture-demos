@@ -108,6 +108,11 @@ public class UVSphere extends Mesh {
 	    shader.setUniform("u_colour", colour);	    
 	    
 	    gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	    
+	    // DEBUG: just draw the vertices
+//	    gl.glDrawElements(GL.GL_POINTS, indices.length, GL_UNSIGNED_INT, 0);		
+
+	    // Draw the wireframe as lines
 	    gl.glDrawElements(GL.GL_LINES, indices.length, GL_UNSIGNED_INT, 0);		
 	}
 
