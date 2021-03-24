@@ -46,6 +46,9 @@ public class Grid extends SceneObject {
 	public void draw() {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		// activate the shader
+		shader.enable();		
+
 		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
 

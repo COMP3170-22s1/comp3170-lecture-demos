@@ -2,12 +2,15 @@ package comp3170.demos.week6;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+
+import org.joml.Matrix4f;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -21,7 +24,9 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week5.mesh.MeshDemo;
+import comp3170.demos.week6.cameras.Camera;
+import comp3170.demos.week6.cameras.OrthographicCamera;
+import comp3170.demos.week6.cameras.PerspectiveCamera;
 import comp3170.demos.week6.sceneobjects.Grid;
 
 public class Week6 extends JFrame implements GLEventListener {
@@ -43,6 +48,11 @@ public class Week6 extends JFrame implements GLEventListener {
 	private InputManager input;
 
 	private Grid grid;
+
+	private Camera[] cameras;
+	private int currentCamera;
+	private Matrix4f viewMatrix;
+	private Matrix4f projectionMatrix;
 
 	public Week6() {
 		super("Week 6 3D camera demo");
@@ -98,7 +108,24 @@ public class Week6 extends JFrame implements GLEventListener {
 		// Set up the scene
 		this.grid = new Grid(shader,11);
 		grid.setAngle(TAU/4, 0, 0);
-
+		grid.setPosition(0,0,0);
+		
+		OrthographicCamera orthoCamera = new OrthographicCamera(4,4,0.1f,10f);
+		orthoCamera.setPosition(0,0,-2);
+		orthoCamera.setAngle(0,TAU/2,0);
+		
+		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(TAU/6, 1, 0.1f, 10f);
+		perspectiveCamera.setPosition(0,0,-2);
+		perspectiveCamera.setAngle(0,TAU/2,0);
+		
+		this.cameras = new Camera[] {
+			orthoCamera,
+			perspectiveCamera,
+		};
+		this.currentCamera = 0;
+		
+		this.viewMatrix = new Matrix4f();
+		this.projectionMatrix = new Matrix4f();
 	}
 
 	
@@ -107,6 +134,23 @@ public class Week6 extends JFrame implements GLEventListener {
 		float deltaTime = (time-oldTime) / 1000f;
 		oldTime = time;
 		
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
+			
+		}
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
+			
+		}
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
+			
+		}
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
+			
+		}
+
+		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
+			currentCamera = (currentCamera + 1) % cameras.length; 
+		}
+
 		
 		input.clear();
 	}
@@ -119,9 +163,12 @@ public class Week6 extends JFrame implements GLEventListener {
 		
         // clear the colour buffer
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
-
-		// activate the shader
-		this.shader.enable();		
+		
+		cameras[currentCamera].getViewMatrix(viewMatrix);
+		cameras[currentCamera].getProjectionMatrix(projectionMatrix);
+		
+		shader.setUniform("u_viewMatrix", viewMatrix);
+		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
 		// draw the curve
 		this.grid.draw();
