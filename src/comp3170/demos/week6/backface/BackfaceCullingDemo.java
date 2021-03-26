@@ -131,6 +131,7 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		this.axes = new Axes(shader);
 		
 		this.triangle = new Triangle(shader);
+		triangle.setColour(Color.YELLOW);
 		
 		camera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);		
 		this.viewMatrix = new Matrix4f();
