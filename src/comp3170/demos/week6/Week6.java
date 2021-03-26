@@ -2,6 +2,7 @@ package comp3170.demos.week6;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -27,6 +28,7 @@ import comp3170.Shader;
 import comp3170.demos.week6.cameras.Camera;
 import comp3170.demos.week6.cameras.OrthographicCamera;
 import comp3170.demos.week6.cameras.PerspectiveCamera;
+import comp3170.demos.week6.sceneobjects.Cube;
 import comp3170.demos.week6.sceneobjects.Grid;
 
 public class Week6 extends JFrame implements GLEventListener {
@@ -53,6 +55,8 @@ public class Week6 extends JFrame implements GLEventListener {
 	private int currentCamera;
 	private Matrix4f viewMatrix;
 	private Matrix4f projectionMatrix;
+
+	private Cube[] cubes;
 
 	public Week6() {
 		super("Week 6 3D camera demo");
@@ -110,6 +114,24 @@ public class Week6 extends JFrame implements GLEventListener {
 		grid.setAngle(0, 0, 0);
 		grid.setPosition(0,0,0);
 		
+		this.cubes = new Cube[] {
+			new Cube(shader),
+			new Cube(shader),
+			new Cube(shader),
+		};
+		
+		cubes[0].setPosition(0.7f, 0.05f, -0.3f);
+		cubes[0].setScale(0.05f);
+		cubes[0].setColour(Color.RED);
+
+		cubes[1].setPosition(-0.5f, 0.05f, 0.3f);
+		cubes[1].setScale(0.05f);
+		cubes[1].setColour(new Color(0.4f, 0.4f, 1.0f));
+
+		cubes[2].setPosition(0.1f, 0.05f, 0.1f);
+		cubes[2].setScale(0.05f);
+		cubes[2].setColour(Color.GREEN);
+
 		OrthographicCamera orthoCamera = new OrthographicCamera(-2, input, 4,4,0.1f,10f);		
 		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(-2, input, TAU/6, 1, 0.1f, 10f);
 		
@@ -155,8 +177,12 @@ public class Week6 extends JFrame implements GLEventListener {
 		shader.setUniform("u_viewMatrix", viewMatrix);
 		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
-		// draw the curve
+		// draw the scene
 		this.grid.draw();
+		for (int i = 0; i < cubes.length; i++) {
+			cubes[i].draw();
+		}
+		
 	}
 
 	@Override
