@@ -72,8 +72,8 @@ abstract public class Mesh {
 
 	public void setColour(Color color) {		
 		colour.x = color.getRed() / 255f;
-		colour.y = color.getBlue() / 255f;
-		colour.z = color.getGreen() / 255f;
+		colour.y = color.getGreen() / 255f;
+		colour.z = color.getBlue() / 255f;
 	}
 
 	abstract public void draw();
