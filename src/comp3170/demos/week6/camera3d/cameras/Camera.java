@@ -1,4 +1,4 @@
-package comp3170.demos.week6.cameras;
+package comp3170.demos.week6.camera3d.cameras;
 
 import java.awt.event.KeyEvent;
 
@@ -29,7 +29,7 @@ public abstract class Camera {
 		this.modelMatrix = new Matrix4f();
 		this.angle = new Vector3f(0,0,0);
 
-		modelMatrix.translate(0,0,-distance);		
+		modelMatrix.translate(0,0,distance);		
 		
 	}
 	
@@ -66,6 +66,6 @@ public abstract class Camera {
 		modelMatrix.identity();
 		modelMatrix.rotateY(angle.y);	// heading
 		modelMatrix.rotateX(angle.x);	// pitch
-		modelMatrix.translate(0,0,-distance);
+		modelMatrix.translate(0,0,distance);
 	}
 }

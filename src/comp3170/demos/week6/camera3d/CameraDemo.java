@@ -1,4 +1,4 @@
-package comp3170.demos.week6;
+package comp3170.demos.week6.camera3d;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
@@ -25,13 +25,14 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week6.cameras.Camera;
-import comp3170.demos.week6.cameras.OrthographicCamera;
-import comp3170.demos.week6.cameras.PerspectiveCamera;
-import comp3170.demos.week6.sceneobjects.Cube;
-import comp3170.demos.week6.sceneobjects.Grid;
+import comp3170.demos.week6.camera3d.cameras.Camera;
+import comp3170.demos.week6.camera3d.cameras.OrthographicCamera;
+import comp3170.demos.week6.camera3d.cameras.PerspectiveCamera;
+import comp3170.demos.week6.camera3d.sceneobjects.Axes;
+import comp3170.demos.week6.camera3d.sceneobjects.Cube;
+import comp3170.demos.week6.camera3d.sceneobjects.Grid;
 
-public class Week6 extends JFrame implements GLEventListener {
+public class CameraDemo extends JFrame implements GLEventListener {
 
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 	
@@ -58,7 +59,9 @@ public class Week6 extends JFrame implements GLEventListener {
 
 	private Cube[] cubes;
 
-	public Week6() {
+	private Axes axes;
+
+	public CameraDemo() {
 		super("Week 6 3D camera demo");
 
 		// set up a GL canvas
@@ -114,6 +117,8 @@ public class Week6 extends JFrame implements GLEventListener {
 		grid.setAngle(0, 0, 0);
 		grid.setPosition(0,0,0);
 		
+		this.axes = new Axes(shader);
+		
 		this.cubes = new Cube[] {
 			new Cube(shader),
 			new Cube(shader),
@@ -132,8 +137,8 @@ public class Week6 extends JFrame implements GLEventListener {
 		cubes[2].setScale(0.05f);
 		cubes[2].setColour(Color.GREEN);
 
-		OrthographicCamera orthoCamera = new OrthographicCamera(-2, input, 4,4,0.1f,10f);		
-		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(-2, input, TAU/6, 1, 0.1f, 10f);
+		OrthographicCamera orthoCamera = new OrthographicCamera(2, input, 4,4,0.1f,10f);		
+		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);
 		
 		this.cameras = new Camera[] {
 			orthoCamera,
@@ -179,6 +184,7 @@ public class Week6 extends JFrame implements GLEventListener {
 		
 		// draw the scene
 		this.grid.draw();
+		this.axes.draw();
 		for (int i = 0; i < cubes.length; i++) {
 			cubes[i].draw();
 		}
@@ -198,7 +204,7 @@ public class Week6 extends JFrame implements GLEventListener {
 	}
 	
 	public static void main(String[] args) { 
-		new Week6();
+		new CameraDemo();
 	}
 
 

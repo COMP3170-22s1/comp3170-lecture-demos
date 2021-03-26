@@ -1,4 +1,4 @@
-package comp3170.demos.week6.cameras;
+package comp3170.demos.week6.camera3d.cameras;
 
 import org.joml.Matrix4f;
 

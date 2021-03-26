@@ -1,4 +1,4 @@
-package comp3170.demos.week6.sceneobjects;
+package comp3170.demos.week6.camera3d.sceneobjects;
 
 import org.joml.Vector4f;
 
