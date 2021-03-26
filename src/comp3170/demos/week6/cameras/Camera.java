@@ -1,27 +1,71 @@
 package comp3170.demos.week6.cameras;
 
+import java.awt.event.KeyEvent;
+
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
-import comp3170.demos.week6.sceneobjects.SceneObject;
+import comp3170.InputManager;
 
-public abstract class Camera extends SceneObject {
+/**
+ * A camera that revolves around the origin
+ * @author malcolmryan
+ *
+ */
 
-	public Camera() {
-		super();
+public abstract class Camera {
+
+	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
+
+	private Matrix4f modelMatrix;
+	private InputManager input;
+
+	private float distance;
+	private Vector3f angle;
+	
+	public Camera(float distance, InputManager input) {
+		this.input = input;
+		this.distance = distance;
+		this.modelMatrix = new Matrix4f();
+		this.angle = new Vector3f(0,0,0);
+
+		modelMatrix.translate(0,0,-distance);		
+		
 	}
 	
 	public Matrix4f getViewMatrix(Matrix4f dest) {
-		// get the translation and rotation and scale without the scale 
-		
-		dest.translation(this.position);
-		dest.rotateY(this.angle.y);	// heading
-		dest.rotateX(this.angle.x); 	// pitch
-		dest.rotateZ(this.angle.z); 	// roll
-		
-		// invert to get the view matrix
-		
-		return dest.invert();
+		// invert the model matrix (we have never applied any scale)
+		return modelMatrix.invert(dest);
 	}
 	
 	abstract public Matrix4f getProjectionMatrix(Matrix4f dest);
+	
+	final static float ROTATION_SPEED = TAU / 4;
+	final static float MOVEMENT_SPEED = 1;
+
+	public void update(float deltaTime) {
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
+			angle.x -= ROTATION_SPEED * deltaTime;
+		}
+		if (input.isKeyDown(KeyEvent.VK_DOWN)) {
+			angle.x += ROTATION_SPEED * deltaTime;
+		}
+		if (input.isKeyDown(KeyEvent.VK_LEFT)) {
+			angle.y -= ROTATION_SPEED * deltaTime;
+		}
+		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
+			angle.y += ROTATION_SPEED * deltaTime;
+		}
+		if (input.isKeyDown(KeyEvent.VK_PAGE_DOWN)) {
+			distance += MOVEMENT_SPEED * deltaTime;
+		}
+		if (input.isKeyDown(KeyEvent.VK_PAGE_UP)) {
+			distance -= MOVEMENT_SPEED * deltaTime;
+		}
+		
+		modelMatrix.identity();
+		modelMatrix.rotateY(angle.y);	// heading
+		modelMatrix.rotateX(angle.x);	// pitch
+		modelMatrix.translate(0,0,-distance);
+	}
 }

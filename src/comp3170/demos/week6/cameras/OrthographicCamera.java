@@ -2,6 +2,8 @@ package comp3170.demos.week6.cameras;
 
 import org.joml.Matrix4f;
 
+import comp3170.InputManager;
+
 public class OrthographicCamera extends Camera {
 
 	private float width;
@@ -9,8 +11,8 @@ public class OrthographicCamera extends Camera {
 	private float near;
 	private float far;
 
-	public OrthographicCamera(float width, float height, float near, float far) {
-		super();
+	public OrthographicCamera(float distance, InputManager input, float width, float height, float near, float far) {
+		super(distance, input);
 		
 		this.width = width;
 		this.height = height;

@@ -107,16 +107,11 @@ public class Week6 extends JFrame implements GLEventListener {
 
 		// Set up the scene
 		this.grid = new Grid(shader,11);
-		grid.setAngle(TAU/4, 0, 0);
+		grid.setAngle(0, 0, 0);
 		grid.setPosition(0,0,0);
 		
-		OrthographicCamera orthoCamera = new OrthographicCamera(4,4,0.1f,10f);
-		orthoCamera.setPosition(0,0,-2);
-		orthoCamera.setAngle(0,TAU/2,0);
-		
-		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(TAU/6, 1, 0.1f, 10f);
-		perspectiveCamera.setPosition(0,0,-2);
-		perspectiveCamera.setAngle(0,TAU/2,0);
+		OrthographicCamera orthoCamera = new OrthographicCamera(-2, input, 4,4,0.1f,10f);		
+		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(-2, input, TAU/6, 1, 0.1f, 10f);
 		
 		this.cameras = new Camera[] {
 			orthoCamera,
@@ -134,23 +129,13 @@ public class Week6 extends JFrame implements GLEventListener {
 		float deltaTime = (time-oldTime) / 1000f;
 		oldTime = time;
 		
-		if (input.isKeyDown(KeyEvent.VK_UP)) {
-			
-		}
-		if (input.isKeyDown(KeyEvent.VK_UP)) {
-			
-		}
-		if (input.isKeyDown(KeyEvent.VK_UP)) {
-			
-		}
-		if (input.isKeyDown(KeyEvent.VK_UP)) {
-			
-		}
-
 		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
 			currentCamera = (currentCamera + 1) % cameras.length; 
 		}
 
+		for (int i = 0; i < cameras.length; i++) {
+			cameras[i].update(deltaTime);
+		}
 		
 		input.clear();
 	}
