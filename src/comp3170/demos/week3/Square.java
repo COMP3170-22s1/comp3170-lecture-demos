@@ -38,21 +38,21 @@ public class Square {
 		//       2-----------3
 		//       | \         |
 		//       |   \       |
-		//       |     \     |
+		//       |     *     |
 		//       |       \   |
 		//       |         \ |
 		//       0-----------1
 		//  (-0.5,-0.5)  (0.5,-0.5)		
 		
 		this.vertices = new float[] {
-			-0.5f, -0.5f,
-			 0.5f, -0.5f,
-			-0.5f,  0.5f,
-			 0.5f,  0.5f,
+			-0.5f, -0.5f, 1,
+			 0.5f, -0.5f, 1,
+			-0.5f,  0.5f, 1,
+			 0.5f,  0.5f, 1,
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = shader.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    this.vertexBuffer = shader.createBuffer(vertices, GL4.GL_FLOAT_VEC3);
 	    
 	    this.indices = new int[] {
 	    	0, 1, 2,
@@ -67,6 +67,12 @@ public class Square {
 	    this.angle = 0f;
 	    this.scale = new Vector2f(1f, 1f);
 	    this.modelMatrix = new Matrix3f();	    
+	    
+	    // Allocate and initialise the matrices to the identity matrix
+	    
+		//      [ 1  0  0 ]
+		//  I = [ 0  1  0 ]
+		//      [ 0  0  1 ]
 	    
 	    this.translationMatrix = new Matrix3f();    
 	    this.rotationMatrix = new Matrix3f();
@@ -122,8 +128,8 @@ public class Square {
 	
 	public void setColour(Color color) {		
 		colour.x = color.getRed() / 255f;
-		colour.y = color.getBlue() / 255f;
-		colour.z = color.getGreen() / 255f;
+		colour.y = color.getGreen() / 255f;
+		colour.z = color.getBlue() / 255f;
 	}
 	
 	public void draw(Shader shader) {
@@ -140,6 +146,7 @@ public class Square {
 	    // write the colour value into the u_colour uniform 
 	    shader.setUniform("u_colour", colour);	    
 	    
+	    // draw using an index buffer
 	    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	    gl.glDrawElements(GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		
 	}
@@ -170,7 +177,7 @@ public class Square {
 		scaleMatrix.m00(scale.x);
 		scaleMatrix.m11(scale.y);
 
-		// M = MT * MR * MS
+		// M = MT * MR * MS (in TRaSheS order)
 		
 		modelMatrix.identity();
 		modelMatrix.mul(translationMatrix);
