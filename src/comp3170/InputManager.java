@@ -9,7 +9,38 @@ import java.awt.event.MouseMotionListener;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.joml.Vector4f;
+import org.joml.Vector3f;
+
+import com.jogamp.opengl.awt.GLCanvas;
+
+/**
+ * Input manager class for COMP3170 projects.
+ * 
+ * Usage:
+ * 
+ * In the constructor create an InputManager and add it to both the JFrame and the Canvas
+ * to listen for mouse events:
+ * 
+ *		// set up Input manager
+ *		this.input = new InputManager();
+ *		input.addListener(this);
+ *		input.addListener(this.canvas);
+ *
+ * Every frame, call the accessor methods to check for key and mouse:
+ * 
+ *      isMouseDown() - mouse is currently held down
+ *      wasMouseClicked() - mouse has been clicked since the last frame
+ *      getMousePosition() - mouse position within the window
+ *      isKeyDown() - the specified key is currently down
+ *      wasKeyPressed() - the specified key has been pressed since the last frame
+ *      
+ * At the end of the frame:
+ * 
+ * 		clear() - clear the wasPressed and wasClicked flags
+ * 
+ * @author malcolmryan
+ *
+ */
 
 public class InputManager implements KeyListener, MouseListener, MouseMotionListener {
 
@@ -17,18 +48,19 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
 	private Set<Integer> keysPressed;
 	private boolean mouseDown;
 	private boolean mouseClicked;
-	private Vector4f mousePosition;
+	private Vector3f mousePosition;
+	private GLCanvas canvas;
 	
-	public InputManager() {
+	public InputManager(GLCanvas canvas) {
+		this.canvas = canvas;
 		this.keysDown = new HashSet<Integer>();
 		this.keysPressed = new HashSet<Integer>();
-		this.mousePosition = new Vector4f(0,0,0,1);
-	}
-	
-	public void addListener(Component component) {
-		component.addKeyListener(this);
-		component.addMouseListener(this);
-		component.addMouseMotionListener(this);
+		this.mousePosition = new Vector3f(0,0,1);
+
+		canvas.addKeyListener(this);
+		canvas.addMouseListener(this);
+		canvas.addMouseMotionListener(this);
+		canvas.requestFocus();
 	}
 	
 	/**
@@ -50,13 +82,13 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
 	}
 
 	/**
-	 * Write the current mouse position into dest as a vector of the form
-	 * (x, y, 0, 1)
+	 * Write the current mouse position in viewport coordinates
+	 * into dest as a 2D homogenous point of the form (x, y, 1)
 	 * 
 	 * @param dest	The destination vector to write the value
 	 * @return the mouse position vector
 	 */
-	public Vector4f getMousePosition(Vector4f dest) {
+	public Vector3f getMousePosition(Vector3f dest) {
 		return this.mousePosition.get(dest);
 	}
 	
@@ -151,14 +183,16 @@ public class InputManager implements KeyListener, MouseListener, MouseMotionList
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		mousePosition.x = 2.0f * e.getX() / canvas.getWidth() - 1;
+		mousePosition.y = 2.0f * e.getY() / canvas.getHeight() - 1;		
+		mousePosition.y = -mousePosition.y;		
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		this.mousePosition.x = e.getX();
-		this.mousePosition.y = e.getY();		
+		mousePosition.x = 2.0f * e.getX() / canvas.getWidth() - 1;
+		mousePosition.y = 2.0f * e.getY() / canvas.getHeight() - 1;		
+		mousePosition.y = -mousePosition.y;
 	}
 
 	

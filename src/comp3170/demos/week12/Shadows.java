@@ -27,8 +27,6 @@ import comp3170.Shader;
 import comp3170.demos.week12.sceneobjects.Cube;
 import comp3170.demos.week12.sceneobjects.Ground;
 import comp3170.demos.week12.sceneobjects.Light;
-import comp3170.demos.week12.sceneobjects.Quad;
-import comp3170.demos.week12.sceneobjects.ShadowObject;
 
 public class Shadows extends JFrame implements GLEventListener {
 
@@ -101,9 +99,7 @@ public class Shadows extends JFrame implements GLEventListener {
 		this.oldTime = System.currentTimeMillis();
 
 		// set up Input manager
-		this.input = new InputManager();
-		input.addListener(this);
-		input.addListener(this.canvas);
+		this.input = new InputManager(canvas);
 
 		// set up the JFrame
 		// make it twice as wide as the view width

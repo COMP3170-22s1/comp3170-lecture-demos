@@ -25,8 +25,6 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.SceneObjectOld;
 import comp3170.Shader;
-import comp3170.demos.week8.sceneobjects.Plane;
-import comp3170.demos.week8.sceneobjects.Triangle;
 import comp3170.demos.week8.sceneobjects.TriangleWithVertexColours;
 
 public class VertexColours extends JFrame implements GLEventListener {
@@ -77,9 +75,7 @@ public class VertexColours extends JFrame implements GLEventListener {
 		this.oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager();
-		input.addListener(this);
-		input.addListener(this.canvas);
+		this.input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width

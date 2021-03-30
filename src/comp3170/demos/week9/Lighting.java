@@ -9,7 +9,6 @@ import java.io.IOException;
 import javax.swing.JFrame;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -128,9 +127,7 @@ public class Lighting extends JFrame implements GLEventListener {
 		this.oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager();
-		input.addListener(this);
-		input.addListener(this.canvas);
+		this.input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width

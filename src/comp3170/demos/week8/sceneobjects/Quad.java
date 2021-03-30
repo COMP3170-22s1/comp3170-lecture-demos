@@ -2,8 +2,6 @@ package comp3170.demos.week8.sceneobjects;
 
 import java.awt.Color;
 
-import org.joml.Vector3f;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;

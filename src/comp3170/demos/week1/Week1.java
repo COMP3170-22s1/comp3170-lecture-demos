@@ -1,8 +1,6 @@
 package comp3170.demos.week1;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static com.jogamp.opengl.GL.GL_FLOAT;
-import static com.jogamp.opengl.GL.GL_LINE_LOOP;
 import static com.jogamp.opengl.GL.GL_TRIANGLES;
 
 import java.awt.event.WindowAdapter;
@@ -12,7 +10,6 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
