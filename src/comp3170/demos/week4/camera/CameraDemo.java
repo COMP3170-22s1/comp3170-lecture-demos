@@ -29,7 +29,6 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week3.Square;
 
 public class CameraDemo extends JFrame implements GLEventListener {
 
