@@ -18,7 +18,7 @@ public abstract class Camera {
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 
 	private Matrix4f modelMatrix;
-	private InputManager input;
+	protected InputManager input;
 
 	private float distance;
 	private Vector3f angle;
