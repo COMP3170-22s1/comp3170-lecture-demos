@@ -24,7 +24,6 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.Shader;
-import comp3170.demos.week4.camera.Square;
 
 public class Week3 extends JFrame implements GLEventListener {
 
@@ -96,9 +95,10 @@ public class Week3 extends JFrame implements GLEventListener {
 		}
 
 		// Set up the scene
+
 		
 	    this.squares = new ArrayList<Square>();
-
+	    
 	    for (int i = 0; i < NSQUARES; i++) {
 			Square square = new Square(shader);
 			float x = (float) Math.random() * 2 - 1;
@@ -114,20 +114,25 @@ public class Week3 extends JFrame implements GLEventListener {
 	}
 
 	private static final float ROTATION_SPEED = TAU / 6;
+	private static final float SCALE_SPEED = 1.1f;
 	
 	private void update() {
 		long time = System.currentTimeMillis();
 		float deltaTime = (time - oldTime) / 1000f;
 		oldTime = time;
+		System.out.println("update: dt = " + deltaTime + "s");
+		
 		
 		for (Square sq : squares) {
-			sq.rotate(ROTATION_SPEED * deltaTime);
+			sq.scale((float)Math.pow(SCALE_SPEED, deltaTime));
 		}
 	
 	}
 	
 	@Override
 	public void display(GLAutoDrawable arg0) {
+		System.out.println("display");
+		
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
 		// update the scene
