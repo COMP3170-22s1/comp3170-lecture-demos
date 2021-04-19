@@ -1,4 +1,4 @@
-package comp3170.demos.week7.fog.sceneobjects;
+package comp3170.demos.week7.sceneobjects;
 
 import java.awt.Color;
 

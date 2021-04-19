@@ -26,9 +26,9 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
 import comp3170.demos.week7.fog.cameras.PerspectiveCamera;
-import comp3170.demos.week7.fog.sceneobjects.Axes;
-import comp3170.demos.week7.fog.sceneobjects.Cube;
-import comp3170.demos.week7.fog.sceneobjects.Grid;
+import comp3170.demos.week7.sceneobjects.Axes;
+import comp3170.demos.week7.sceneobjects.Cube;
+import comp3170.demos.week7.sceneobjects.Grid;
 
 public class FogDemo extends JFrame implements GLEventListener {
 
