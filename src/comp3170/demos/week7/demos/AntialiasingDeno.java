@@ -1,4 +1,4 @@
-package comp3170.demos.week7.antialiasing;
+package comp3170.demos.week7.demos;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 import static com.jogamp.opengl.GL.GL_TRIANGLES;
@@ -21,13 +21,13 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.Shader;
+import comp3170.demos.week7.shaders.ShaderLibrary;
 
-public class Antialiasing extends JFrame implements GLEventListener {
+public class AntialiasingDeno extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader shader;
 	
-	final private File DIRECTORY = new File("src/comp3170/demos/week7/antialiasing"); 
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 
@@ -38,7 +38,7 @@ public class Antialiasing extends JFrame implements GLEventListener {
 	private int height = 800;
 
 
-	public Antialiasing() {
+	public AntialiasingDeno() {
 		super("Antialiasing example");
 		
 		// create an OpenGL canvas and add this as a listener
@@ -77,18 +77,7 @@ public class Antialiasing extends JFrame implements GLEventListener {
 		// set the background colour to black
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		// Compile the shader
-		try {
-			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
-			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (GLException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+		this.shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		
 		// create the shape
 		
@@ -149,7 +138,7 @@ public class Antialiasing extends JFrame implements GLEventListener {
 
 
 	public static void main(String[] args) throws IOException, GLException {
-		new Antialiasing();
+		new AntialiasingDeno();
 	}
 
 

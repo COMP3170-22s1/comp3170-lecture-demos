@@ -6,15 +6,18 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import comp3170.Shader;
+import comp3170.demos.week7.cameras.Camera;
 
 public class SceneObject {
 
 	protected Shader shader;
 	protected Vector3f colour;
-	protected Vector3f position;
-	protected Vector3f angle;
-	protected float scale;
-	protected Matrix4f modelMatrix;
+	protected Vector3f position = new Vector3f();
+	protected Vector3f angle = new Vector3f();
+	protected float scale = 1;
+	protected Matrix4f modelMatrix= new Matrix4f();
+	protected Matrix4f viewMatrix= new Matrix4f();
+	protected Matrix4f projectionMatrix= new Matrix4f();
 
 	public SceneObject() {
 		this(null);
@@ -23,10 +26,7 @@ public class SceneObject {
 	public SceneObject(Shader shader) {
 		this.shader = shader;
 		
-		this.position = new Vector3f();
-		this.angle = new Vector3f();
 		this.scale = 1;
-		this.modelMatrix = new Matrix4f();
 		
 		this.colour = new Vector3f(1,1,1); // default to white;
 	}
@@ -73,10 +73,6 @@ public class SceneObject {
 		colour.z = color.getBlue() / 255f;
 	}
 
-	public void draw() {
-		// does nothing by default		
-	}
-
 	protected void calcModelMatrix() {
 		modelMatrix.identity();
 		modelMatrix.translate(this.position);
@@ -84,6 +80,10 @@ public class SceneObject {
 		modelMatrix.rotateX(this.angle.x); 	// pitch
 		modelMatrix.rotateZ(this.angle.z); 	// roll
 		modelMatrix.scale(this.scale);
+	}
+
+	public void draw(Camera camera) {
+		// does nothing by default		
 	}
 
 }

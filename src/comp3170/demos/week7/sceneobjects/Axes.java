@@ -1,23 +1,27 @@
 package comp3170.demos.week7.sceneobjects;
 
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
-import comp3170.Shader;
+import comp3170.demos.week7.cameras.Camera;
+import comp3170.demos.week7.shaders.ShaderLibrary;
 
 public class Axes extends SceneObject {
-	
+	static final private String VERTEX_SHADER = "simpleVertex.glsl";
+	static final private String FRAGMENT_SHADER = "simpleFragment.glsl";
+
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int indexBufferX;
 	private int indexBufferY;
 	private int indexBufferZ;
 
-	public Axes(Shader shader) {
-		super(shader);
+	public Axes() {
+		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
 		
 		// A set of i,j,k axes		
 		
@@ -36,7 +40,7 @@ public class Axes extends SceneObject {
 	
 
 	@Override
-	public void draw() {
+	public void draw(Camera camera) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		// activate the shader
@@ -44,6 +48,8 @@ public class Axes extends SceneObject {
 
 		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
+		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
 
 		// connect the vertex buffer to the a_position attribute
 		shader.setAttribute("a_position", vertexBuffer);

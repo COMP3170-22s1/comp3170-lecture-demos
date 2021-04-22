@@ -1,4 +1,4 @@
-package comp3170.demos.week7.fog.cameras;
+package comp3170.demos.week7.cameras;
 
 import java.awt.event.KeyEvent;
 
@@ -13,8 +13,8 @@ public class PerspectiveCamera extends Camera {
 	private float fovy;
 	private float aspect;
 
-	public PerspectiveCamera(float distance, InputManager input, float fovy, float aspect, float near, float far) {
-		super(distance, input);
+	public PerspectiveCamera(InputManager input, float fovy, float aspect, float near, float far) {
+		super(input);
 		
 		this.fovy = fovy;
 		this.aspect = aspect;

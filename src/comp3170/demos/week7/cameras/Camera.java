@@ -1,4 +1,4 @@
-package comp3170.demos.week7.fog.cameras;
+package comp3170.demos.week7.cameras;
 
 import java.awt.event.KeyEvent;
 
@@ -22,21 +22,34 @@ public abstract class Camera {
 
 	private float distance;
 	private Vector3f angle;
+
+	private float height;
 	
-	public Camera(float distance, InputManager input) {
+	public Camera(InputManager input) {
 		this.input = input;
-		this.distance = distance;
+		this.distance = 1;
+		this.height = 0;
 		this.modelMatrix = new Matrix4f();
 		this.angle = new Vector3f(0,0,0);
 
-		modelMatrix.translate(0,0,distance);		
+		modelMatrix.translate(0,height,distance);		
 		
 	}
 	
-	public Matrix4f getModellMatrix(Matrix4f dest) {
-		return dest.set(modelMatrix);
+	public void setDistance(float distance) {
+		this.distance = distance;
+		update(0);
 	}
 	
+	public void setHeight(float height) {
+		this.height = height;
+		update(0);
+	}
+	
+	public Matrix4f getModelMatrix(Matrix4f dest) {
+		return dest.set(modelMatrix);
+	}
+
 	public Matrix4f getViewMatrix(Matrix4f dest) {
 		// invert the model matrix (we have never applied any scale)
 		return modelMatrix.invert(dest);
@@ -70,6 +83,6 @@ public abstract class Camera {
 		modelMatrix.identity();
 		modelMatrix.rotateY(angle.y);	// heading
 		modelMatrix.rotateX(angle.x);	// pitch
-		modelMatrix.translate(0,0,distance);
+		modelMatrix.translate(0,height,distance);
 	}
 }
