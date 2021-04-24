@@ -1,52 +1,93 @@
 package comp3170.demos.week8.sceneobjects;
 
-import java.awt.Color;
+import java.awt.event.KeyEvent;
+
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
-import comp3170.SceneObjectOld;
-import comp3170.Shader;
+import comp3170.InputManager;
+import comp3170.demos.week8.cameras.Camera;
+import comp3170.demos.week8.shaders.ShaderLibrary;
 
-public class Quad extends SceneObjectOld {
+public class Quad extends SceneObject {
 
-	private float[] vertices = {
-		 1, 1, 0,
-		 1, -1, 0,
-	    -1, -1, 0,	    
-
-		 1, 1, 0,
-		-1, 1, 0,
-	    -1, -1, 0,	    
-
-	};
-
+	static final private String VERTEX_SHADER = "distortVertex.glsl";
+	static final private String FRAGMENT_SHADER = "distortFragment.glsl";
+	private Vector4f[] vertices;
 	private int vertexBuffer;
-	
-	private float[] colour = { 1.0f, 1.0f, 1.0f, 1.0f}; // white
-	
-	public Quad(Shader shader, Color colour) {
-		
-		// read the RGBA values into this.colour
-		colour.getComponents(this.colour);
+	private Vector3f[] colours;
+	private int colourBuffer;
+	private int[] indices;
+	private int indexBuffer;
 
-		this.vertexBuffer = shader.createBuffer(this.vertices, GL4.GL_FLOAT_VEC3);
+	public Quad() {
+		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
+
+		this.vertices = new Vector4f[] {
+			new Vector4f( 1,  1, 0, 1),
+			new Vector4f( 1, -1, 0, 1),
+			new Vector4f(-1,  1, 0, 1),
+			new Vector4f(-1, -1, 0, 1),
+		};
+		
+		this.vertexBuffer = shader.createBuffer(vertices);
+
+		this.colours = new Vector3f[] {
+			new Vector3f(1, 0, 0),	// RED
+			new Vector3f(1, 0, 0),	// RED
+			new Vector3f(0, 0, 1),	// BLUE
+			new Vector3f(0, 0, 1),	// BLUE
+		};
+			
+		this.colourBuffer = shader.createBuffer(colours);
+		
+		this.indices = new int[] {
+			0, 1, 2,
+			3, 2, 1,
+		};
+		this.indexBuffer = shader.createIndexBuffer(indices);
 	}
 
+	private boolean maximise = false;
+	private float distort = 0;
+	private static final float DISTORT = 0.25f;
+
+	public void update(InputManager input, float deltaTime) {
+		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
+			maximise = !maximise;
+		}
+		
+		if (input.isKeyDown(KeyEvent.VK_X)) {
+			distort = Math.min(1f, distort + DISTORT * deltaTime);			
+		}
+		if (input.isKeyDown(KeyEvent.VK_Z)) {
+			distort = Math.max(0f, distort - DISTORT * deltaTime);			
+		}
+	}
+	
 	@Override
-	protected void drawSelf(Shader shader) {
+	public void draw(Camera camera) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		// draw the triangle
+		shader.enable();
+
+		calcModelMatrix();
+		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
+		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
 		
-		shader.setAttribute("a_position", this.vertexBuffer);
-		if (shader.hasUniform("u_colour")) {
-			shader.setUniform("u_colour", this.colour);
-		}
+		shader.setUniform("u_distort" , distort);
+		shader.setUniform("u_maximise" , maximise);
+		
+		shader.setAttribute("a_position", this.vertexBuffer);		
+		shader.setAttribute("a_colour", this.colourBuffer);		
 
-		gl.glDrawArrays(GL.GL_TRIANGLES, 0, this.vertices.length / 3);
-
+		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		
 	}
 
 }
