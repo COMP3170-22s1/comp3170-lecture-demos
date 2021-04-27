@@ -13,10 +13,10 @@ import comp3170.demos.week9.cameras.Camera;
 public class SceneObject {
 
 	protected Shader shader;
-	protected Vector3f colour;
+	protected Vector3f colour = new Vector3f(1,1,1); // white
 	protected Vector3f position = new Vector3f();
 	protected Vector3f angle = new Vector3f();
-	protected float scale = 1;
+	protected Vector3f scale = new Vector3f(1,1,1);
 	protected Matrix4f modelMatrix= new Matrix4f();
 	protected Matrix4f viewMatrix= new Matrix4f();
 	protected Matrix4f projectionMatrix= new Matrix4f();
@@ -26,11 +26,7 @@ public class SceneObject {
 	}
 	
 	public SceneObject(Shader shader) {
-		this.shader = shader;
-		
-		this.scale = 1;
-		
-		this.colour = new Vector3f(1,1,1); // default to white;
+		this.shader = shader;		
 	}
 
 	public Vector3f getPosition(Vector3f dest) {
@@ -45,8 +41,8 @@ public class SceneObject {
 		this.position.set(position);
 	}
 
-	public Vector3f getAngle(Vector3f angle) {
-		return angle.set(this.angle);
+	public Vector3f getAngle(Vector3f dest) {
+		return dest.set(this.angle);
 	}
 
 	public void setAngle(float pitch, float heading, float roll) {
@@ -57,12 +53,16 @@ public class SceneObject {
 		this.angle.set(angle);
 	}
 
-	public float getScale() {
-		return scale;
+	public Vector3f getScale(Vector3f dest) {
+		return dest.set(scale);
 	}
 
 	public void setScale(float scale) {
-		this.scale = scale;
+		this.scale.set(scale, scale, scale);
+	}
+
+	public void setScale(float sx, float sy, float sz) {
+		this.scale.set(sx, sy, sz);
 	}
 
 	public Vector3f getColour(Vector3f dest) {

@@ -1,14 +1,14 @@
 #version 410
 
-in vec4 a_position;	
-in vec3 a_normal;	
+in vec4 a_position;		// vertex in 3D homogenous coordinates (MODEL)
+in vec4 a_normal;		// normal vector in 3D homogenous coordinates (MODEL)
 
-uniform mat4 u_modelMatrix;
-uniform mat4 u_viewMatrix;
-uniform mat4 u_projectionMatrix;
-uniform mat3 u_normalMatrix;
+uniform mat4 u_modelMatrix;	// MODEL -> WORLD
+uniform mat4 u_viewMatrix;	// WORLD -> VIEW
+uniform mat4 u_projectionMatrix;	// VIEW -> NDC
+uniform mat4 u_normalMatrix;	// MODEL -> WORLD (without scaling)
 
-out vec3 v_normal;
+out vec4 v_normal;	// WORLD
 
 void main() {
 	v_normal = u_normalMatrix * a_normal;

@@ -26,12 +26,12 @@ public class CylinderWithNormals extends SceneObject {
 
 	private Vector4f[] vertices;
 	private int vertexBuffer;
-	private Vector3f[] normals;
+	private Vector4f[] normals;
 	private int normalBuffer;	
 	private int[] indices;
 	private int indexBuffer;
 	
-	private Matrix3f normalMatrix = new Matrix3f();
+	private Matrix4f normalMatrix = new Matrix4f();
 	private List<Integer> topIndices;
 	private List<Integer> bottomIndices;
 	private List<Integer> sideIndices;
@@ -55,13 +55,13 @@ public class CylinderWithNormals extends SceneObject {
 		// The normals for the top and bottom faces are not computed correctly.
 		
 		this.vertices = new Vector4f[NSIDES * 4 + 2];
-		this.normals = new Vector3f[NSIDES * 4 + 2];
+		this.normals = new Vector4f[NSIDES * 4 + 2];
 		
 		int kv = 0;			
 		int kn = 0;
 
-		Vector3f nUp = new Vector3f(0,1,0);
-		Vector3f nDown = new Vector3f(0,-1,0);
+		Vector4f nUp = new Vector4f(0,1,0,0);
+		Vector4f nDown = new Vector4f(0,-1,0,0);
 
 		vertices[kv++] = new Vector4f(0,0,0,1);
 		normals[kn++] = nDown;
@@ -71,10 +71,9 @@ public class CylinderWithNormals extends SceneObject {
 		
 		// form the bottom and top edges by rotating point P = (1,0,0) about the y axis
 		Vector4f p = new Vector4f(1,0,0,1);
-		Vector3f n = new Vector3f(1,0,0);
+		Vector4f n = new Vector4f(1,0,0,0);
 
-		Matrix4f rotate4 = new Matrix4f();
-		Matrix3f rotate3 = new Matrix3f();
+		Matrix4f rotate = new Matrix4f();
 		Matrix4f translate = new Matrix4f().translation(0,1,0);
 		
 		this.topIndices = new ArrayList<Integer>();
@@ -83,12 +82,11 @@ public class CylinderWithNormals extends SceneObject {
 		
 		for (int i = 0; i < NSIDES; i++) {
 			float angle = i * TAU / NSIDES; 
-			rotate3.rotationY(angle);
-			rotate4.rotationY(angle);
+			rotate.rotationY(angle);
 
-			Vector4f vb = p.mul(rotate4, new Vector4f());  // vb = R(p)
-			Vector4f vt = p.mul(rotate4, new Vector4f()).mul(translate);  // vt = T(R(p))
-			Vector3f ni = n.mul(rotate3, new Vector3f());   // ni = R(n)
+			Vector4f vb = p.mul(rotate, new Vector4f());  // vb = R(p)
+			Vector4f vt = p.mul(rotate, new Vector4f()).mul(translate);  // vt = T(R(p))
+			Vector4f ni = n.mul(rotate, new Vector4f());   // ni = R(n)
 			
 			// bottom
 			bottomIndices.add(kv);
@@ -170,7 +168,11 @@ public class CylinderWithNormals extends SceneObject {
 		shader.setUniform("u_modelMatrix", modelMatrix);
 		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
 		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));
+
+		// compute normal matrix to transform normals without scaling
 		shader.setUniform("u_normalMatrix", modelMatrix.normal(normalMatrix));
+//		shader.setUniform("u_normalMatrix", normalMatrix.identity()); // WRONG
+//		shader.setUniform("u_normalMatrix", modelMatrix); // WRONG
 		
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_normal", normalBuffer);
