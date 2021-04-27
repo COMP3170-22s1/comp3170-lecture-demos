@@ -43,7 +43,7 @@ public class InterpolationDemo extends JFrame implements GLEventListener {
 	private Quad quad;
 	
 	public InterpolationDemo() {
-		super("Z-fighting demo");
+		super("Interpolation demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
