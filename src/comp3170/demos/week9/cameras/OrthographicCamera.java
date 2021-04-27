@@ -11,9 +11,7 @@ public class OrthographicCamera extends Camera {
 	private float near;
 	private float far;
 
-	public OrthographicCamera(InputManager input, float width, float height, float near, float far) {
-		super(input);
-		
+	public OrthographicCamera(float width, float height, float near, float far) {
 		this.width = width;
 		this.height = height;
 		this.near = near;

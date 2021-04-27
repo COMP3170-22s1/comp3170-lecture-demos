@@ -18,15 +18,13 @@ public abstract class Camera {
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 
 	private Matrix4f modelMatrix;
-	protected InputManager input;
 
 	private float distance;
 	private Vector3f angle;
 
 	private float height;
 	
-	public Camera(InputManager input) {
-		this.input = input;
+	public Camera() {
 		this.distance = 1;
 		this.height = 0;
 		this.modelMatrix = new Matrix4f();
@@ -38,12 +36,12 @@ public abstract class Camera {
 	
 	public void setDistance(float distance) {
 		this.distance = distance;
-		update(0);
+		updateModelMatrix();		
 	}
 	
 	public void setHeight(float height) {
 		this.height = height;
-		update(0);
+		updateModelMatrix();		
 	}
 	
 	public Matrix4f getModelMatrix(Matrix4f dest) {
@@ -60,7 +58,7 @@ public abstract class Camera {
 	final static float ROTATION_SPEED = TAU / 4;
 	final static float MOVEMENT_SPEED = 1;
 
-	public void update(float deltaTime) {
+	public void update(InputManager input, float deltaTime) {
 		if (input.isKeyDown(KeyEvent.VK_UP)) {
 			angle.x -= ROTATION_SPEED * deltaTime;
 		}
@@ -79,7 +77,11 @@ public abstract class Camera {
 		if (input.isKeyDown(KeyEvent.VK_PAGE_UP)) {
 			distance -= MOVEMENT_SPEED * deltaTime;
 		}
-		
+
+		updateModelMatrix();		
+	}
+	
+	private void updateModelMatrix() {
 		modelMatrix.identity();
 		modelMatrix.rotateY(angle.y);	// heading
 		modelMatrix.rotateX(angle.x);	// pitch

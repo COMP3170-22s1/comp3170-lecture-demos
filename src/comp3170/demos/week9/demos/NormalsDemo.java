@@ -18,11 +18,11 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
-import comp3170.Shader;
-import comp3170.demos.week7.shaders.ShaderLibrary;
 import comp3170.demos.week9.cameras.OrthographicCamera;
-import comp3170.demos.week9.sceneobjects.Cylinder;
+import comp3170.demos.week9.sceneobjects.Axes;
+import comp3170.demos.week9.sceneobjects.CylinderWithNormals;
 import comp3170.demos.week9.sceneobjects.Grid;
+import comp3170.demos.week9.sceneobjects.SceneObject;
 
 public class NormalsDemo extends JFrame implements GLEventListener {
 
@@ -38,16 +38,14 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private final static String SIMPLE_VERTEX = "simpleVertex.glsl";
-	private final static String SIMPLE_FRAGMENT = "simpleFragment.glsl";
-	
 	private OrthographicCamera camera;
 	private Grid grid;
+	private SceneObject cylinder;
 
-	private Cylinder cylinder;
+	private Axes axes;
 	
 	public NormalsDemo() {
-		super("Z-fighting demo");
+		super("Normals demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
@@ -89,13 +87,13 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 		gl.glEnable(GL.GL_CULL_FACE);
 
 		this.grid = new Grid(10);
-		
-		Shader simpleShader = ShaderLibrary.compileShader(SIMPLE_VERTEX, SIMPLE_FRAGMENT);		
-		this.cylinder = new Cylinder(simpleShader);
+		this.cylinder = new CylinderWithNormals();
+		this.axes = new Axes();
+		axes.setPosition(0,2,0);
 		
 		// camera 
-		this.camera = new OrthographicCamera(input, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
-		camera.setHeight(1);
+		this.camera = new OrthographicCamera(CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
+		camera.setHeight(0.5f);
 		camera.setDistance(CAMERA_DISTANCE);
 	}
 
@@ -110,7 +108,8 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 		float dt = (time - oldTime) / 1000.0f;
 		oldTime = time;
 		
-		camera.update(dt);
+		cylinder.update(input, dt);
+		camera.update(input, dt);
 		input.clear();
 	}
 	
@@ -136,6 +135,7 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 		// draw
 		this.grid.draw(camera);
 		this.cylinder.draw(camera);
+		this.axes.draw(camera);
 	}
 
 	@Override

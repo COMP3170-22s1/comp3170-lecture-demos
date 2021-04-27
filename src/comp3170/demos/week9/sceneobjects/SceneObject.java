@@ -1,10 +1,12 @@
 package comp3170.demos.week9.sceneobjects;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+import comp3170.InputManager;
 import comp3170.Shader;
 import comp3170.demos.week9.cameras.Camera;
 
@@ -83,6 +85,10 @@ public class SceneObject {
 	}
 
 	public void draw(Camera camera) {
+		// does nothing by default		
+	}
+
+	public void update(InputManager input, float deltaTime) {
 		// does nothing by default		
 	}
 
