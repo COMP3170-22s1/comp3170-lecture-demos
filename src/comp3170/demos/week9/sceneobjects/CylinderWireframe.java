@@ -1,5 +1,7 @@
 package comp3170.demos.week9.sceneobjects;
 
+import static com.jogamp.opengl.GL.GL_TRIANGLES;
+
 import java.awt.event.KeyEvent;
 
 import org.joml.Matrix4f;
@@ -14,7 +16,7 @@ import comp3170.InputManager;
 import comp3170.demos.week7.shaders.ShaderLibrary;
 import comp3170.demos.week9.cameras.Camera;
 
-public class Cylinder extends SceneObject {
+public class CylinderWireframe extends SceneObject {
 
 	private static final float TAU = (float) (Math.PI * 2);;
 	private static final int NSIDES = 12;
@@ -26,11 +28,22 @@ public class Cylinder extends SceneObject {
 	private int[] indices;
 	private int indexBuffer;
 	
-	public Cylinder() {
+	private Vector3f normalsColour = new Vector3f(1,1,0); // YELLOW
+	private Vector4f[] normals;
+	private Vector4f[] normalVertices;
+	private int normalVertexBuffer;
+	private boolean showNormals = false;
+	
+	public CylinderWireframe() {
 		super(ShaderLibrary.compileShader(VERTEX, FRAGMENT));
 		
 		createVertexBuffer();
 		createIndexBuffer();
+
+		// draw the normals
+		createNormals();
+		createNormalVerticesBuffer();
+
 	}
 
 	private void createVertexBuffer() {
@@ -65,7 +78,7 @@ public class Cylinder extends SceneObject {
 
 
 	private void createIndexBuffer() {
-		this.indices = new int[NSIDES * 3 * 4];
+		this.indices = new int[NSIDES * 2 * 6];
 		
 		int k = 0;
 		for (int i = 1; i <= NSIDES; i++) {
@@ -74,30 +87,75 @@ public class Cylinder extends SceneObject {
 			int t0 = i * 2 + 1;
 			int t1 = (i % NSIDES) * 2 + 3;
 			
-			// bottom 
+			// bottom star
 			indices[k++] = 0;
 			indices[k++] = b1; 
+			
+			// bottom circle
 			indices[k++] = b0;
+			indices[k++] = b1;
 
-			// top 
+			// top star
 			indices[k++] = 1;
 			indices[k++] = t0;
-			indices[k++] = t1;
 
+			// top circle
+			indices[k++] = t0;
+			indices[k++] = t1;
+			
 			// side
 			indices[k++] = b0;
-			indices[k++] = b1;
 			indices[k++] = t0;
 
 			// side
-			indices[k++] = b1;
-			indices[k++] = t1;
 			indices[k++] = t0;
+			indices[k++] = b1;
 		}
 		
 		this.indexBuffer = shader.createIndexBuffer(indices);
 	}
+
 	
+	private void createNormals() {
+		// The normal at each vertex points along th radius of the circle
+		// Note: normals are vectors, not points, so w = 0
+
+		this.normals = new Vector4f[NSIDES * 2 + 2];
+		
+		int k = 0;			
+		normals[k++] = new Vector4f(0,-1,0,0); // bottom, n = down
+		normals[k++] = new Vector4f(0,1,0,0);  // top, n = up
+		
+		// form the bottom and top edges by rotating point P = (1,0,0) about the y axis
+		Vector4f n = new Vector4f(1,0,0,0);
+		Matrix4f rotate = new Matrix4f();
+		
+		for (int i = 0; i < NSIDES; i++) {
+			float angle = i * TAU / NSIDES; 
+			rotate.rotationY(angle);
+			Vector4f ni = n.mul(rotate, new Vector4f());  // ni = R(n)
+			
+			// the normal is the same at the top and bottom;
+			normals[k++] = ni;
+			normals[k++] = ni;			
+		}		
+	}
+	
+	private void createNormalVerticesBuffer() {
+		
+		// draw the normals as lines extending from each vertex
+		
+		this.normalVertices = new Vector4f[vertices.length * 2];
+		
+		int k = 0;
+		for (int i = 0; i < this.vertices.length; i++) {			
+			this.normalVertices[k++] = vertices[i];
+			this.normalVertices[k++] = vertices[i].add(normals[i], new Vector4f());
+		}
+		
+		this.normalVertexBuffer = shader.createBuffer(normalVertices);
+	}
+
 	private static final float ROTATION_SPEED = TAU/4;
 	private Vector3f angle = new Vector3f();
 	
@@ -110,6 +168,10 @@ public class Cylinder extends SceneObject {
 		if (input.isKeyDown(KeyEvent.VK_X)) {
 			angle.y = (angle.y + ROTATION_SPEED * dt) % TAU;
 		}
+		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
+			this.showNormals = !this.showNormals;
+		}
+		
 		setAngle(angle);		
 	}
 
@@ -127,7 +189,14 @@ public class Cylinder extends SceneObject {
 		shader.setAttribute("a_position", vertexBuffer);
 		
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		
+		gl.glDrawElements(GL.GL_LINES, indices.length, GL.GL_UNSIGNED_INT, 0);
+		
+		if (showNormals) {
+			// draw the normals
+			shader.setUniform("u_colour", normalsColour);		
+			shader.setAttribute("a_position", normalVertexBuffer);
+	        gl.glDrawArrays(GL.GL_LINES, 0, normalVertices.length);           	
+		}
 
 	}
 	

@@ -20,7 +20,9 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.demos.week9.cameras.OrthographicCamera;
 import comp3170.demos.week9.sceneobjects.Axes;
+import comp3170.demos.week9.sceneobjects.CylinderWireframe;
 import comp3170.demos.week9.sceneobjects.CylinderWithNormals;
+import comp3170.demos.week9.sceneobjects.CylinderWithNormalsBroken;
 import comp3170.demos.week9.sceneobjects.Grid;
 import comp3170.demos.week9.sceneobjects.SceneObject;
 
@@ -87,7 +89,10 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 		gl.glEnable(GL.GL_CULL_FACE);
 
 		this.grid = new Grid(10);
+//		this.cylinder = new CylinderWireframe();
+//		this.cylinder = new CylinderWithNormalsBroken();
 		this.cylinder = new CylinderWithNormals();
+		cylinder.setScale(0.5f, 1, 1);
 		this.axes = new Axes();
 		axes.setPosition(0,2,0);
 		
