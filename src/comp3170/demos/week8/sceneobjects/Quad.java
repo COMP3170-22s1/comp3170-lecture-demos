@@ -28,19 +28,19 @@ public class Quad extends SceneObject {
 		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
 
 		this.vertices = new Vector4f[] {
-			new Vector4f( 1,  1, 0, 1),
-			new Vector4f( 1, -1, 0, 1),
 			new Vector4f(-1,  1, 0, 1),
+			new Vector4f( 1,  1, 0, 1),
 			new Vector4f(-1, -1, 0, 1),
+			new Vector4f( 1, -1, 0, 1),
 		};
 		
 		this.vertexBuffer = shader.createBuffer(vertices);
 
 		this.colours = new Vector3f[] {
+			new Vector3f(0, 1, 0),	// GREEN
 			new Vector3f(1, 0, 0),	// RED
-			new Vector3f(1, 0, 0),	// RED
-			new Vector3f(0, 0, 1),	// BLUE
-			new Vector3f(0, 0, 1),	// BLUE
+			new Vector3f(1, 0, 0),	// BLUE
+			new Vector3f(0, 1, 0),	// BLUE
 		};
 			
 		this.colourBuffer = shader.createBuffer(colours);

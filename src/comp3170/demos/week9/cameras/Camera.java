@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import comp3170.InputManager;
 
@@ -51,6 +52,14 @@ public abstract class Camera {
 	public Matrix4f getViewMatrix(Matrix4f dest) {
 		// invert the model matrix (we have never applied any scale)
 		return modelMatrix.invert(dest);
+	}
+	
+	public Vector4f getViewDirection(Vector4f dest) {
+		// the viewDirection is the Z axis (i.e. the k vector)
+		// because the view direction points towards the camera
+		// and the view volume is normally negative view space.
+					
+		return modelMatrix.getColumn(2, dest);		
 	}
 	
 	abstract public Matrix4f getProjectionMatrix(Matrix4f dest);

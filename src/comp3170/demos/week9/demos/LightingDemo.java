@@ -1,5 +1,6 @@
 package comp3170.demos.week9.demos;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -21,12 +22,12 @@ import comp3170.InputManager;
 import comp3170.demos.week9.cameras.OrthographicCamera;
 import comp3170.demos.week9.sceneobjects.Axes;
 import comp3170.demos.week9.sceneobjects.CylinderWireframe;
-import comp3170.demos.week9.sceneobjects.CylinderWithNormals;
-import comp3170.demos.week9.sceneobjects.CylinderWithNormalsBroken;
+import comp3170.demos.week9.sceneobjects.CylinderWithLight;
+import comp3170.demos.week9.sceneobjects.DirectionalLight;
 import comp3170.demos.week9.sceneobjects.Grid;
 import comp3170.demos.week9.sceneobjects.SceneObject;
 
-public class NormalsDemo extends JFrame implements GLEventListener {
+public class LightingDemo extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 
@@ -42,12 +43,14 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 
 	private OrthographicCamera camera;
 	private Grid grid;
-	private SceneObject cylinder;
+	private CylinderWithLight cylinder;
 
 	private Axes axes;
+
+	private DirectionalLight light;
 	
-	public NormalsDemo() {
-		super("Normals demo");
+	public LightingDemo() {
+		super("Lighting demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
@@ -89,12 +92,16 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 		gl.glEnable(GL.GL_CULL_FACE);
 
 		this.grid = new Grid(10);
-		this.cylinder = new CylinderWireframe();
-//		this.cylinder = new CylinderWithNormalsBroken();
-//		this.cylinder = new CylinderWithNormals();
+		this.cylinder = new CylinderWithLight();
+		cylinder.setDiffuseMaterial(Color.red);
 		cylinder.setScale(0.5f, 1, 0.5f);
 		this.axes = new Axes();
 		axes.setPosition(0,2,0);
+		
+		// light source
+		Color ambientLight = new Color(0.1f, 0.1f, 0.1f);
+		light = new DirectionalLight(Color.white, ambientLight);
+		light.setPosition(0,0.5f,0);
 		
 		// camera 
 		this.camera = new OrthographicCamera(CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
@@ -115,6 +122,7 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 		
 		cylinder.update(input, dt);
 		camera.update(input, dt);
+		light.update(input, dt);
 		input.clear();
 	}
 	
@@ -139,8 +147,9 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 				
 		// draw
 		this.grid.draw(camera);
-		this.cylinder.draw(camera);
+		this.cylinder.draw(camera, light);
 		this.axes.draw(camera);
+		this.light.draw(camera);
 	}
 
 	@Override
@@ -164,7 +173,7 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 	}
 
 	public static void main(String[] args) throws IOException, GLException {
-		new NormalsDemo();
+		new LightingDemo();
 	}
 
 
