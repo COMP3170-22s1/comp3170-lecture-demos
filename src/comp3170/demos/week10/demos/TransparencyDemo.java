@@ -1,5 +1,6 @@
-package comp3170.demos.week9.demos;
+package comp3170.demos.week10.demos;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -18,15 +19,12 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
-import comp3170.demos.week9.cameras.OrthographicCamera;
-import comp3170.demos.week9.sceneobjects.Axes;
-import comp3170.demos.week9.sceneobjects.CylinderWireframe;
-import comp3170.demos.week9.sceneobjects.CylinderWithNormals;
-import comp3170.demos.week9.sceneobjects.CylinderWithNormalsBroken;
-import comp3170.demos.week9.sceneobjects.Grid;
-import comp3170.demos.week9.sceneobjects.SceneObject;
+import comp3170.demos.week10.cameras.Camera;
+import comp3170.demos.week10.cameras.PerspectiveCamera;
+import comp3170.demos.week10.sceneobjects.Grid;
+import comp3170.demos.week10.sceneobjects.Triangle;
 
-public class NormalsDemo extends JFrame implements GLEventListener {
+public class TransparencyDemo extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 
@@ -40,14 +38,15 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private OrthographicCamera camera;
-	private Grid grid;
-	private SceneObject cylinder;
+	private Triangle redTriangle;
+	private Triangle blueTriangle;
 
-	private Axes axes;
+	private Grid grid;
+
+	private Camera camera;
 	
-	public NormalsDemo() {
-		super("Normals demo");
+	public TransparencyDemo() {
+		super("Depth demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
@@ -82,39 +81,45 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 	 */
 	public void init(GLAutoDrawable drawable) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
-				
+		
 		// enable depth testing
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);
-		gl.glEnable(GL.GL_CULL_FACE);
-
+		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		
 		this.grid = new Grid(10);
-		this.cylinder = new CylinderWireframe();
-//		this.cylinder = new CylinderWithNormalsBroken();
-//		this.cylinder = new CylinderWithNormals();
-		cylinder.setScale(0.5f, 1, 0.5f);
-		this.axes = new Axes();
-		axes.setPosition(0,2,0);
+		
+		Color red = new Color(1f, 0, 0, 0.5f);
+		this.redTriangle = new Triangle(red);
+		
+		Color blue = new Color(0, 0, 1f, 0.5f);
+		this.blueTriangle = new Triangle(blue);
+		blueTriangle.setPosition(0.1f,0,0);
+		blueTriangle.setAngle(0,TAU/12,0);
 		
 		// camera 
-		this.camera = new OrthographicCamera(CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
-		camera.setHeight(0.5f);
+		float aspect = (float)screenWidth / screenHeight;
+//		this.camera = new OrthographicCamera(input, 2, 2, CAMERA_NEAR, CAMERA_FAR);
+		this.camera = new PerspectiveCamera(input, CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
+		camera.setHeight(CAMERA_HEIGHT);		
 	}
 
-	private static final float CAMERA_DISTANCE = 2;
-	private static final float CAMERA_WIDTH = 3f;
-	private static final float CAMERA_HEIGHT = 3f;
+	private static final float CAMERA_DISTANCE = 5;
+	private static final float CAMERA_HEIGHT = 0.5f;
+	private static final float CAMERA_FOVY = TAU / 8;
 	private static final float CAMERA_NEAR = 0.1f;
 	private static final float CAMERA_FAR = 10.0f;	
-		
+	
 	public void update() {
 		long time = System.currentTimeMillis();
 		float dt = (time - oldTime) / 1000.0f;
 		oldTime = time;
 		
-		cylinder.update(input, dt);
-		camera.update(input, dt);
+		camera.update(dt);
 		input.clear();
 	}
 	
@@ -130,17 +135,18 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 		
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		// set the background colour to black
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		
 		// clear the depth buffer
 		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
+
 				
 		// draw
 		this.grid.draw(camera);
-		this.cylinder.draw(camera);
-		this.axes.draw(camera);
+		this.redTriangle.draw(camera);
+		this.blueTriangle.draw(camera);
 	}
 
 	@Override
@@ -164,7 +170,7 @@ public class NormalsDemo extends JFrame implements GLEventListener {
 	}
 
 	public static void main(String[] args) throws IOException, GLException {
-		new NormalsDemo();
+		new TransparencyDemo();
 	}
 
 
