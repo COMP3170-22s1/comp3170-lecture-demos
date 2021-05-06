@@ -99,7 +99,7 @@ public class LightingDemo extends JFrame implements GLEventListener {
 		axes.setPosition(0,2,0);
 		
 		// light source
-		Color ambientLight = new Color(0.1f, 0.1f, 0.1f);
+		Color ambientLight = new Color(0.01f, 0.01f, 0.01f);
 		light = new DirectionalLight(Color.white, ambientLight);
 		light.setPosition(0,0.5f,0);
 		
