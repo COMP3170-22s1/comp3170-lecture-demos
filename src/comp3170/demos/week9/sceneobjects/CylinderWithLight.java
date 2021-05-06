@@ -22,8 +22,8 @@ public class CylinderWithLight extends SceneObject {
 	private static final float TAU = (float) (Math.PI * 2);;
 	private static final int NSIDES = 12;
 	private final static String VERTEX = "lightVertex.glsl";
-//	private final static String FRAGMENT = "lightFragment.glsl";
-	private final static String FRAGMENT = "gammaFragment.glsl";
+	private final static String FRAGMENT = "lightFragment.glsl";
+//	private final static String FRAGMENT = "gammaFragment.glsl";
 
 	private Vector4f[] vertices;
 	private int vertexBuffer;
