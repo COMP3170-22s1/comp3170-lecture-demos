@@ -1,10 +1,10 @@
 package comp3170.demos.week9.sceneobjects;
 
 import java.awt.Color;
-import java.awt.event.KeyEvent;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import comp3170.InputManager;
 import comp3170.Shader;
@@ -30,7 +30,11 @@ public class SceneObject {
 	}
 
 	public Vector3f getPosition(Vector3f dest) {
-		return dest.get(position);
+		return dest.set(position);
+	}
+
+	public Vector4f getPosition(Vector4f dest) {
+		return dest.set(position, 1);
 	}
 
 	public void setPosition(float x, float y, float z) {
