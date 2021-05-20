@@ -51,9 +51,6 @@ public class CylinderWithNormals extends SceneObject {
 		// vertices[2*i] = points around bottom edge
 		// vertices[2*i+1] = points around top edge
 		
-		// TODO: This code contains an error. 
-		// The normals for the top and bottom faces are not computed correctly.
-		
 		this.vertices = new Vector4f[NSIDES * 4 + 2];
 		this.normals = new Vector4f[NSIDES * 4 + 2];
 		
