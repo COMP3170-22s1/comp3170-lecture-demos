@@ -11,7 +11,7 @@ public class SceneObject {
 	protected Shader shader;
 	protected Vector3f position = new Vector3f();
 	protected Vector3f angle = new Vector3f();
-	protected Vector3f scale = new Vector3f();
+	protected Vector3f scale = new Vector3f(1,1,1);
 	protected Matrix4f modelMatrix= new Matrix4f();
 	protected Matrix4f viewMatrix= new Matrix4f();
 	protected Matrix4f projectionMatrix= new Matrix4f();

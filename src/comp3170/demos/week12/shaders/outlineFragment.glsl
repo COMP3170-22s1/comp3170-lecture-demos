@@ -19,7 +19,7 @@ const float conv[9] = float[9](
 void main() {
 	vec2 pixelSize = u_thickness / u_screenSize;
 
-	// Use a Laplacian filter to find the places where depth changes quickly
+	// Use a convolution skernel to find the places where depth changes quickly
 
     float edge = 0;
 	int k = 0;
