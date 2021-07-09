@@ -21,8 +21,13 @@ import com.jogamp.opengl.awt.GLCanvas;
 import comp3170.GLException;
 import comp3170.Shader;
 
-public class Week1 extends JFrame implements GLEventListener {
+/**
+ * @author malcolmryan
+ *
+ */
 
+public class Week1 extends JFrame implements GLEventListener {
+	
 	private GLCanvas canvas;
 	private Shader shader;
 	
@@ -60,10 +65,13 @@ public class Week1 extends JFrame implements GLEventListener {
 		
 	}
 
-	@Override
 	/**
 	 * Initialise the GLCanvas
+	 * 
+	 * <img src="images/square.png" />
+	 * 
 	 */
+	@Override
 	public void init(GLAutoDrawable drawable) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
