@@ -9,6 +9,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.demos.week8.cameras.Camera;
 import comp3170.demos.week8.shaders.ShaderLibrary;
@@ -34,7 +35,7 @@ public class Quad extends SceneObject {
 			new Vector4f( 1, -1, 0, 1),
 		};
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		this.colours = new Vector3f[] {
 			new Vector3f(0, 1, 0),	// GREEN
@@ -43,13 +44,13 @@ public class Quad extends SceneObject {
 			new Vector3f(0, 1, 0),	// BLUE
 		};
 			
-		this.colourBuffer = shader.createBuffer(colours);
+		this.colourBuffer = GLBuffers.createBuffer(colours);
 		
 		this.indices = new int[] {
 			0, 1, 2,
 			3, 2, 1,
 		};
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 	private boolean maximise = false;

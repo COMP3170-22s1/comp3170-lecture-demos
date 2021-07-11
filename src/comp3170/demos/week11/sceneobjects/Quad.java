@@ -9,6 +9,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.demos.week11.cameras.Camera;
 import comp3170.demos.week11.shaders.ShaderLibrary;
 import comp3170.demos.week11.textures.TextureLibrary;
@@ -37,7 +38,7 @@ public class Quad extends SceneObject {
 			new Vector4f(-1, -1, 0, 1),
 		};
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		this.uvs = new Vector2f[] {
 			new Vector2f(0, 0),
@@ -46,13 +47,13 @@ public class Quad extends SceneObject {
 			new Vector2f(1, 1),
 		};
 			
-		this.uvBuffer = shader.createBuffer(uvs);
+		this.uvBuffer = GLBuffers.createBuffer(uvs);
 		
 		this.indices = new int[] {
 			0, 1, 2,
 			3, 2, 1,
 		};
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 		
 		try {
 			this.texture = TextureLibrary.loadTexture(TEXTURE);

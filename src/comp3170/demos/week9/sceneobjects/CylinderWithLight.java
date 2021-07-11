@@ -13,6 +13,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.demos.week9.cameras.Camera;
 import comp3170.demos.week9.shaders.ShaderLibrary;
@@ -131,8 +132,8 @@ public class CylinderWithLight extends SceneObject {
 			normals[kn++] = ni;
 		}
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
-		this.normalBuffer = shader.createBuffer(normals);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		this.normalBuffer = GLBuffers.createBuffer(normals);
 	}
 	
 	private void createIndexBuffer() {
@@ -163,7 +164,7 @@ public class CylinderWithLight extends SceneObject {
 			indices[k++] = sideIndices.get(2 * j + 1);
 		}
 		
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 

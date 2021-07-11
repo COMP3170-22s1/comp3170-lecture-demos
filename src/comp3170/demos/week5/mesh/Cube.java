@@ -8,6 +8,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 import comp3170.demos.week5.Mesh;
 
@@ -68,7 +69,7 @@ public class Cube extends Mesh {
 				k++;
 			}
 		}
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		//
 		// 3. create the index buffer for each face
@@ -110,7 +111,7 @@ public class Cube extends Mesh {
 			}
 		}
 
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 
 		this.colour = new Vector3f(1f, 1f, 1f); // default is white
 	}

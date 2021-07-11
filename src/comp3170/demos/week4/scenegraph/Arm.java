@@ -12,6 +12,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 
 public class Arm extends SceneObject {
@@ -45,14 +46,14 @@ public class Arm extends SceneObject {
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = shader.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 	    
 	    this.indices = new int[] {
 	    	0, 1, 2,
 	    	3, 2, 1,
 	    };
 	    
-	    this.indexBuffer = shader.createIndexBuffer(indices);
+	    this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 	    this.colour = new Vector3f(1f, 1f, 1f);	// default is white
 	}
 	

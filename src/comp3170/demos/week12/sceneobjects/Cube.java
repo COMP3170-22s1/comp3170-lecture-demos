@@ -10,6 +10,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.Shader;
 import comp3170.demos.week12.cameras.Camera;
@@ -49,7 +50,7 @@ public class Cube extends SceneObject {
 			new Vector4f(-1,  1, -1, 1),
 		};
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 		
 		// v
 		// 1 1--3--5--7--9
@@ -72,7 +73,7 @@ public class Cube extends SceneObject {
 			new Vector2f(4,1),
 		};
 		
-		this.uvBuffer = shader.createBuffer(uvs);
+		this.uvBuffer = GLBuffers.createBuffer(uvs);
 		
 		this.indices = new int[] {
 			0,2,1,
@@ -85,7 +86,7 @@ public class Cube extends SceneObject {
 			9,7,8,
 		};
 
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 		
 	}
 

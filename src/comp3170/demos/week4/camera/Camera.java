@@ -7,6 +7,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 
 public class Camera {
@@ -47,7 +48,7 @@ public class Camera {
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = shader.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 	    
 	    this.position = new Vector2f(0,0);
         this.angle = 0;

@@ -11,6 +11,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.demos.week9.cameras.Camera;
 import comp3170.demos.week9.shaders.ShaderLibrary;
@@ -36,8 +37,8 @@ public class DirectionalLight extends SceneObject {
 			new Vector4f(0,0,0,1),
 			new Vector4f(0,0,-10,1),
 		};
-		this.vertexBuffer = shader.createBuffer(vertices);
-		this.indexBuffer = shader.createIndexBuffer(new int[] {0,1});		
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(new int[] {0,1});		
 		
 		setIntensity(intensity);		
 		setAmbientIntensity(ambientIntensity);	

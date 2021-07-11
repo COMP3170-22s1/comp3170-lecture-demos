@@ -19,6 +19,7 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
+import comp3170.GLBuffers;
 import comp3170.GLException;
 import comp3170.Shader;
 import comp3170.demos.week7.shaders.ShaderLibrary;
@@ -89,7 +90,7 @@ public class AntialiasingDeno extends JFrame implements GLEventListener {
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = this.shader.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
 	}
 

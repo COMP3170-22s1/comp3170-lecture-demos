@@ -20,6 +20,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
+import comp3170.GLBuffers;
 import comp3170.GLException;
 import comp3170.Shader;
 
@@ -109,7 +110,7 @@ public class Week2 extends JFrame implements GLEventListener {
 		}
 				
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = this.shader.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
 		this.colours = new float[] {
 				 1.0f, 1.0f, 1.0f,  // WHITE
@@ -122,7 +123,7 @@ public class Week2 extends JFrame implements GLEventListener {
 		};
 
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.colourBuffer = this.shader.createBuffer(colours, GL4.GL_FLOAT_VEC3);
+	    this.colourBuffer = GLBuffers.createBuffer(colours, GL4.GL_FLOAT_VEC3);
 	    
 	    this.indices = new int[] {
 	    	0, 1, 2,
@@ -133,7 +134,7 @@ public class Week2 extends JFrame implements GLEventListener {
 	    	0, 6, 1,	    		
 	    };
 	    
-	    this.indexBuffer = this.shader.createIndexBuffer(indices);
+	    this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 	    		 
 	    
 	}

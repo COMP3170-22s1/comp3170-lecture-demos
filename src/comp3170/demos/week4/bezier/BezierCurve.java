@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 
 public class BezierCurve {
@@ -37,7 +38,7 @@ public class BezierCurve {
 		}
 			
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = shader.createBuffer(vertices);	    
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices);	    
     }
 	
 	private float b(int i, float t) {

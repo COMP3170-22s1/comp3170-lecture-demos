@@ -18,6 +18,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 
+import comp3170.GLBuffers;
 import comp3170.GLException;
 import comp3170.Shader;
 
@@ -105,7 +106,7 @@ public class Week1 extends JFrame implements GLEventListener {
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = this.shader.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
 	}
 

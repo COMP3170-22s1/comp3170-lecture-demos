@@ -11,6 +11,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.demos.week9.cameras.Camera;
 import comp3170.demos.week9.shaders.ShaderLibrary;
@@ -76,8 +77,8 @@ public class CylinderWithNormalsBroken extends SceneObject {
 			normals[kn++] = n.mul(rotate, new Vector4f());   // ni = R(n)
 		}
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
-		this.normalBuffer = shader.createBuffer(normals);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		this.normalBuffer = GLBuffers.createBuffer(normals);
 	}
 	
 	private void createIndexBuffer() {
@@ -111,7 +112,7 @@ public class CylinderWithNormalsBroken extends SceneObject {
 			indices[k++] = t0;
 		}
 		
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 	private static final float ROTATION_SPEED = TAU/4;

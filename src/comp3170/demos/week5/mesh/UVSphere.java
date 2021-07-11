@@ -13,6 +13,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 import comp3170.demos.week5.Mesh;
 
@@ -53,7 +54,7 @@ public class UVSphere extends Mesh {
 		}
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = shader.createBuffer(vertices);
+	    this.vertexBuffer = GLBuffers.createBuffer(vertices);
 	    
 	    // Each quad looks like
 	    //
@@ -89,7 +90,7 @@ public class UVSphere extends Mesh {
 			}			
 		}
 	    
-	    this.indexBuffer = shader.createIndexBuffer(indices);
+	    this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 
 	    this.colour = new Vector3f(1f, 1f, 1f);	// default is white
 	}

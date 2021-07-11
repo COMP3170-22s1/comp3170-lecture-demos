@@ -12,6 +12,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.demos.week7.shaders.ShaderLibrary;
 import comp3170.demos.week9.cameras.Camera;
@@ -73,7 +74,7 @@ public class CylinderWireframe extends SceneObject {
 			vertices[k++] = p.mul(rotate, new Vector4f()).mul(translate);  // v = T(R(p))			
 		}
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 	}
 
 
@@ -112,7 +113,7 @@ public class CylinderWireframe extends SceneObject {
 			indices[k++] = b1;
 		}
 		
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 	
@@ -153,7 +154,7 @@ public class CylinderWireframe extends SceneObject {
 			this.normalVertices[k++] = vertices[i].add(normals[i], new Vector4f());
 		}
 		
-		this.normalVertexBuffer = shader.createBuffer(normalVertices);
+		this.normalVertexBuffer = GLBuffers.createBuffer(normalVertices);
 	}
 
 	private static final float ROTATION_SPEED = TAU/4;

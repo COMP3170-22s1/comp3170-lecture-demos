@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 
 public class Grid extends SceneObject {
@@ -37,8 +38,8 @@ public class Grid extends SceneObject {
 			this.indices[4*i+3] = 4*i+3;
 		}
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
-		this.indexBuffer = shader.createIndexBuffer(indices);		
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);		
 	}
 	
 

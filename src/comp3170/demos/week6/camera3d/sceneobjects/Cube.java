@@ -7,6 +7,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 
 public class Cube extends SceneObject {
@@ -39,7 +40,7 @@ public class Cube extends SceneObject {
 			new Vector4f( 1, 1,-1, 1),
 		};
 		
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		// indices for the lines forming each face
 
@@ -74,7 +75,7 @@ public class Cube extends SceneObject {
 			
 		};
 
-		this.indexBuffer = shader.createIndexBuffer(indices);
+		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
 		
 		// scale down to fit in window
 		this.setScale((float) (1.0f / Math.sqrt(3)));

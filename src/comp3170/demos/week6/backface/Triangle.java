@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
+import comp3170.GLBuffers;
 import comp3170.Shader;
 import comp3170.demos.week6.camera3d.sceneobjects.SceneObject;
 
@@ -32,7 +33,7 @@ public class Triangle extends SceneObject {
 			new Vector4f( 1, 0, 0, 1),
 		};
 			
-		this.vertexBuffer = shader.createBuffer(vertices);
+		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 	}
 
 	public void draw() {
