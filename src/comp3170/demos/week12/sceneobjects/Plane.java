@@ -50,7 +50,10 @@ public class Plane extends SceneObject {
 		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
 		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
 		shader.setAttribute("a_position", vertexBuffer);
-		shader.setUniform("u_colour", colour);		
+
+		if (shader.hasUniform("u_colour")) {
+			shader.setUniform("u_colour", colour);
+		}
 				
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		

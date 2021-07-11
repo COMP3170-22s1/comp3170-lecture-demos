@@ -9,7 +9,7 @@ layout(location = 0) out vec4 o_colour;
 in vec4 v_viewPos; // VIEW
 
 void main() {
-	float dist = (-v_viewPos.z - u_near) / (u_far - u_near);
-    o_colour = vec4(u_colour.rgb, dist);	
+	float dist = gl_FragCoord.z;
+    o_colour = vec4(dist, dist, dist, 1);	
 }
 

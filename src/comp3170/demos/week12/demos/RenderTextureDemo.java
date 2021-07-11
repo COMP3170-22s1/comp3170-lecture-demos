@@ -21,7 +21,7 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week12.cameras.Camera;
+import comp3170.demos.week12.cameras.PerspectiveCamera;
 import comp3170.demos.week12.sceneobjects.Cube;
 import comp3170.demos.week12.sceneobjects.Cylinder;
 import comp3170.demos.week12.sceneobjects.RenderQuad;
@@ -45,9 +45,9 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private Camera camera1;
+	private PerspectiveCamera camera1;
 	private Cylinder cylinder;
-	private Camera camera2;
+	private PerspectiveCamera camera2;
 	private Cube cube;
 
 	private int renderTexture;
@@ -108,13 +108,13 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		cylinder.setScale(1,2,1);
 		
 		float aspect = (float)screenWidth / screenHeight;
-		this.camera1 = new Camera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		this.camera1 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera1.setDistance(CAMERA_DISTANCE);
 		camera1.setTarget(0,1,0);	
 
 		// Scene 2
 		
-		this.camera2 = new Camera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		this.camera2 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera2.setDistance(CAMERA_DISTANCE);
 		camera2.setTarget(0,0,0);	
 		

@@ -8,12 +8,12 @@ import org.joml.Vector3f;
 import comp3170.InputManager;
 
 /**
- * A orthographic camera that revolves around the origin
+ * A camera that revolves around the origin
  * @author malcolmryan
  *
  */
 
-public class Camera {
+abstract public class Camera {
 
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 
@@ -22,22 +22,16 @@ public class Camera {
 	private Vector3f target = new Vector3f();
 	
 	private Matrix4f modelMatrix = new Matrix4f();
-	private Matrix4f projectionMatrix = new Matrix4f();
-
-	private float fovy;
+	protected Matrix4f projectionMatrix = new Matrix4f();
 
 	private float aspect;
-
 	private float near;
-
 	private float far;
 	
-	public Camera(float fovy, float aspect, float near, float far) {
-		this.fovy = fovy;
+	public Camera(float aspect, float near, float far) {
 		this.aspect = aspect;
 		this.near = near;
 		this.far = far;
-		projectionMatrix.setPerspective(fovy, aspect, near, far);
 		updateModelMatrix();				
 	}
 	

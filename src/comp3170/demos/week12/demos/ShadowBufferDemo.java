@@ -22,9 +22,9 @@ import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
 import comp3170.demos.week12.cameras.Camera;
+import comp3170.demos.week12.cameras.OrthographicCamera;
 import comp3170.demos.week12.sceneobjects.Cylinder;
 import comp3170.demos.week12.sceneobjects.Plane;
-import comp3170.demos.week12.sceneobjects.RenderQuad;
 import comp3170.demos.week12.shaders.ShaderLibrary;
 
 public class ShadowBufferDemo extends JFrame implements GLEventListener {
@@ -50,7 +50,6 @@ public class ShadowBufferDemo extends JFrame implements GLEventListener {
 	private Plane plane;
 	
 	private int renderSize = 4096;
-	private RenderQuad quad;
 	private int renderTexture;
 	private int frameBuffer;
 
@@ -106,13 +105,14 @@ public class ShadowBufferDemo extends JFrame implements GLEventListener {
 		Shader simpleShader = ShaderLibrary.compileShader(SIMPLE_VERTEX_SHADER, SIMPLE_FRAGMENT_SHADER);
 		Shader depthShader = ShaderLibrary.compileShader(DEPTH_VERTEX_SHADER, DEPTH_FRAGMENT_SHADER);
 
-		this.cylinder = new Cylinder(simpleShader, Color.RED);
+		this.cylinder = new Cylinder(depthShader, Color.RED);
 		cylinder.setScale(1,2,1);
-		this.plane = new Plane(simpleShader, Color.WHITE);
+		this.plane = new Plane(depthShader, Color.WHITE);
 		plane.setScale(10,1,10);
 		
 		float aspect = (float)screenWidth / screenHeight;
-		this.camera = new Camera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		this.camera = new OrthographicCamera(CAMERA_HEIGHT * aspect, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
+//		this.camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 		camera.setTarget(0,1,0);	
 				
@@ -128,6 +128,7 @@ public class ShadowBufferDemo extends JFrame implements GLEventListener {
 	}
 
 	private static final float CAMERA_DISTANCE = 20;
+	private static final float CAMERA_HEIGHT = 30;
 	private static final float CAMERA_FOVY = TAU / 8;
 	private static final float CAMERA_NEAR = 0.1f;
 	private static final float CAMERA_FAR = 50.0f;	

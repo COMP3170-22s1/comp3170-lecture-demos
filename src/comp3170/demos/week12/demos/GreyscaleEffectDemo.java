@@ -21,7 +21,7 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week12.cameras.Camera;
+import comp3170.demos.week12.cameras.PerspectiveCamera;
 import comp3170.demos.week12.sceneobjects.Cylinder;
 import comp3170.demos.week12.sceneobjects.RenderQuad;
 import comp3170.demos.week12.shaders.ShaderLibrary;
@@ -44,7 +44,7 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private Camera camera;
+	private PerspectiveCamera camera;
 	private Cylinder cylinder;
 	
 	private int renderWidth = 1000;
@@ -105,7 +105,7 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		cylinder.setScale(1,2,1);
 		
 		float aspect = (float)screenWidth / screenHeight;
-		this.camera = new Camera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		this.camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 		camera.setTarget(0,1,0);	
 		

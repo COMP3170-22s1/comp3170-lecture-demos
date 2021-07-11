@@ -172,7 +172,9 @@ public class Cylinder extends SceneObject {
 			shader.setAttribute("a_normal", normalBuffer);			
 		}
 		
-		shader.setUniform("u_colour", colour);		
+		if (shader.hasUniform("u_colour")) {
+			shader.setUniform("u_colour", colour);
+		}
 
 		if (shader.hasUniform("u_near")) {
 			float near = camera.getNear();
