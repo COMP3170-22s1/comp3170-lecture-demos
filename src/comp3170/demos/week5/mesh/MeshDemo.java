@@ -45,7 +45,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 	private InputManager input;
 
-	private Mesh[] spheres;
+	private Mesh[] meshes;
 	private int currentSphere;
 
 	public MeshDemo() {
@@ -100,15 +100,15 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		}
 
 		// Set up the scene
-		this.spheres = new Mesh[] {
+		this.meshes = new Mesh[] {
 			new SimpleCube(shader),
 			new UVSphere(shader, 17),
 			new Cube(shader, 10),
 		};
 		currentSphere = 0;
 		
-		for (int i = 0; i < spheres.length; i++) {
-			this.spheres[i].setAngle(TAU/8, 0, TAU/8);			
+		for (int i = 0; i < meshes.length; i++) {
+			this.meshes[i].setAngle(TAU/8, 0, TAU/8);			
 		}
 	}
 
@@ -123,9 +123,9 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		float deltaTime = (time-oldTime) / 1000f;
 		oldTime = time;
 		
-		spheres[currentSphere].getAngle(angle);
+		meshes[currentSphere].getAngle(angle);
 		angle.y = angle.y + ROTATION_SPEED * deltaTime;
-		spheres[currentSphere].setAngle(angle);
+		meshes[currentSphere].setAngle(angle);
 
 		if (input.isKeyDown(KeyEvent.VK_UP)) {
 			sphericity = Math.min(1, sphericity + deltaTime / PERIOD);
@@ -134,7 +134,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 			sphericity = Math.max(0, sphericity - deltaTime / PERIOD);
 		}
 		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
-			currentSphere = (currentSphere + 1) % spheres.length;
+			currentSphere = (currentSphere + 1) % meshes.length;
 		}
 		
 		input.clear();
@@ -155,7 +155,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		this.shader.setUniform("u_sphericity", sphericity);
 		
 		// draw the curve
-		this.spheres[currentSphere].draw();
+		this.meshes[currentSphere].draw();
 	}
 
 	@Override
