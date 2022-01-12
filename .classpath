@@ -6,6 +6,6 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry combineaccessrules="false" kind="src" path="/comp3170-21s1-jogl-240"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/comp3170-jogl-240"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
