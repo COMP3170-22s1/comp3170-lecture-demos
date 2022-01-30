@@ -39,8 +39,8 @@ public class Week1 extends JFrame implements GLEventListener {
 	private float[] vertices;
 	private int vertexBuffer;
 	
-	private int width = 800;
-	private int height = 800;
+	private int screenWidth = 800;
+	private int screenHeight = 800;
 
 
 	public Week1() {
@@ -50,15 +50,15 @@ public class Week1 extends JFrame implements GLEventListener {
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth,screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -83,7 +83,7 @@ public class Week1 extends JFrame implements GLEventListener {
 		try {
 			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
 			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
+			shader = new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -95,7 +95,7 @@ public class Week1 extends JFrame implements GLEventListener {
 		// create the shape
 		
 		// vertices of a square as (x,y) pairs
-		this.vertices = new float[] {
+		vertices = new float[] {
 				 1.0f,	1.0f,
 				-1.0f,	1.0f,
 				-1.0f, -1.0f,
@@ -106,7 +106,7 @@ public class Week1 extends JFrame implements GLEventListener {
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
 	}
 
@@ -130,17 +130,17 @@ public class Week1 extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();
+		shader.enable();
 		
         // connect the vertex buffer to the a_position attribute		   
-	    this.shader.setAttribute("a_position", vertexBuffer);
+	    shader.setAttribute("a_position", vertexBuffer);
 
 	    // write the colour value into the u_colour uniform 
 	    float[] colour = {1.0f, 0.0f, 0.0f};	    
-        this.shader.setUniform("u_colour", colour);
+        shader.setUniform("u_colour", colour);
         
-        float[] screenSize = new float[] { width, height };
-        this.shader.setUniform("u_screenSize", screenSize);	
+        float[] screenSize = new float[] { screenWidth, screenHeight };
+        shader.setUniform("u_screenSize", screenSize);	
 	    
         // draw the shape as a series of lines in a loop
         gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length / 2);           	
@@ -152,8 +152,8 @@ public class Week1 extends JFrame implements GLEventListener {
 	 * Called when the canvas is resized
 	 */
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-		this.width = width;
-		this.height = height;
+		this.screenWidth = width;
+		this.screenHeight = height;
 	}
 
 
