@@ -53,15 +53,15 @@ public class Week2 extends JFrame implements GLEventListener {
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -80,7 +80,7 @@ public class Week2 extends JFrame implements GLEventListener {
 		try {
 			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
 			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
+			shader = new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -91,7 +91,7 @@ public class Week2 extends JFrame implements GLEventListener {
 
 		// calculate the vertices of a hexagon as (x,y) pairs
 
-		this.vertices = new float[7 * 2];
+		vertices = new float[7 * 2];
 		
 		// the centre
 
@@ -110,9 +110,9 @@ public class Week2 extends JFrame implements GLEventListener {
 		}
 				
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
-		this.colours = new float[] {
+		colours = new float[] {
 				 1.0f, 1.0f, 1.0f,  // WHITE
 				 1.0f, 0.0f, 0.0f,  // RED
 				 1.0f, 1.0f, 0.0f,  // YELLOW
@@ -123,9 +123,9 @@ public class Week2 extends JFrame implements GLEventListener {
 		};
 
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.colourBuffer = GLBuffers.createBuffer(colours, GL4.GL_FLOAT_VEC3);
+	    colourBuffer = GLBuffers.createBuffer(colours, GL4.GL_FLOAT_VEC3);
 	    
-	    this.indices = new int[] {
+	    indices = new int[] {
 	    	0, 1, 2,
 	    	0, 2, 3,
 	    	0, 3, 4,
@@ -134,7 +134,7 @@ public class Week2 extends JFrame implements GLEventListener {
 	    	0, 6, 1,	    		
 	    };
 	    
-	    this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+	    indexBuffer = GLBuffers.createIndexBuffer(indices);
 	    		 
 	    
 	}
@@ -147,20 +147,20 @@ public class Week2 extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();
+		shader.enable();
 		
         // connect the vertex buffer to the a_position attribute		   
-	    this.shader.setAttribute("a_position", vertexBuffer);
-	    this.shader.setAttribute("a_colour", colourBuffer);
+	    shader.setAttribute("a_position", vertexBuffer);
+	    shader.setAttribute("a_colour", colourBuffer);
 
 	    // write the colour value into the u_colour uniform 
 //	    float[] colour = {1.0f, 0.0f, 1.0f};	    
-//      this.shader.setUniform("u_colour", colour);	    
+//      shader.setUniform("u_colour", colour);	    
 	    
         // draw the shape as a series of lines in a loop
 //        gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length / 2);           	
 
-	    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, this.indexBuffer);
+	    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	    gl.glDrawElements(GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
 	}
 
