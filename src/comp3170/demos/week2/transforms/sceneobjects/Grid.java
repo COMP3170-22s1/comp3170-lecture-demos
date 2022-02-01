@@ -1,5 +1,7 @@
 package comp3170.demos.week2.transforms.sceneobjects;
 
+import java.awt.Color;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
@@ -19,7 +21,7 @@ public class Grid extends SceneObject {
 	private Vector3f colour;
 	
 
-	public Grid(int nLines) {
+	public Grid(int nLines, Color colour) {
 		
 		// Grid on horizontal and vertical lines from (-1,-1) to (1,1)
 		
@@ -45,7 +47,10 @@ public class Grid extends SceneObject {
 		// copy the data into a Vertex Buffer Object in graphics memory		
 	    vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 	    
-	    colour = new Vector3f(0.8f, 0.8f, 1.0f);	// pale blue
+	    float red = colour.getRed() / 255f;
+	    float green = colour.getGreen() / 255f; 
+	    float blue = colour.getBlue() / 255f;
+	    this.colour = new Vector3f(red, green, blue);
 	}
 	
 	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {

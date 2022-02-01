@@ -134,17 +134,25 @@ public class TransformsDemo extends JFrame implements GLEventListener {
 		root = new SceneObject();
 		
 		Matrix4f matrix; 
-		Grid grid = new Grid(40);
-		grid.setParent(root);
-		matrix = grid.getMatrix();
-		matrix.scale(2.0f);
 		
 		Axes worldAxes = new Axes();
 		worldAxes.setParent(root);
 		
+		Color lightBlue = new Color(128, 128, 255);
+		Grid grid = new Grid(40, lightBlue);
+		grid.setParent(worldAxes);
+		matrix = grid.getMatrix();
+		matrix.scale(2.0f);
+
 		Axes modelAxes = new Axes();
 		modelAxes.setParent(worldAxes);
 		modelToWorldMatrix = modelAxes.getMatrix();
+
+		Color lightMagenta = new Color(255, 128, 255);
+		grid = new Grid(40, lightMagenta);
+		grid.setParent(modelAxes);
+		matrix = grid.getMatrix();
+		matrix.scale(2.0f);
 
 		Point point = new Point(Color.black);
 		matrix = point.getMatrix();
