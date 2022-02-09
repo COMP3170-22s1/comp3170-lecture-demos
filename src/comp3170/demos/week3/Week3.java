@@ -51,24 +51,24 @@ public class Week3 extends JFrame implements GLEventListener {
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
 		});
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();		
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();		
 		
 	}
 
@@ -97,7 +97,7 @@ public class Week3 extends JFrame implements GLEventListener {
 		// Set up the scene
 
 		
-	    this.squares = new ArrayList<Square>();
+	    squares = new ArrayList<Square>();
 	    
 	    for (int i = 0; i < NSQUARES; i++) {
 			Square square = new Square(shader);
@@ -142,7 +142,7 @@ public class Week3 extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();		
+		shader.enable();		
 				
 		// draw the squares
 		for (Square sq : squares) {

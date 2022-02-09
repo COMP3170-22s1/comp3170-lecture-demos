@@ -53,21 +53,21 @@ public class Square {
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC3);
+	    vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC3);
 	    
-	    this.indices = new int[] {
+	    indices = new int[] {
 	    	0, 1, 2,
 	    	3, 2, 1,
 	    };
 	    
-	    this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+	    indexBuffer = GLBuffers.createIndexBuffer(indices);
 
 	    // set up transform
 	    
-	    this.position = new Vector2f(0f, 0f);
-	    this.angle = 0f;
-	    this.scale = new Vector2f(1f, 1f);
-	    this.modelMatrix = new Matrix3f();	    
+	    position = new Vector2f(0f, 0f);
+	    angle = 0f;
+	    scale = new Vector2f(1f, 1f);
+	    modelMatrix = new Matrix3f();	    
 	    
 	    // Allocate and initialise the matrices to the identity matrix
 	    
@@ -75,13 +75,13 @@ public class Square {
 		//  I = [ 0  1  0 ]
 		//      [ 0  0  1 ]
 	    
-	    this.translationMatrix = new Matrix3f();    
-	    this.rotationMatrix = new Matrix3f();
-	    this.scaleMatrix = new Matrix3f();
+	    translationMatrix = new Matrix3f();    
+	    rotationMatrix = new Matrix3f();
+	    scaleMatrix = new Matrix3f();
 	    
 	    // colour
 	    
-	    this.colour = new Vector3f(1f, 1f, 1f);	// default is white
+	    colour = new Vector3f(1f, 1f, 1f);	// default is white
 	}
 	
 	public Vector2f getPosition() {
@@ -103,7 +103,7 @@ public class Square {
 	}
 		
 	public void setAngle(float angle) {
-		this.angle = angle;
+		angle = angle;
 	}
 	
 	public void rotate(float radians) {
@@ -115,8 +115,8 @@ public class Square {
 	}
 
 	public void setScale(float sx, float sy) {
-		this.scale.x = sx;
-		this.scale.y = sy;
+		scale.x = sx;
+		scale.y = sy;
 	}
 
 	public void scale(float factor) {
