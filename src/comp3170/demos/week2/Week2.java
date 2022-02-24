@@ -72,22 +72,8 @@ public class Week2 extends JFrame implements GLEventListener {
 	@Override
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
-		
-		// set the background colour to white
-		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		
-		// Compile the shader
-		try {
-			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
-			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			shader = new Shader(vertexShader, fragementShader);
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.exit(1);
-		} catch (GLException e) {
-			e.printStackTrace();
-			System.exit(1);
-		}
+			
+		shader = compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 
 		// calculate the vertices of a hexagon as (x,y) pairs
 
@@ -113,13 +99,13 @@ public class Week2 extends JFrame implements GLEventListener {
 	    vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
 		colours = new float[] {
-				 1.0f, 1.0f, 1.0f,  // WHITE
-				 1.0f, 0.0f, 0.0f,  // RED
-				 1.0f, 1.0f, 0.0f,  // YELLOW
-				 0.0f, 1.0f, 0.0f,  // GREEN
-				 0.0f, 1.0f, 1.0f,  // CYAN
-				 0.0f, 0.0f, 1.0f,  // BLUE
-				 1.0f, 0.0f, 1.0f,  // MAGENTA
+			 1.0f, 1.0f, 1.0f,  // WHITE
+			 1.0f, 0.0f, 0.0f,  // RED
+			 1.0f, 1.0f, 0.0f,  // YELLOW
+			 0.0f, 1.0f, 0.0f,  // GREEN
+			 0.0f, 1.0f, 1.0f,  // CYAN
+			 0.0f, 0.0f, 1.0f,  // BLUE
+			 1.0f, 0.0f, 1.0f,  // MAGENTA
 		};
 
 		// copy the data into a Vertex Buffer Object in graphics memory		
@@ -139,10 +125,28 @@ public class Week2 extends JFrame implements GLEventListener {
 	    
 	}
 
+	private Shader compileShader(String vertexShaderFile, String fragmentShaderFile) {
+		// Compile the shader
+		try {
+			File vertexShader = new File(DIRECTORY, vertexShaderFile);
+			File fragementShader = new File(DIRECTORY, fragmentShaderFile);
+			return new Shader(vertexShader, fragementShader);
+		} catch (IOException e) {
+			e.printStackTrace();
+			System.exit(1);
+		} catch (GLException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		return null;
+	}
+
 	@Override
 	public void display(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		// set the background colour to white
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         // clear the colour buffer
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
@@ -161,6 +165,9 @@ public class Week2 extends JFrame implements GLEventListener {
 //        gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length / 2);           	
 
 	    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+	    
+	    // draw triangles as wireframe or filled
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_LINE);
 	    gl.glDrawElements(GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
 	}
 
