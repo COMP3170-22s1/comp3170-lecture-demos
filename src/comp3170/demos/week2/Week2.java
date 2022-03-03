@@ -167,7 +167,7 @@ public class Week2 extends JFrame implements GLEventListener {
 	    gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 	    
 	    // draw triangles as wireframe or filled
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_LINE);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_FILL);
 	    gl.glDrawElements(GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
 	}
 
