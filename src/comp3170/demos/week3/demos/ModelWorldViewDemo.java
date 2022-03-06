@@ -10,6 +10,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
+
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -40,6 +42,8 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 	private InputManager input;
 	private Animator animator;
 	private long oldTime;
+
+	private Axes axes;
 
 	public ModelWorldViewDemo() {
 		super("Model/World/View demo");
@@ -74,10 +78,12 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 	@Override
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
+		gl.glEnable(GL4.GL_SCISSOR_TEST);
 		
 		shader = compileShaders(VERTEX_SHADER, FRAGMENT_SHADER);
 	    
 		// set up the scene
+		axes = new Axes();
 	}
 	
 	private Shader compileShaders(String vertex, String fragment) {
@@ -97,24 +103,73 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 		return null;
 	}
 	
+	private Matrix4f identity = new Matrix4f().identity();
+	private Matrix4f modelMatrix = new Matrix4f();
+	private Matrix4f viewMatrix = new Matrix4f();
+
+	private void update() {
+		long time = System.currentTimeMillis();
+		float dt = (time - oldTime) / 1000f;
+		oldTime = time;
+		
+		
+	}
+	
+	
+	private static final int MARGIN = 0;
 
 	@Override
 	public void display(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		// set the background colour to black
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);			
+		update();
+		
+		// set the background colour to whites
+		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);			
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
 		shader.enable();		
-				
-		// draw stuff here
+
+		// MODEL
+		
+		gl.glViewport(MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
+		gl.glScissor(MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
+		gl.glClearColor(0.1f, 0.0f, 0.0f, 1.0f);			
+		gl.glClear(GL_COLOR_BUFFER_BIT);		
+		
+		shader.setUniform("u_modelMatrix", identity);
+		shader.setUniform("u_viewMatrix", identity);		
+		axes.draw(shader);
+
+		// WORLD
+		
+		gl.glViewport(width/3+MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
+		gl.glScissor(width/3+MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
+		gl.glClearColor(0.0f, 0.1f, 0.0f, 1.0f);			
+		gl.glClear(GL_COLOR_BUFFER_BIT);		
+
+		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.setUniform("u_viewMatrix", identity);		
+		axes.draw(shader);
+
+		// View
+		
+		gl.glViewport(2*width/3+MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
+		gl.glScissor(2*width/3+MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
+		gl.glClearColor(0.0f, 0.0f, 0.1f, 1.0f);			
+		gl.glClear(GL_COLOR_BUFFER_BIT);		
+
+		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.setUniform("u_viewMatrix", viewMatrix);		
+		axes.draw(shader);
+
 	}
 
 	@Override
 	public void reshape(GLAutoDrawable d, int x, int y, int width, int height) {
-		// TODO Auto-generated method stub		
+		this.width = width;
+		this.height = height;
 	}
 
 	@Override
