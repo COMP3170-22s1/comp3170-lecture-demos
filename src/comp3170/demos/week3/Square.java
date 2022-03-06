@@ -31,7 +31,7 @@ public class Square {
 	private Matrix3f scaleMatrix;
 	private Vector3f colour;
 	
-	public Square(Shader shader) {
+	public Square() {
 		
 		// verices for a 1x1 square with origin in the centre
 		// 
@@ -45,7 +45,7 @@ public class Square {
 		//       0-----------1
 		//  (-0.5,-0.5)  (0.5,-0.5)		
 		
-		this.vertices = new float[] {
+		vertices = new float[] {
 			-0.5f, -0.5f, 1,
 			 0.5f, -0.5f, 1,
 			-0.5f,  0.5f, 1,
@@ -103,7 +103,7 @@ public class Square {
 	}
 		
 	public void setAngle(float angle) {
-		angle = angle;
+		this.angle = angle;
 	}
 	
 	public void rotate(float radians) {
