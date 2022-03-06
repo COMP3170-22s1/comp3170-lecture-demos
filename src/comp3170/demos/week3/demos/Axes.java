@@ -22,12 +22,12 @@ public class Axes {
 	public Axes() {
 		xAxis = new float[] {
 			0, 0,
-			0, 1,
+			1, 0,
 		};
 
 		yAxis = new float[] {
-				0, 0,
-				1, 0,
+			0, 0,
+			0, 1,
 		};
 		
 		xVertexBuffer = GLBuffers.createBuffer(xAxis, GL4.GL_FLOAT_VEC2);
