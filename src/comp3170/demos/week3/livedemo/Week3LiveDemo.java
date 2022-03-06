@@ -3,13 +3,10 @@ package comp3170.demos.week3.livedemo;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
-import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.JFrame;
 
@@ -20,7 +17,6 @@ import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
-import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.Shader;

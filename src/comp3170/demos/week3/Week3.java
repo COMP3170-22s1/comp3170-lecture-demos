@@ -100,7 +100,7 @@ public class Week3 extends JFrame implements GLEventListener {
 	    squares = new ArrayList<Square>();
 	    
 	    for (int i = 0; i < NSQUARES; i++) {
-			Square square = new Square(shader);
+			Square square = new Square();
 			float x = (float) Math.random() * 2 - 1;
 			float y = (float) Math.random() * 2 - 1;
 			square.setPosition(x, y);
