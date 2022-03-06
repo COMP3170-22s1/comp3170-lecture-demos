@@ -3,6 +3,7 @@ package comp3170.demos.week3.demos;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -44,6 +45,7 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 
 	private Axes axes;
+	private Square camera;
 
 	public ModelWorldViewDemo() {
 		super("Model/World/View demo");
@@ -84,6 +86,7 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 	    
 		// set up the scene
 		axes = new Axes();
+		camera = new Square();
 	}
 	
 	private Shader compileShaders(String vertex, String fragment) {
@@ -105,14 +108,79 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 	
 	private Matrix4f identity = new Matrix4f().identity();
 	private Matrix4f modelMatrix = new Matrix4f();
+	private Matrix4f cameraModelMatrix = new Matrix4f();
 	private Matrix4f viewMatrix = new Matrix4f();
 
+	private static final float SCALE_RATE = 1.2f;
+	private static final float ROTATION_SPEED = TAU / 6;
+	private static final float MOVEMENT_SPEED = 0.5f;
+	
 	private void update() {
 		long time = System.currentTimeMillis();
 		float dt = (time - oldTime) / 1000f;
 		oldTime = time;
 		
+		// Object movement using WASD etc
 		
+		if (input.isKeyDown(KeyEvent.VK_Z)) {
+			modelMatrix.scale((float) Math.pow(SCALE_RATE, dt)); 	// scale up
+		}
+		if (input.isKeyDown(KeyEvent.VK_X)) {
+			modelMatrix.scale((float) Math.pow(1f / SCALE_RATE, dt));	// scale down
+		}
+		
+		if (input.isKeyDown(KeyEvent.VK_Q)) {
+			modelMatrix.rotateZ(ROTATION_SPEED * dt);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_E)) {
+			modelMatrix.rotateZ(-ROTATION_SPEED * dt);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_W)) {
+			// multiply translation matrix on the left to move in world space
+			modelMatrix.translateLocal(0, MOVEMENT_SPEED * dt, 0);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_S)) {
+			// multiply translation matrix on the left to move in world space
+			modelMatrix.translateLocal(0, -MOVEMENT_SPEED * dt, 0);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_A)) {
+			// multiply translation matrix on the left to move in world space
+			modelMatrix.translateLocal(-MOVEMENT_SPEED * dt, 0, 0);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_D)) {
+			// multiply translation matrix on the left to move in world space
+			modelMatrix.translateLocal(MOVEMENT_SPEED * dt, 0, 0);	
+		}
+		
+		// Camera movement using numpad
+		
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD1)) {
+			cameraModelMatrix.scale((float) Math.pow(SCALE_RATE, dt)); 	// scale up
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD0)) {
+			cameraModelMatrix.scale((float) Math.pow(1f / SCALE_RATE, dt));	// scale down
+		}
+		
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD7)) {
+			cameraModelMatrix.rotateZ(ROTATION_SPEED * dt);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD9)) {
+			cameraModelMatrix.rotateZ(-ROTATION_SPEED * dt);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD8)) {
+			cameraModelMatrix.translate(0, MOVEMENT_SPEED * dt, 0);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD2)) {
+			cameraModelMatrix.translate(0, -MOVEMENT_SPEED * dt, 0);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD4)) {
+			cameraModelMatrix.translate(-MOVEMENT_SPEED * dt, 0, 0);	
+		}
+		if (input.isKeyDown(KeyEvent.VK_NUMPAD6)) {
+			cameraModelMatrix.translate(MOVEMENT_SPEED * dt, 0, 0);	
+		}
+
+	
 	}
 	
 	
@@ -138,6 +206,7 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 		gl.glClearColor(0.1f, 0.0f, 0.0f, 1.0f);			
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 		
+		// draw with no model/view transformation NDC = MODEL
 		shader.setUniform("u_modelMatrix", identity);
 		shader.setUniform("u_viewMatrix", identity);		
 		axes.draw(shader);
@@ -149,18 +218,25 @@ public class ModelWorldViewDemo extends JFrame implements GLEventListener {
 		gl.glClearColor(0.0f, 0.1f, 0.0f, 1.0f);			
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
+		// draw with model transformation but no view transformation,  NDC = WORLD
 		shader.setUniform("u_modelMatrix", modelMatrix);
 		shader.setUniform("u_viewMatrix", identity);		
 		axes.draw(shader);
 
-		// View
+		// draw the camera view
+		shader.setUniform("u_modelMatrix", cameraModelMatrix);
+		camera.draw(shader);
+		
+		// VIEW
 		
 		gl.glViewport(2*width/3+MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
 		gl.glScissor(2*width/3+MARGIN,MARGIN,width/3-2*MARGIN,height-2*MARGIN);
 		gl.glClearColor(0.0f, 0.0f, 0.1f, 1.0f);			
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
+		// draw with model and view transformation, NDC = VIEW
 		shader.setUniform("u_modelMatrix", modelMatrix);
+		cameraModelMatrix.invert(viewMatrix);
 		shader.setUniform("u_viewMatrix", viewMatrix);		
 		axes.draw(shader);
 
