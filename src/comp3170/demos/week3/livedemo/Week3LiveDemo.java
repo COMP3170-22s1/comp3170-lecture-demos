@@ -35,6 +35,8 @@ public class Week3LiveDemo extends JFrame implements GLEventListener {
 	final private String VERTEX_SHADER = "vertex.glsl";
 	final private String FRAGMENT_SHADER = "fragment.glsl";
 
+	private Question question;
+	
 	public Week3LiveDemo() {
 		super("Week 3 live demo");
 
@@ -63,6 +65,11 @@ public class Week3LiveDemo extends JFrame implements GLEventListener {
 		shader = compileShaders(VERTEX_SHADER, FRAGMENT_SHADER);
 	    
 		// set up the scene
+		
+		question = new Question(shader);
+		question.setPosition(0f, 0.5f);
+		question.setAngle(TAU/6);
+		question.setScale(1.0f);
 	}
 	
 	private Shader compileShaders(String vertex, String fragment) {
@@ -91,10 +98,9 @@ public class Week3LiveDemo extends JFrame implements GLEventListener {
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);			
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
-		// activate the shader
-		shader.enable();		
-				
+		
 		// draw stuff here
+		question.draw();
 	}
 
 	@Override
