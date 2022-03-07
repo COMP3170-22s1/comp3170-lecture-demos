@@ -24,7 +24,10 @@ public class Question {
 	private Matrix4f modelMatrix = new Matrix4f();
 	private float angle = 0; // radians
 	private float scale = 1.0f;
-	
+
+	/**
+	 * <img src="mesh.png" />
+	 */
 	public Question(Shader shader) {
 		this.shader = shader;
 		
