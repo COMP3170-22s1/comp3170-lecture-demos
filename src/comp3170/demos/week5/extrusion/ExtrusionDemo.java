@@ -54,25 +54,25 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
 
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();		
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();		
 
 		// input
 		
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -90,7 +90,7 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 		try {
 			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
 			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
+			shader = new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -126,12 +126,11 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 		
 		Vector3f up = new Vector3f(0,0,1);
 		
-		this.mesh = new Extrusion(shader, crossSection, curve, up);		
+		mesh = new Extrusion(crossSection, curve, up);		
 	}
 
 	private final float ROTATION_SPEED = TAU / 8;
 	
-	private Vector3f angle = new Vector3f();
 	private boolean isTurning = true;
 	
 	private void update() {
@@ -144,9 +143,7 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 		}
 		
 		if (isTurning) {
-			mesh.getAngle(angle);
-			angle.y = angle.y + ROTATION_SPEED * deltaTime;
-			mesh.setAngle(angle);
+			mesh.getMatrix().rotateY(ROTATION_SPEED * deltaTime);
 		}
 		
 		input.clear();
@@ -162,10 +159,10 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();		
+		shader.enable();		
 		
 		// draw the curve
-		this.mesh.draw();
+		mesh.draw(shader);
 	}
 
 	@Override

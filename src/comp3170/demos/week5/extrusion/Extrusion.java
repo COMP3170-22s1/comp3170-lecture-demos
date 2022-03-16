@@ -14,9 +14,9 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
-import comp3170.demos.week5.Mesh;
+import comp3170.demos.SceneObject;
 
-public class Extrusion extends Mesh {
+public class Extrusion extends SceneObject {
 
 	private Vector4f[] vertices;
 	private int vertexBuffer;
@@ -24,11 +24,11 @@ public class Extrusion extends Mesh {
 	private int[] indices;
 	private int indexBuffer;
 	
-	public Extrusion(Shader shader, Vector2f[] crossSection, Vector3f[] curve, Vector3f up) {
-		super(shader);
-
+	private float[] colour = {1f, 1f, 1f};
+	
+	public Extrusion(Vector2f[] crossSection, Vector3f[] curve, Vector3f up) {
 		createVertexBuffer(crossSection, curve, up);
-		createIndexBuffer(shader, crossSection, curve);
+		createIndexBuffer(crossSection, curve);
 	}
 
 	private void createVertexBuffer(Vector2f[] crossSection, Vector3f[] curve, Vector3f up) {
@@ -48,7 +48,7 @@ public class Extrusion extends Mesh {
 		Matrix4f matrix = new Matrix4f();
 
 		
-		this.vertices = new Vector4f[curve.length * crossSection.length];
+		vertices = new Vector4f[curve.length * crossSection.length];
 		
 		int k = 0;
 		for (int i = 0; i < curve.length; i++) {
@@ -93,10 +93,10 @@ public class Extrusion extends Mesh {
 			}
 		}
 		
-	    this.vertexBuffer = GLBuffers.createBuffer(vertices);
+	    vertexBuffer = GLBuffers.createBuffer(vertices);
 	}
 
-	private void createIndexBuffer(Shader shader, Vector2f[] crossSection, Vector3f[] curve) {
+	private void createIndexBuffer(Vector2f[] crossSection, Vector3f[] curve) {
 		//
 		// a = size of cross-section
 		// b = length of curve
@@ -110,7 +110,7 @@ public class Extrusion extends Mesh {
 		//  0     a     ...     (b-1) * a	<-- loop around to top
 		
 		
-		this.indices = new int[2 * crossSection.length * (2 * curve.length - 1)];
+		indices = new int[2 * crossSection.length * (2 * curve.length - 1)];
 		
 		int a = crossSection.length;
 		int b = curve.length;
@@ -129,14 +129,13 @@ public class Extrusion extends Mesh {
 				}
 			}
 		}
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 	@Override
-	public void draw() {
+	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
 		
         // connect the vertex buffer to the a_position attribute		   
