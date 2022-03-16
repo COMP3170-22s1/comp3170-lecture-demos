@@ -1,12 +1,6 @@
 package comp3170.demos.week5.mesh;
 
-import static com.jogamp.opengl.GL.GL_ELEMENT_ARRAY_BUFFER;
-import static com.jogamp.opengl.GL.GL_UNSIGNED_INT;
-
-import java.awt.Color;
-
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -15,25 +9,25 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
-import comp3170.demos.week5.Mesh;
+import comp3170.demos.SceneObject;
 
-public class UVSphere extends Mesh {
+public class UVSphere extends SceneObject {
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
 	private int indexBuffer;
+	private float[] colour = {1f, 1f, 1f};
 
 	private final float TAU = (float) (Math.PI * 2);
 	
-	public UVSphere(Shader shader, int nSegments) {
-		super(shader);		
+	public UVSphere(int nSegments) {
 		//
 		// Create a (2n+1) * (n+1) grid of points in polar space
 		//
 		int width = 2 * nSegments;
 		int height = nSegments;
 		
-		this.vertices = new Vector4f[(width +1) * (height+1)];
+		vertices = new Vector4f[(width +1) * (height+1)];
 		
 		Matrix4f rotateY = new Matrix4f();
 		Matrix4f rotateX = new Matrix4f();
@@ -54,7 +48,7 @@ public class UVSphere extends Mesh {
 		}
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = GLBuffers.createBuffer(vertices);
+	    vertexBuffer = GLBuffers.createBuffer(vertices);
 	    
 	    // Each quad looks like
 	    //
@@ -63,7 +57,7 @@ public class UVSphere extends Mesh {
 	    //     | \|
 	    //   k +--+ k + h + 1
 	    
-	    this.indices = new int[12 * width * height]; // 2 tris * 3 lines * 2 verts * width height
+	    indices = new int[12 * width * height]; // 2 tris * 3  verts * width height
 
 	    int n = 0;
 		for (int i = 0; i < width; i++) {		// note there is no quad for the top row
@@ -72,34 +66,22 @@ public class UVSphere extends Mesh {
 				
 				indices[n++] = k;
 				indices[n++] = k + height + 1;
-
-				indices[n++] = k + height + 1;
 				indices[n++] = k + 1;
-
-				indices[n++] = k + 1;
-				indices[n++] = k;
 
 				indices[n++] = k + height + 2;
 				indices[n++] = k + 1;
-
-				indices[n++] = k + 1;
 				indices[n++] = k + height + 1;
-
-				indices[n++] = k + height + 1;
-				indices[n++] = k + height + 2;
 			}			
 		}
 	    
-	    this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+	    indexBuffer = GLBuffers.createIndexBuffer(indices);
 
-	    this.colour = new Vector3f(1f, 1f, 1f);	// default is white
 	}
 	
 	@Override
-	public void draw() {
+	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
 		
         // connect the vertex buffer to the a_position attribute		   
@@ -108,13 +90,9 @@ public class UVSphere extends Mesh {
 	    // write the colour value into the u_colour uniform 
 	    shader.setUniform("u_colour", colour);	    
 	    
-	    gl.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-	    
-	    // DEBUG: just draw the vertices
-//	    gl.glDrawElements(GL.GL_POINTS, indices.length, GL_UNSIGNED_INT, 0);		
-
-	    // Draw the wireframe as lines
-	    gl.glDrawElements(GL.GL_LINES, indices.length, GL_UNSIGNED_INT, 0);		
+		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_LINE);
+		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
 	}
 
 	

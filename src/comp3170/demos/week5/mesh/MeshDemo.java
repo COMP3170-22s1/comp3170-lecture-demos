@@ -25,7 +25,7 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week5.Mesh;
+import comp3170.demos.SceneObject;
 
 public class MeshDemo extends JFrame implements GLEventListener {
 
@@ -45,7 +45,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 	private InputManager input;
 
-	private Mesh[] meshes;
+	private SceneObject[] meshes;
 	private int currentSphere;
 
 	public MeshDemo() {
@@ -54,25 +54,25 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
 
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();		
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();		
 
 		// input
 		
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -90,7 +90,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		try {
 			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
 			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
+			shader = new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -100,15 +100,15 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		}
 
 		// Set up the scene
-		this.meshes = new Mesh[] {
-			new SimpleCube(shader),
-			new UVSphere(shader, 17),
-			new Cube(shader, 10),
+		meshes = new SceneObject[] {
+			new SimpleCube(),
+			new UVSphere(17),
+			new Cube(10),
 		};
 		currentSphere = 0;
 		
 		for (int i = 0; i < meshes.length; i++) {
-			this.meshes[i].setAngle(TAU/8, 0, TAU/8);			
+			meshes[i].getMatrix().rotateX(TAU/8).rotateZ(TAU/8);			
 		}
 	}
 
@@ -123,9 +123,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		float deltaTime = (time-oldTime) / 1000f;
 		oldTime = time;
 		
-		meshes[currentSphere].getAngle(angle);
-		angle.y = angle.y + ROTATION_SPEED * deltaTime;
-		meshes[currentSphere].setAngle(angle);
+		meshes[currentSphere].getMatrix().rotateY(ROTATION_SPEED * deltaTime);
 
 		if (input.isKeyDown(KeyEvent.VK_UP)) {
 			sphericity = Math.min(1, sphericity + deltaTime / PERIOD);
@@ -150,12 +148,12 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();		
+		shader.enable();		
 		
-		this.shader.setUniform("u_sphericity", sphericity);
+		shader.setUniform("u_sphericity", sphericity);
 		
-		// draw the curve
-		this.meshes[currentSphere].draw();
+		// draw the mesh
+		meshes[currentSphere].draw(shader);
 	}
 
 	@Override

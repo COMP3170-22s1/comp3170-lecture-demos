@@ -10,17 +10,18 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
-import comp3170.demos.week5.Mesh;
+import comp3170.demos.SceneObject;
 
-public class Cube extends Mesh {
+public class Cube extends SceneObject {
+	private static final float TAU = (float) (Math.PI * 2);
+
 	private Vector4f[] vertices;
-	int vertexBuffer;
-	int[] indices;
-	int indexBuffer;
-	private final float TAU = (float) (Math.PI * 2);
-
-	public Cube(Shader shader, int nSegments) {
-		super(shader);
+	private int vertexBuffer;
+	private int[] indices;
+	private int indexBuffer;
+	private float[] colour = {1.0f, 1.0f, 1.0f};
+	
+	public Cube(int nSegments) {
 
 		//
 		// Create a cube with each face divided into an n x n grid
@@ -47,15 +48,15 @@ public class Cube extends Mesh {
 		// 
 
 		Matrix4f[] sides = new Matrix4f[] { 
-				new Matrix4f(), // front
-				new Matrix4f().rotateY(TAU / 2), // back
-				new Matrix4f().rotateY(TAU / 4), // right
-				new Matrix4f().rotateY(-TAU / 4), // left
-				new Matrix4f().rotateX(TAU / 4), // bottom
-				new Matrix4f().rotateX(-TAU / 4), // top
+			new Matrix4f(), // front
+			new Matrix4f().rotateY(TAU / 2), // back
+			new Matrix4f().rotateY(TAU / 4), // right
+			new Matrix4f().rotateY(-TAU / 4), // left
+			new Matrix4f().rotateX(TAU / 4), // bottom
+			new Matrix4f().rotateX(-TAU / 4), // top
 		};
 
-		this.vertices = new Vector4f[sides.length * grid.length];
+		vertices = new Vector4f[sides.length * grid.length];
 
 		// scale of 1/sqrt(3) means the corner points lie on the unit cube
 		Matrix4f scale = new Matrix4f().scaling(1.0f / (float) Math.sqrt(3));
@@ -69,7 +70,7 @@ public class Cube extends Mesh {
 				k++;
 			}
 		}
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		//
 		// 3. create the index buffer for each face
@@ -82,7 +83,7 @@ public class Cube extends Mesh {
 		//     | \|
 		//   k +--+ k + n + 1
 
-		this.indices = new int[12 * vertices.length]; // 2 tris * 3 lines * 2 verts * width * height
+		indices = new int[6 * vertices.length]; // 2 tris * 3  verts * width * height
 
 		int n = 0;
 		for (int s = 0; s < sides.length; s++) { 
@@ -92,34 +93,23 @@ public class Cube extends Mesh {
 					
 					indices[n++] = k;
 					indices[n++] = k + nSegments + 1;
-
-					indices[n++] = k + nSegments + 1;
 					indices[n++] = k + 1;
-
-					indices[n++] = k + 1;
-					indices[n++] = k;
 
 					indices[n++] = k + nSegments + 2;
 					indices[n++] = k + 1;
-
-					indices[n++] = k + 1;
 					indices[n++] = k + nSegments + 1;
-
-					indices[n++] = k + nSegments + 1;
-					indices[n++] = k + nSegments + 2;
 				}
 			}
 		}
 
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 
-		this.colour = new Vector3f(1f, 1f, 1f); // default is white
 	}
 	
-	public void draw() {
+	@Override
+	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
 
 		// connect the vertex buffer to the a_position attribute
@@ -129,7 +119,8 @@ public class Cube extends Mesh {
 		shader.setUniform("u_colour", colour);
 
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.glDrawElements(GL.GL_LINES, indices.length, GL.GL_UNSIGNED_INT, 0);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_LINE);
+		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
 	}
 
 }
