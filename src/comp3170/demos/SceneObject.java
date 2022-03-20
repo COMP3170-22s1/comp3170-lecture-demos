@@ -92,9 +92,9 @@ public class SceneObject {
 	 * Draw this object. Override this in subclasses to draw specific objects.
 	 * 
 	 * @param shader	The shader to use.
-	 * @param worldMatrix	The world matrix to use.
+	 * @param modelMatrix	The model matrix to use.
 	 */
-	protected void drawSelf(Shader shader, Matrix4f worldMatrix) {
+	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
 		// do nothing
 	}
 
