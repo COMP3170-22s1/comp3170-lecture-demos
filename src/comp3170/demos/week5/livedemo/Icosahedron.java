@@ -29,6 +29,10 @@ public class Icosahedron extends SceneObject {
 		createIndexBuffer();
 	}
 
+	/**
+	 * Reference: https://en.wikipedia.org/wiki/Regular_icosahedron
+	 */
+	
 	private void createVertexBuffer() {
 		vertices = new Vector4f[12];
 		
@@ -46,11 +50,11 @@ public class Icosahedron extends SceneObject {
 			rotate.rotationY(angleY);		// M = Ry(angleY)
 						
 			if (i % 2 == 1) {
-				// odd
+				// odd points rotate up
 				rotate.rotateZ(angleZ);		// M = M * Rz(angleZ)
 			}
 			else {
-				// even
+				// even points rotate down
 				rotate.rotateZ(-angleZ);	// M = M * Rz(-angleZ)
 			}
 			
@@ -115,14 +119,16 @@ public class Icosahedron extends SceneObject {
 		
 		Matrix4f matrix = getMatrix();
 		
+		// Apply rotations on the left, to rotate around world axes instead of model axes
+		
 		if (input.isKeyDown(KeyEvent.VK_W)) {
 			matrix.rotateLocalX(ROTATION_SPEED * dt);	// M = Rx(angle) * M 
 		}
 		if (input.isKeyDown(KeyEvent.VK_S)) {
 			matrix.rotateLocalX(-ROTATION_SPEED * dt);
 		}
-		if (input.isKeyDown(KeyEvent.VK_A)) {			// M = Ry(angle) * M
-			matrix.rotateLocalY(ROTATION_SPEED * dt);
+		if (input.isKeyDown(KeyEvent.VK_A)) {
+			matrix.rotateLocalY(ROTATION_SPEED * dt);	// M = Ry(angle) * M
 		}
 		if (input.isKeyDown(KeyEvent.VK_D)) {
 			matrix.rotateLocalY(-ROTATION_SPEED * dt);
