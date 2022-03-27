@@ -1,8 +1,10 @@
 package comp3170.demos.week5.livedemo;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -20,12 +22,16 @@ public class Icosahedron extends SceneObject {
 	
 	private Vector4f[] vertices;
 	private int vertexBuffer;
+	private Vector3f[] colours;
+	private int colourBuffer;
 	private int[] indices;
 	private int indexBuffer;
 
 
+
 	public Icosahedron() {
 		createVertexBuffer();
+		createColourBuffer();
 		createIndexBuffer();
 	}
 
@@ -62,6 +68,34 @@ public class Icosahedron extends SceneObject {
 		}
 
 		vertexBuffer = GLBuffers.createBuffer(vertices);
+	}
+	
+	private void createColourBuffer() {
+		colours = new Vector3f[12];
+
+		// poles are white
+		
+		colours[0] = new Vector3f(1,1,1);
+		colours[11] = new Vector3f(1,1,1);
+				
+		float h = 0;
+		float s = 1;
+		float b = 1;
+		
+		float[] rgb = new float[3];
+		
+		// vary the hue from 0 to 1 around the icosahedron
+		
+		for (int i = 1; i < 11; i++) {
+			h = (i-1)/10f;
+			
+			Color c = Color.getHSBColor(h,s,b);
+			c.getRGBColorComponents(rgb);
+			colours[i] = new Vector3f(rgb[0], rgb[1], rgb[2]);
+		}
+		
+		
+		colourBuffer = GLBuffers.createBuffer(colours);
 	}
 	
 	private void createIndexBuffer() {
@@ -104,11 +138,12 @@ public class Icosahedron extends SceneObject {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		shader.setAttribute("a_position", vertexBuffer);
+		shader.setAttribute("a_colour", colourBuffer);
 		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_colour", colour);
+//		shader.setUniform("u_colour", colour);
 		
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_FILL);
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_LINE);
 		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);
 
 	}

@@ -48,7 +48,7 @@ public class LiveDemo extends JFrame implements GLEventListener {
 
 
 	public LiveDemo() {
-		super("Week 5 mesh demo");
+		super("Week 5 live demo");
 
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
