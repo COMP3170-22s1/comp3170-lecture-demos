@@ -18,13 +18,11 @@ public abstract class Camera {
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 
 	private Matrix4f modelMatrix;
-	protected InputManager input;
 
 	private float distance;
 	private Vector3f angle;
 	
-	public Camera(float distance, InputManager input) {
-		this.input = input;
+	public Camera(float distance) {
 		this.distance = distance;
 		this.modelMatrix = new Matrix4f();
 		this.angle = new Vector3f(0,0,0);
@@ -43,7 +41,10 @@ public abstract class Camera {
 	final static float ROTATION_SPEED = TAU / 4;
 	final static float MOVEMENT_SPEED = 1;
 
-	public void update(float deltaTime) {
+	public void update(InputManager input, float deltaTime) {
+		
+		// key controls to orbit camera around the origin
+		
 		if (input.isKeyDown(KeyEvent.VK_UP)) {
 			angle.x -= ROTATION_SPEED * deltaTime;
 		}

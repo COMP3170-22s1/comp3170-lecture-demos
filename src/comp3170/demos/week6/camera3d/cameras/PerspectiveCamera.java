@@ -13,8 +13,8 @@ public class PerspectiveCamera extends Camera {
 	private float fovy;
 	private float aspect;
 
-	public PerspectiveCamera(float distance, InputManager input, float fovy, float aspect, float near, float far) {
-		super(distance, input);
+	public PerspectiveCamera(float distance, float fovy, float aspect, float near, float far) {
+		super(distance);
 		
 		this.fovy = fovy;
 		this.aspect = aspect;
@@ -31,7 +31,8 @@ public class PerspectiveCamera extends Camera {
 	private float FOV_CHANGE = TAU / 6;
 	
 	@Override
-	public void update(float deltaTime) {
+	public void update(InputManager input, float deltaTime) {
+		super.update(input, deltaTime);	
 		
 		if (input.isKeyDown(KeyEvent.VK_Q)) {
 			fovy += FOV_CHANGE * deltaTime;
@@ -41,9 +42,7 @@ public class PerspectiveCamera extends Camera {
 		}
 		if (input.isKeyDown(KeyEvent.VK_Z)) {
 			fovy -= FOV_CHANGE * deltaTime;
-		}
-		
-		super.update(deltaTime);	
+		}		
 	}
 
 }

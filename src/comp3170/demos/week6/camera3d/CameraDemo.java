@@ -95,6 +95,14 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		});
 	}
 
+	private static final float CAMERA_DISTANCE = 2f;
+	private static final float CAMERA_NEAR = 0.1f;
+	private static final float CAMERA_FAR = 10f;
+	private static final float CAMERA_WIDTH = 4;
+	private static final float CAMERA_HEIGHT = 4;
+	private static final float CAMERA_FOVY = TAU/6;
+	private static final float CAMERA_ASPECT = 1;
+	
 	@Override
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
@@ -124,8 +132,8 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		cubes[1].getMatrix().translate(-0.5f, 0.05f, 0.3f).scale(0.05f);
 		cubes[2].getMatrix().translate(0.1f, 0.05f, 0.1f).scale(0.05f);
 
-		OrthographicCamera orthoCamera = new OrthographicCamera(2, input, 4,4,0.1f,10f);		
-		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);
+		OrthographicCamera orthoCamera = new OrthographicCamera(CAMERA_DISTANCE, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);		
+		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(CAMERA_DISTANCE, CAMERA_FOVY, CAMERA_ASPECT, CAMERA_NEAR, CAMERA_FAR);
 		
 		cameras = new Camera[] {
 			orthoCamera,
@@ -165,7 +173,7 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		}
 
 		for (int i = 0; i < cameras.length; i++) {
-			cameras[i].update(deltaTime);
+			cameras[i].update(input, deltaTime);
 		}
 		
 		input.clear();

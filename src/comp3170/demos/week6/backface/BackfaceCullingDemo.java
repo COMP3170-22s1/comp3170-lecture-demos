@@ -122,7 +122,7 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		triangle = new Triangle(Color.YELLOW);
 		triangle.setParent(root);
 		
-		camera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);		
+		camera = new PerspectiveCamera(2, TAU/6, 1, 0.1f, 10f);		
 		viewMatrix = new Matrix4f();
 		projectionMatrix = new Matrix4f();
 	}
@@ -173,7 +173,7 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 			gl.glCullFace(GL.GL_BACK);
 		}
 
-		camera.update(deltaTime);
+		camera.update(input, deltaTime);
 		
 		input.clear();
 	}
