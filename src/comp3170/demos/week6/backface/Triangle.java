@@ -1,5 +1,8 @@
 package comp3170.demos.week6.backface;
 
+import java.awt.Color;
+
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -8,15 +11,18 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
-import comp3170.demos.week6.camera3d.sceneobjects.SceneObject;
+import comp3170.demos.SceneObject;
 
 public class Triangle extends SceneObject {
 
 	private Vector4f[] vertices;
 	private int vertexBuffer;
+	private float[] colour = {1f, 1f, 1f};
+	
+	public Triangle(Color colour) {
 
-	public Triangle(Shader shader) {
-		super(shader);
+		// convert colour to RGB array of floats
+		colour.getRGBColorComponents(this.colour);
 
 		//         0
 		//       /   \
@@ -33,19 +39,15 @@ public class Triangle extends SceneObject {
 			new Vector4f( 1, 0, 0, 1),
 		};
 			
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 	}
 
-	public void draw() {
+	@Override
+	public void drawSelf(Shader shader, Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
-
-		// connect the vertex buffer to the a_position attribute
 		shader.setAttribute("a_position", vertexBuffer);
-
-		// write the colour value into the u_colour uniform
 		shader.setUniform("u_colour", colour);
 
 		// Draw a solid triangle

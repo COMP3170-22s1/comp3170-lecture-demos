@@ -26,11 +26,10 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week6.camera3d.cameras.Camera;
-import comp3170.demos.week6.camera3d.cameras.OrthographicCamera;
 import comp3170.demos.week6.camera3d.cameras.PerspectiveCamera;
 import comp3170.demos.week6.camera3d.sceneobjects.Axes;
-import comp3170.demos.week6.camera3d.sceneobjects.Cube;
 import comp3170.demos.week6.camera3d.sceneobjects.Grid;
 
 public class BackfaceCullingDemo extends JFrame implements GLEventListener {
@@ -62,6 +61,8 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 	private boolean isCulling = false;
 	private int cullFace = GL.GL_BACK;
 
+	private SceneObject root;
+
 
 	public BackfaceCullingDemo() {
 		super("Week 6 3D camera demo");
@@ -69,25 +70,25 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
 
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();		
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();		
 
 		// input
 		
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -98,9 +99,6 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		// set the background colour to black
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		
 		if (isCulling) {
 			gl.glEnable(GL.GL_CULL_FACE);
 		}
@@ -110,11 +108,31 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		
 		gl.glCullFace(cullFace);
 		
+
+		shader = compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
+		
+		// Set up the scene
+		root = new SceneObject();
+		grid = new Grid(11);
+		grid.setParent(root);
+		
+		axes = new Axes();
+		axes.setParent(root);
+		
+		triangle = new Triangle(Color.YELLOW);
+		triangle.setParent(root);
+		
+		camera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);		
+		viewMatrix = new Matrix4f();
+		projectionMatrix = new Matrix4f();
+	}
+
+	private Shader compileShader(String vertex, String fragement) {
 		// Compile the shader
 		try {
-			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
-			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
+			File vertexShader = new File(DIRECTORY, vertex);
+			File fragementShader = new File(DIRECTORY, fragement);
+			return new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -122,20 +140,8 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		return null;
 
-		// Set up the scene
-		this.grid = new Grid(shader,11);
-		grid.setAngle(0, 0, 0);
-		grid.setPosition(0,0,0);
-		
-		this.axes = new Axes(shader);
-		
-		this.triangle = new Triangle(shader);
-		triangle.setColour(Color.YELLOW);
-		
-		camera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);		
-		this.viewMatrix = new Matrix4f();
-		this.projectionMatrix = new Matrix4f();
 	}
 
 	
@@ -179,18 +185,19 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		update();
 		
         // clear the colour buffer
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);		
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 		
 		camera.getViewMatrix(viewMatrix);
 		camera.getProjectionMatrix(projectionMatrix);
 		
+		// set the same view and projection matrices for all scene objects
+		shader.enable();
 		shader.setUniform("u_viewMatrix", viewMatrix);
 		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
 		// draw the scene
-		this.grid.draw();
-		this.triangle.draw();
-		this.axes.draw();
+		root.draw(shader);
 		
 	}
 

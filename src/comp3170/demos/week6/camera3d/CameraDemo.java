@@ -25,6 +25,7 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week6.camera3d.cameras.Camera;
 import comp3170.demos.week6.camera3d.cameras.OrthographicCamera;
 import comp3170.demos.week6.camera3d.cameras.PerspectiveCamera;
@@ -61,31 +62,33 @@ public class CameraDemo extends JFrame implements GLEventListener {
 
 	private Axes axes;
 
+	private SceneObject root;
+
 	public CameraDemo() {
 		super("Week 6 3D camera demo");
 
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
 
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();		
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();		
 
 		// input
 		
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -95,15 +98,51 @@ public class CameraDemo extends JFrame implements GLEventListener {
 	@Override
 	public void init(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
+				
+		shader = compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
+
+		root = new SceneObject();
 		
-		// set the background colour to black
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		// Set up the scene
+		grid = new Grid(11);
+		grid.setParent(root);
 		
+		axes = new Axes();
+		axes.setParent(root);
+		
+		cubes = new Cube[] {
+			new Cube(Color.RED),
+			new Cube(new Color(0.4f, 0.4f, 1.0f)),
+			new Cube(Color.GREEN),
+		};
+		
+		for (int i = 0; i < cubes.length; i++) {
+			cubes[i].setParent(grid);
+		}
+		
+		cubes[0].getMatrix().translate(0.7f, 0.05f, -0.3f).scale(0.05f);
+		cubes[1].getMatrix().translate(-0.5f, 0.05f, 0.3f).scale(0.05f);
+		cubes[2].getMatrix().translate(0.1f, 0.05f, 0.1f).scale(0.05f);
+
+		OrthographicCamera orthoCamera = new OrthographicCamera(2, input, 4,4,0.1f,10f);		
+		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);
+		
+		cameras = new Camera[] {
+			orthoCamera,
+			perspectiveCamera,
+		};
+		currentCamera = 0;
+		
+		viewMatrix = new Matrix4f();
+		projectionMatrix = new Matrix4f();
+	}
+
+	private Shader compileShader(String vertex, String fragment) {
 		// Compile the shader
 		try {
-			File vertexShader = new File(DIRECTORY, VERTEX_SHADER);
-			File fragementShader = new File(DIRECTORY, FRAGMENT_SHADER);
-			this.shader = new Shader(vertexShader, fragementShader);
+			File vertexShader = new File(DIRECTORY, vertex);
+			File fragementShader = new File(DIRECTORY, fragment);
+			return new Shader(vertexShader, fragementShader);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -111,43 +150,8 @@ public class CameraDemo extends JFrame implements GLEventListener {
 			e.printStackTrace();
 			System.exit(1);
 		}
+		return null;
 
-		// Set up the scene
-		this.grid = new Grid(shader,11);
-		grid.setAngle(0, 0, 0);
-		grid.setPosition(0,0,0);
-		
-		this.axes = new Axes(shader);
-		
-		this.cubes = new Cube[] {
-			new Cube(shader),
-			new Cube(shader),
-			new Cube(shader),
-		};
-		
-		cubes[0].setPosition(0.7f, 0.05f, -0.3f);
-		cubes[0].setScale(0.05f);
-		cubes[0].setColour(Color.RED);
-
-		cubes[1].setPosition(-0.5f, 0.05f, 0.3f);
-		cubes[1].setScale(0.05f);
-		cubes[1].setColour(new Color(0.4f, 0.4f, 1.0f));
-
-		cubes[2].setPosition(0.1f, 0.05f, 0.1f);
-		cubes[2].setScale(0.05f);
-		cubes[2].setColour(Color.GREEN);
-
-		OrthographicCamera orthoCamera = new OrthographicCamera(2, input, 4,4,0.1f,10f);		
-		PerspectiveCamera perspectiveCamera = new PerspectiveCamera(2, input, TAU/6, 1, 0.1f, 10f);
-		
-		this.cameras = new Camera[] {
-			orthoCamera,
-			perspectiveCamera,
-		};
-		this.currentCamera = 0;
-		
-		this.viewMatrix = new Matrix4f();
-		this.projectionMatrix = new Matrix4f();
 	}
 
 	
@@ -174,21 +178,20 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		update();
 		
         // clear the colour buffer
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 		
 		cameras[currentCamera].getViewMatrix(viewMatrix);
 		cameras[currentCamera].getProjectionMatrix(projectionMatrix);
 		
+		// set the same view and projection matrices for all scene objects
+
+		shader.enable();
 		shader.setUniform("u_viewMatrix", viewMatrix);
 		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
 		// draw the scene
-		this.grid.draw();
-		this.axes.draw();
-		for (int i = 0; i < cubes.length; i++) {
-			cubes[i].draw();
-		}
-		
+		root.draw(shader);		
 	}
 
 	@Override

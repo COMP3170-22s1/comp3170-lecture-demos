@@ -1,5 +1,6 @@
 package comp3170.demos.week6.camera3d.sceneobjects;
 
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -8,6 +9,7 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
+import comp3170.demos.SceneObject;
 
 public class Axes extends SceneObject {
 	
@@ -17,36 +19,28 @@ public class Axes extends SceneObject {
 	private int indexBufferY;
 	private int indexBufferZ;
 
-	public Axes(Shader shader) {
-		super(shader);
-		
+	public Axes() {
 		// A set of i,j,k axes		
 		
-		this.vertices = new Vector4f[] {
+		vertices = new Vector4f[] {
 			new Vector4f(0,0,0,1),
 			new Vector4f(1,0,0,1),
 			new Vector4f(0,1,0,1),
 			new Vector4f(0,0,1,1),				
 		};
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 
-		this.indexBufferX = GLBuffers.createIndexBuffer(new int[] {0,1});		
-		this.indexBufferY = GLBuffers.createIndexBuffer(new int[] {0,2});		
-		this.indexBufferZ = GLBuffers.createIndexBuffer(new int[] {0,3});		
+		indexBufferX = GLBuffers.createIndexBuffer(new int[] {0,1});		
+		indexBufferY = GLBuffers.createIndexBuffer(new int[] {0,2});		
+		indexBufferZ = GLBuffers.createIndexBuffer(new int[] {0,3});		
 	}
 	
 
 	@Override
-	public void draw() {
+	public void drawSelf(Shader shader, Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		// activate the shader
-		shader.enable();		
-
-		calcModelMatrix();
 		shader.setUniform("u_modelMatrix", modelMatrix);
-
-		// connect the vertex buffer to the a_position attribute
 		shader.setAttribute("a_position", vertexBuffer);
 
 		// X axis in red
