@@ -3,12 +3,15 @@ package comp3170.demos.week5.livedemo;
 
 import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
 
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+
+import org.joml.Matrix4f;
 
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -107,13 +110,55 @@ public class LiveDemo extends JFrame implements GLEventListener {
 
 	}
 
+	private float cameraAngle = 0;
+	private float cameraDistance = 5;
+	
+	// perspective camera
+	private float cameraFOVY = TAU/6;	
+	private float cameraAspect = 1;
+	
+	private static final float CAMERA_ROTATION = TAU/6;
+	private static final float CAMERA_MOVEMENT = 2;
+	private static final float CAMERA_D_FOVY = TAU/6;
+
+	
 	private void update() {
 		long time = System.currentTimeMillis();
 		float dt = (time - oldTime) / 1000f;
 		oldTime = time;
 
+		if (input.isKeyDown(KeyEvent.VK_LEFT)) {
+			cameraAngle -= CAMERA_ROTATION * dt;
+		}
+		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
+			cameraAngle += CAMERA_ROTATION * dt;
+		}
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
+			cameraDistance -= CAMERA_MOVEMENT * dt;
+		}
+		if (input.isKeyDown(KeyEvent.VK_DOWN)) {
+			cameraDistance += CAMERA_MOVEMENT * dt;
+		}
+		if (input.isKeyDown(KeyEvent.VK_Z)) {
+			cameraFOVY += CAMERA_D_FOVY* dt;
+		}
+		if (input.isKeyDown(KeyEvent.VK_X)) {
+			cameraFOVY -= CAMERA_D_FOVY* dt;
+		}
+		
+		
 		icosahedron.update(dt, input);
 	}
+
+	// pre-allocate matrices
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+
+	private static final float CAMERA_NEAR = 1;
+	private static final float CAMERA_FAR = 10;
+	// orthographic camera
+	private static final float CAMERA_WIDTH = 5;
+	private static final float CAMERA_HEIGHT = 5;
 	
 	@Override
 	public void display(GLAutoDrawable arg0) {
@@ -124,9 +169,25 @@ public class LiveDemo extends JFrame implements GLEventListener {
 		// set the background colour to black
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
+		
+		// the view matrix is the inverse of the camera model matrix
+		viewMatrix.identity();
+		viewMatrix.translate(0,0,cameraDistance);
+		viewMatrix.rotateZ(cameraAngle);
+		viewMatrix.invert();
+		
+//		projectionMatrix.setOrtho(
+//				-CAMERA_WIDTH / 2, CAMERA_WIDTH / 2, 
+//				-CAMERA_HEIGHT / 2, CAMERA_HEIGHT / 2, 
+//				CAMERA_NEAR, CAMERA_FAR);
 
+		projectionMatrix.setPerspective(cameraFOVY, cameraAspect, CAMERA_NEAR, CAMERA_FAR);
+		
+		
 		// activate the shader
-		shader.enable();		
+		shader.enable();
+		shader.setUniform("u_viewMatrix", viewMatrix);
+		shader.setUniform("u_projectionMatrix", projectionMatrix);
 		
 		// draw the scene
 		root.draw(shader);
@@ -137,6 +198,10 @@ public class LiveDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable d, int x, int y, int width, int height) {
 		this.width = width;
 		this.height = height;		
+		
+		// set the camera aspect equal to the window aspect
+		// note: make sure this is a float division, not an integer division
+		cameraAspect = (float)width / height;
 	}
 
 	@Override
