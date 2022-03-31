@@ -24,7 +24,7 @@ import comp3170.GLException;
 import comp3170.Shader;
 import comp3170.demos.week7.shaders.ShaderLibrary;
 
-public class AntialiasingDeno extends JFrame implements GLEventListener {
+public class AntialiasingDemo extends JFrame implements GLEventListener {
 
 	private GLCanvas canvas;
 	private Shader shader;
@@ -39,7 +39,7 @@ public class AntialiasingDeno extends JFrame implements GLEventListener {
 	private int height = 800;
 
 
-	public AntialiasingDeno() {
+	public AntialiasingDemo() {
 		super("Antialiasing example");
 		
 		// create an OpenGL canvas and add this as a listener
@@ -139,7 +139,7 @@ public class AntialiasingDeno extends JFrame implements GLEventListener {
 
 
 	public static void main(String[] args) throws IOException, GLException {
-		new AntialiasingDeno();
+		new AntialiasingDemo();
 	}
 
 
