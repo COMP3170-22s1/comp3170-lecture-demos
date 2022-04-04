@@ -9,9 +9,11 @@ const float TAU = 2. * 355. / 113;
 void main() {
 	vec2 p = gl_FragCoord.xy / u_screenSize;  // convert to range (0,0) - (1,1)
 
+	// divide the screen into 100 x 100 cells
+
 	p = fract(p * 100.) * 2 - 1;
 
-	// draw a circle
+	// draw a circle in each cell
 	
 	vec3 colour = vec3(0,0,0);
 
