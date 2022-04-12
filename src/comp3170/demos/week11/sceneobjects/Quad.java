@@ -18,7 +18,7 @@ public class Quad extends SceneObject {
 
 	static final private String VERTEX_SHADER = "textureVertex.glsl";
 	static final private String FRAGMENT_SHADER = "textureFragment.glsl";
-	static final private String TEXTURE = "brick-diffuse.png";
+	static final private String TEXTURE = "colours.png";
 	
 	private Vector4f[] vertices;
 	private int vertexBuffer;
@@ -31,25 +31,33 @@ public class Quad extends SceneObject {
 	public Quad() {
 		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
 
+		//  1---3
+		//  |   |   y
+		//  | * |   |
+		//  |   |   +--x
+		//  0---2
+		
 		this.vertices = new Vector4f[] {
-			new Vector4f( 1,  1, 0, 1),
+			new Vector4f(-1, -1, 0, 1),
 			new Vector4f(-1,  1, 0, 1),
 			new Vector4f( 1, -1, 0, 1),
-			new Vector4f(-1, -1, 0, 1),
+			new Vector4f( 1,  1, 0, 1),
 		};
 		
 		this.vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		this.uvs = new Vector2f[] {
-			new Vector2f(0, 0),
-			new Vector2f(1, 0),
 			new Vector2f(0, 1),
-			new Vector2f(1, 1),
+			new Vector2f(0, 0),
+			new Vector2f(2, 1),
+			new Vector2f(1, 0),
 		};
 			
 		this.uvBuffer = GLBuffers.createBuffer(uvs);
 		
 		this.indices = new int[] {
+//			0, 1, 3,
+//			3, 2, 0,
 			0, 1, 2,
 			3, 2, 1,
 		};
