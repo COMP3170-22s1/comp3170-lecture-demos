@@ -109,9 +109,8 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 	private static final float CAMERA_FOVY = TAU / 8;
 	private static final float CAMERA_NEAR = 0.1f;
 	private static final float CAMERA_FAR = 100.0f;	
-	
+
 	private static final float ROTATE_SPEED = TAU / 20;
-	private Vector3f angle = new Vector3f();
 	
 	public void update() {
 		long time = System.currentTimeMillis();
@@ -156,7 +155,6 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
-		// draw
 		// pre-multiply projetion and view matrices
 		camera.getViewMatrix(viewMatrix);
 		camera.getProjectionMatrix(projectionMatrix);		

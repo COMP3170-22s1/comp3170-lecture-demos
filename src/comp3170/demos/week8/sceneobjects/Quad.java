@@ -2,6 +2,7 @@ package comp3170.demos.week8.sceneobjects;
 
 import java.awt.event.KeyEvent;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
@@ -11,13 +12,16 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.InputManager;
-import comp3170.demos.week8.cameras.Camera;
+import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week8.shaders.ShaderLibrary;
 
 public class Quad extends SceneObject {
 
 	static final private String VERTEX_SHADER = "distortVertex.glsl";
 	static final private String FRAGMENT_SHADER = "distortFragment.glsl";
+	
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private Vector3f[] colours;
@@ -26,31 +30,31 @@ public class Quad extends SceneObject {
 	private int indexBuffer;
 
 	public Quad() {
-		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
+		shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 
-		this.vertices = new Vector4f[] {
+		vertices = new Vector4f[] {
 			new Vector4f(-1,  1, 0, 1),
 			new Vector4f( 1,  1, 0, 1),
 			new Vector4f(-1, -1, 0, 1),
 			new Vector4f( 1, -1, 0, 1),
 		};
 		
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 
-		this.colours = new Vector3f[] {
+		colours = new Vector3f[] {
 			new Vector3f(0, 1, 0),	// GREEN
 			new Vector3f(1, 0, 0),	// RED
 			new Vector3f(1, 0, 0),	// BLUE
 			new Vector3f(0, 1, 0),	// BLUE
 		};
 			
-		this.colourBuffer = GLBuffers.createBuffer(colours);
+		colourBuffer = GLBuffers.createBuffer(colours);
 		
-		this.indices = new int[] {
+		indices = new int[] {
 			0, 1, 2,
 			3, 2, 1,
 		};
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 	private boolean maximise = false;
@@ -71,22 +75,17 @@ public class Quad extends SceneObject {
 	}
 	
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		shader.enable();
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
+		shader.setAttribute("a_position", vertexBuffer);		
+		shader.setAttribute("a_colour", colourBuffer);		
 
-		calcModelMatrix();
-		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
-		
 		shader.setUniform("u_distort" , distort);
 		shader.setUniform("u_maximise" , maximise);
 		
-		shader.setAttribute("a_position", this.vertexBuffer);		
-		shader.setAttribute("a_colour", this.colourBuffer);		
-
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		
 	}

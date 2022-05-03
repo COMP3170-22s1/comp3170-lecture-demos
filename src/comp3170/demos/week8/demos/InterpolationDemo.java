@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import com.jogamp.opengl.GL;
@@ -22,6 +23,7 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week8.cameras.OrthographicCamera;
 import comp3170.demos.week8.sceneobjects.Quad;
 
@@ -41,30 +43,32 @@ public class InterpolationDemo extends JFrame implements GLEventListener {
 
 	private OrthographicCamera camera;
 	private Quad quad;
+
+	private SceneObject root;
 	
 	public InterpolationDemo() {
 		super("Interpolation demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenWidth, screenHeight);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth, screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -83,10 +87,12 @@ public class InterpolationDemo extends JFrame implements GLEventListener {
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);	
 
-		this.quad = new Quad();
+		root = new SceneObject();
+		quad = new Quad();
+		quad.setParent(root);
 				
 		// camera 
-		this.camera = new OrthographicCamera(input, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
+		camera = new OrthographicCamera(input, CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 	}
 
@@ -106,7 +112,11 @@ public class InterpolationDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 	
+
 	@Override
 	/**
 	 * Called when the canvas is redrawn
@@ -125,8 +135,12 @@ public class InterpolationDemo extends JFrame implements GLEventListener {
 		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
-		// draw
-		this.quad.draw(camera);
+		// pre-multiply projetion and view matrices
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
+			
+		root.draw(mvpMatrix);
 	}
 
 	@Override
@@ -136,9 +150,8 @@ public class InterpolationDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenWidth = width;
-		this.screenHeight = height;
-		
+		screenWidth = width;
+		screenHeight = height;		
 	}
 
 	@Override
