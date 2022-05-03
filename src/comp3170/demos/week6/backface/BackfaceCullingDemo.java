@@ -187,10 +187,9 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);		
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 		
-		camera.getViewMatrix(viewMatrix);
-		camera.getProjectionMatrix(projectionMatrix);
-		
 		// pre-multiply projetion and view matrices
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
 		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
 		
 		// draw the scene
