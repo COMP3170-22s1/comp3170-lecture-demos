@@ -101,9 +101,9 @@ public class MeshDemo extends JFrame implements GLEventListener {
 
 		// Set up the scene
 		meshes = new SceneObject[] {
-			new SimpleCube(),
-			new UVSphere(17),
-			new Cube(10),
+			new SimpleCube(shader),
+			new UVSphere(shader,17),
+			new Cube(shader,10),
 		};
 		currentSphere = 0;
 		
@@ -153,7 +153,7 @@ public class MeshDemo extends JFrame implements GLEventListener {
 		shader.setUniform("u_sphericity", sphericity);
 		
 		// draw the mesh
-		meshes[currentSphere].draw(shader);
+		meshes[currentSphere].draw();
 	}
 
 	@Override

@@ -126,7 +126,7 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
 		
 		Vector3f up = new Vector3f(0,0,1);
 		
-		mesh = new Extrusion(crossSection, curve, up);		
+		mesh = new Extrusion(shader, crossSection, curve, up);		
 	}
 
 	private final float ROTATION_SPEED = TAU / 8;
@@ -158,11 +158,8 @@ public class ExtrusionDemo extends JFrame implements GLEventListener {
         // clear the colour buffer
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
-		// activate the shader
-		shader.enable();		
-		
 		// draw the curve
-		mesh.draw(shader);
+		mesh.draw();
 	}
 
 	@Override

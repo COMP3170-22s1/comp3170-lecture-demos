@@ -5,8 +5,6 @@ import java.util.List;
 
 import org.joml.Matrix4f;
 
-import comp3170.Shader;
-
 /**
  * A simple implementation of a scene graph.
  * 
@@ -38,7 +36,7 @@ import comp3170.Shader;
  * 
  * 7) Use the draw() method to draw the entire scene graph with a given shader. 
  * 
- * root.draw(shader); // recursively draws the ship and the pirate 
+ * root.draw(); // recursively draws the ship and the pirate 
  * 
  * @author malcolmryan
  *
@@ -59,6 +57,15 @@ public class SceneObject {
 		// Initialise the scenegraph connections to parent and children
 		parent = null;
 		children = new ArrayList<SceneObject>();
+	}
+	
+	/**
+	 * Get the parent object in the scene graph 
+	 * @return the parent object
+	 */
+	
+	public SceneObject getParent() {
+		return parent;
 	}
 	
 	/**
@@ -89,22 +96,37 @@ public class SceneObject {
 	}	
 
 	/**
+	 * Get the model->world matrix
+	 * @param dest	 a matrix to write the result into
+	 */
+	public Matrix4f getModelToWorldMatrix(Matrix4f dest) {
+		dest.identity();
+		SceneObject o = this;
+		
+		// ascend the scene graph multiplying matrices on the left
+		while (o.parent != null) {
+			dest.mulLocal(modelToParentMatrix);
+			o = o.parent;
+		}		
+		
+		return dest;
+	}
+	
+	/**
 	 * Draw this object. Override this in subclasses to draw specific objects.
 	 * 
-	 * @param shader	The shader to use.
-	 * @param modelMatrix	The model matrix to use.
+	 * @param matrix	The matrix to use.
 	 */
-	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	protected void drawSelf(Matrix4f matrix) {
 		// do nothing
 	}
 
 	/**
 	 * Draw this object and all its children in the subgraph.
 	 * 
-	 * @param shader	The shader to use.
 	 */
-	public void draw(Shader shader) {
-		draw(shader, IDENTITY);
+	public void draw() {
+		draw(IDENTITY);
 	}
 
 	// Allocate a matrix for use in draw() to calculate the model->world Matrix.
@@ -117,17 +139,17 @@ public class SceneObject {
 	 * @param shader	The shader to use.
 	 * @param parentMatrix	The model->world matrix for the parent. Set to the identity matrix when drawing the root.
 	 */
-	private void draw(Shader shader, Matrix4f parentMatrix) {
+	public void draw(Matrix4f parentMatrix) {
 		// W = P * M
 		tempModelMatrix.set(parentMatrix);			// W = P
 		tempModelMatrix.mul(modelToParentMatrix);	// W = W * M
 		
 		// draw the object using the shader and calculated model matrix
-		drawSelf(shader, tempModelMatrix);
+		drawSelf(tempModelMatrix);
 	
 		// recursively draw the children
 		for (SceneObject child : children) {
-			child.draw(shader, tempModelMatrix);
+			child.draw(tempModelMatrix);
 		}
 		
 	}

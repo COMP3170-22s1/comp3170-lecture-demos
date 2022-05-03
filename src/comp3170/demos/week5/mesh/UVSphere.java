@@ -12,6 +12,7 @@ import comp3170.Shader;
 import comp3170.demos.SceneObject;
 
 public class UVSphere extends SceneObject {
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
@@ -20,7 +21,8 @@ public class UVSphere extends SceneObject {
 
 	private final float TAU = (float) (Math.PI * 2);
 	
-	public UVSphere(int nSegments) {
+	public UVSphere(Shader shader, int nSegments) {
+		this.shader = shader;
 		//
 		// Create a (2n+1) * (n+1) grid of points in polar space
 		//
@@ -79,15 +81,12 @@ public class UVSphere extends SceneObject {
 	}
 	
 	@Override
-	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	protected void drawSelf(Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		shader.enable();
 		shader.setUniform("u_modelMatrix", modelMatrix);
-		
-        // connect the vertex buffer to the a_position attribute		   
 	    shader.setAttribute("a_position", vertexBuffer);
-
-	    // write the colour value into the u_colour uniform 
 	    shader.setUniform("u_colour", colour);	    
 	    
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

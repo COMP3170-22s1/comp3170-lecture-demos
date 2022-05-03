@@ -15,13 +15,17 @@ import comp3170.demos.SceneObject;
 public class Cube extends SceneObject {
 	private static final float TAU = (float) (Math.PI * 2);
 
+	private Shader shader;
+	
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
 	private int indexBuffer;
 	private float[] colour = {1.0f, 1.0f, 1.0f};
-	
-	public Cube(int nSegments) {
+
+	public Cube(Shader shader, int nSegments) {
+		
+		this.shader = shader;
 
 		//
 		// Create a cube with each face divided into an n x n grid
@@ -107,15 +111,12 @@ public class Cube extends SceneObject {
 	}
 	
 	@Override
-	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	protected void drawSelf(Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		shader.enable();
 		shader.setUniform("u_modelMatrix", modelMatrix);
-
-		// connect the vertex buffer to the a_position attribute
 		shader.setAttribute("a_position", vertexBuffer);
-
-		// write the colour value into the u_colour uniform
 		shader.setUniform("u_colour", colour);
 
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

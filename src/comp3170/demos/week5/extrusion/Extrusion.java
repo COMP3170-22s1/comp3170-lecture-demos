@@ -18,6 +18,7 @@ import comp3170.demos.SceneObject;
 
 public class Extrusion extends SceneObject {
 
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 
@@ -26,7 +27,8 @@ public class Extrusion extends SceneObject {
 	
 	private float[] colour = {1f, 1f, 1f};
 	
-	public Extrusion(Vector2f[] crossSection, Vector3f[] curve, Vector3f up) {
+	public Extrusion(Shader shader, Vector2f[] crossSection, Vector3f[] curve, Vector3f up) {
+		this.shader = shader;
 		createVertexBuffer(crossSection, curve, up);
 		createIndexBuffer(crossSection, curve);
 	}
@@ -133,9 +135,10 @@ public class Extrusion extends SceneObject {
 	}
 
 	@Override
-	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	protected void drawSelf(Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		shader.enable();				
 		shader.setUniform("u_modelMatrix", modelMatrix);
 		
         // connect the vertex buffer to the a_position attribute		   

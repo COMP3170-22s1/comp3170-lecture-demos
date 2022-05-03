@@ -19,7 +19,10 @@ import comp3170.demos.SceneObject;
 public class Icosahedron extends SceneObject {
 
 	private static final float TAU = (float) (Math.PI * 2);
-	
+
+
+	private Shader shader;
+
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private Vector3f[] colours;
@@ -27,9 +30,8 @@ public class Icosahedron extends SceneObject {
 	private int[] indices;
 	private int indexBuffer;
 
-
-
-	public Icosahedron() {
+	public Icosahedron(Shader shader) {
+		this.shader = shader;
 		createVertexBuffer();
 		createColourBuffer();
 		createIndexBuffer();
@@ -134,12 +136,13 @@ public class Icosahedron extends SceneObject {
 	private float[] colour = new float[] {1,1,1};
 	
 	@Override
-	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	protected void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		shader.enable();
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_colour", colourBuffer);
-		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 //		shader.setUniform("u_colour", colour);
 		
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);

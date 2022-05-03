@@ -89,7 +89,7 @@ public class LiveDemo extends JFrame implements GLEventListener {
 		
 		root = new SceneObject();
 		
-		icosahedron = new Icosahedron();
+		icosahedron = new Icosahedron(shader);
 		icosahedron.setParent(root);
 	}
 	
@@ -153,6 +153,7 @@ public class LiveDemo extends JFrame implements GLEventListener {
 	// pre-allocate matrices
 	private Matrix4f viewMatrix = new Matrix4f();
 	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 
 	private static final float CAMERA_NEAR = 1;
 	private static final float CAMERA_FAR = 10;
@@ -183,15 +184,11 @@ public class LiveDemo extends JFrame implements GLEventListener {
 
 		projectionMatrix.setPerspective(cameraFOVY, cameraAspect, CAMERA_NEAR, CAMERA_FAR);
 		
-		
-		// activate the shader
-		shader.enable();
-		shader.setUniform("u_viewMatrix", viewMatrix);
-		shader.setUniform("u_projectionMatrix", projectionMatrix);
+		// pre-multiply projetion and view matrices
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
 		
 		// draw the scene
-		root.draw(shader);
-		
+		root.draw(mvpMatrix);		
 	}
 
 	@Override
