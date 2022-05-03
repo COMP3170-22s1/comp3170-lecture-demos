@@ -1,7 +1,5 @@
 package comp3170.demos.week1;
 
-import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static com.jogamp.opengl.GL.GL_TRIANGLES;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -127,7 +125,7 @@ public class Week1 extends JFrame implements GLEventListener {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
         // clear the colour buffer
-		gl.glClear(GL_COLOR_BUFFER_BIT);		
+		gl.glClear(GL4.GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
 		shader.enable();
@@ -143,7 +141,7 @@ public class Week1 extends JFrame implements GLEventListener {
         shader.setUniform("u_screenSize", screenSize);	
 	    
         // draw the shape as a series of lines in a loop
-        gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length / 2);           	
+        gl.glDrawArrays(GL4.GL_TRIANGLES, 0, vertices.length / 2);           	
         
 	}
 
