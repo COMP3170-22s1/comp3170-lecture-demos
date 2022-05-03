@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -19,13 +21,12 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
-import comp3170.demos.week9.cameras.OrthographicCamera;
+import comp3170.demos.SceneObject;
+import comp3170.demos.week9.cameras.Camera;
 import comp3170.demos.week9.sceneobjects.Axes;
-import comp3170.demos.week9.sceneobjects.CylinderWireframe;
-import comp3170.demos.week9.sceneobjects.CylinderWithLight;
+import comp3170.demos.week9.sceneobjects.Cylinder;
 import comp3170.demos.week9.sceneobjects.DirectionalLight;
 import comp3170.demos.week9.sceneobjects.Grid;
-import comp3170.demos.week9.sceneobjects.SceneObject;
 
 public class LightingDemo extends JFrame implements GLEventListener {
 
@@ -41,37 +42,43 @@ public class LightingDemo extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private OrthographicCamera camera;
+	private Camera camera;
 	private Grid grid;
-	private CylinderWithLight cylinder;
+	private Cylinder cylinder;
 
 	private Axes axes;
 
 	private DirectionalLight light;
 	
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
+
+	private SceneObject root;
+	
 	public LightingDemo() {
-		super("Lighting demo");
+		super("Lighting Demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenWidth, screenHeight);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth, screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -91,25 +98,33 @@ public class LightingDemo extends JFrame implements GLEventListener {
 		gl.glEnable(GL.GL_DEPTH_TEST);
 		gl.glEnable(GL.GL_CULL_FACE);
 
-		this.grid = new Grid(10);
-		this.cylinder = new CylinderWithLight();
+		root = new SceneObject();
+		
+		grid = new Grid(10);
+		grid.setParent(root);
+
+		cylinder = new Cylinder();
+		cylinder.setParent(root);
 		cylinder.setDiffuseMaterial(Color.red);
-		cylinder.setScale(0.5f, 1, 0.5f);
-		this.axes = new Axes();
-		axes.setPosition(0,2,0);
+		cylinder.getMatrix().scale(0.5f, 1, 0.5f);
+
+		axes = new Axes();
+		axes.setParent(root);
+		axes.getMatrix().translate(0,2,0);
 		
 		// light source
-		Color ambientLight = new Color(0.01f, 0.01f, 0.01f);
+		Color ambientLight = new Color(0.1f, 0.1f, 0.1f);
 		light = new DirectionalLight(Color.white, ambientLight);
-		light.setPosition(0,0.5f,0);
+		light.setParent(root);
+		light.getMatrix().translate(0,0.5f,0);
+		cylinder.setLight(light);
 		
 		// camera 
-		this.camera = new OrthographicCamera(CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
-		camera.setHeight(0.5f);
-		camera.setDistance(CAMERA_DISTANCE);
+		camera = new Camera(CAMERA_WIDTH, CAMERA_HEIGHT, CAMERA_NEAR, CAMERA_FAR);
+		camera.setParent(root);
+		cylinder.setCamera(camera);
 	}
 
-	private static final float CAMERA_DISTANCE = 2;
 	private static final float CAMERA_WIDTH = 3f;
 	private static final float CAMERA_HEIGHT = 3f;
 	private static final float CAMERA_NEAR = 0.1f;
@@ -123,6 +138,7 @@ public class LightingDemo extends JFrame implements GLEventListener {
 		cylinder.update(input, dt);
 		camera.update(input, dt);
 		light.update(input, dt);
+		
 		input.clear();
 	}
 	
@@ -145,11 +161,20 @@ public class LightingDemo extends JFrame implements GLEventListener {
 		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
-		// draw
-		this.grid.draw(camera);
-		this.cylinder.draw(camera, light);
-		this.axes.draw(camera);
-		this.light.draw(camera);
+		// get the camera matrices
+		
+		// Note: rather than pass the view and projection matrices to every object
+		// we multiply them into the matrix before descending the scene graph
+		// and pass a single Model-View-Projection matrix to the shader
+		//
+		// M_mvp = M_projection * M_view * M_model
+		
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
+		
+		// draw the scenegraph
+		root.draw(mvpMatrix);
 	}
 
 	@Override
@@ -159,8 +184,8 @@ public class LightingDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenWidth = width;
-		this.screenHeight = height;
+		screenWidth = width;
+		screenHeight = height;
 		
 	}
 

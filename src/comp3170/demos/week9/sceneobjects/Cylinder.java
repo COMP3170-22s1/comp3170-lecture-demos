@@ -1,10 +1,10 @@
 package comp3170.demos.week9.sceneobjects;
 
+import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -15,15 +15,17 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.InputManager;
+import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week9.cameras.Camera;
 import comp3170.demos.week9.shaders.ShaderLibrary;
 
-public class CylinderWithNormals extends SceneObject {
+public class Cylinder extends SceneObject {
 
 	private static final float TAU = (float) (Math.PI * 2);;
 	private static final int NSIDES = 12;
-	private final static String VERTEX = "normalVertex.glsl";
-	private final static String FRAGMENT = "normalFragment.glsl";
+	private final static String VERTEX = "lightVertex.glsl";
+	private final static String FRAGMENT = "lightFragment.glsl";
 
 	private Vector4f[] vertices;
 	private int vertexBuffer;
@@ -37,11 +39,46 @@ public class CylinderWithNormals extends SceneObject {
 	private List<Integer> bottomIndices;
 	private List<Integer> sideIndices;
 	
-	public CylinderWithNormals() {
-		super(ShaderLibrary.compileShader(VERTEX, FRAGMENT));
+	private Vector4f lightDirection = new Vector4f();
+	private Vector3f lightIntensity = new Vector3f();
+	private Vector3f ambientIntensity = new Vector3f();
+	private Vector4f viewDirection = new Vector4f();
+	
+	private Vector3f diffuseMaterial = new Vector3f(1,1,1);		// default to white
+	private Vector3f specularMaterial = new Vector3f(1,1,1);	// default to white
+	
+	private Shader shader;
+	private DirectionalLight light;
+	private Camera camera;
+
+
+	public Cylinder() {
+		shader = ShaderLibrary.compileShader(VERTEX, FRAGMENT);
 		
 		createVertexBuffer();
 		createIndexBuffer();
+	}
+
+	public void setDiffuseMaterial(Color colour) {
+		float[] rgb = colour.getRGBColorComponents(new float[3]);
+		diffuseMaterial.x = rgb[0];
+		diffuseMaterial.y = rgb[1];
+		diffuseMaterial.z = rgb[2];
+	}
+
+	public void setSpecularMaterial(Color colour) {
+		float[] rgb = colour.getRGBColorComponents(new float[3]);
+		specularMaterial.x = rgb[0];
+		specularMaterial.y = rgb[1];
+		specularMaterial.z = rgb[2];
+	}
+	
+	public void setLight(DirectionalLight light) {
+		this.light = light;
+	}
+
+	public void setCamera(Camera camera) {
+		this.camera = camera;
 	}
 
 	private void createVertexBuffer() {
@@ -52,8 +89,11 @@ public class CylinderWithNormals extends SceneObject {
 		// vertices[2*i] = points around bottom edge
 		// vertices[2*i+1] = points around top edge
 		
-		this.vertices = new Vector4f[NSIDES * 4 + 2];
-		this.normals = new Vector4f[NSIDES * 4 + 2];
+		// TODO: This code contains an error. 
+		// The normals for the top and bottom faces are not computed correctly.
+		
+		vertices = new Vector4f[NSIDES * 4 + 2];
+		normals = new Vector4f[NSIDES * 4 + 2];
 		
 		int kv = 0;			
 		int kn = 0;
@@ -74,9 +114,9 @@ public class CylinderWithNormals extends SceneObject {
 		Matrix4f rotate = new Matrix4f();
 		Matrix4f translate = new Matrix4f().translation(0,1,0);
 		
-		this.topIndices = new ArrayList<Integer>();
-		this.bottomIndices = new ArrayList<Integer>();
-		this.sideIndices = new ArrayList<Integer>();
+		topIndices = new ArrayList<Integer>();
+		bottomIndices = new ArrayList<Integer>();
+		sideIndices = new ArrayList<Integer>();
 		
 		for (int i = 0; i < NSIDES; i++) {
 			float angle = i * TAU / NSIDES; 
@@ -105,12 +145,12 @@ public class CylinderWithNormals extends SceneObject {
 			normals[kn++] = ni;
 		}
 		
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
-		this.normalBuffer = GLBuffers.createBuffer(normals);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
+		normalBuffer = GLBuffers.createBuffer(normals);
 	}
 	
 	private void createIndexBuffer() {
-		this.indices = new int[NSIDES * 3 * 4];
+		indices = new int[NSIDES * 3 * 4];
 		
 		int k = 0;
 		for (int i = 0; i < NSIDES; i++) {
@@ -137,40 +177,41 @@ public class CylinderWithNormals extends SceneObject {
 			indices[k++] = sideIndices.get(2 * j + 1);
 		}
 		
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 
 	private static final float ROTATION_SPEED = TAU/4;
 	private Vector3f angle = new Vector3f();
 	
-	@Override
 	public void update(InputManager input, float dt) {
-		getAngle(angle);		
 		if (input.isKeyDown(KeyEvent.VK_Z)) {
-			angle.y = (angle.y - ROTATION_SPEED * dt) % TAU;
+			getMatrix().rotateY(-ROTATION_SPEED * dt);
 		}
 		if (input.isKeyDown(KeyEvent.VK_X)) {
-			angle.y = (angle.y + ROTATION_SPEED * dt) % TAU;
+			getMatrix().rotateY(ROTATION_SPEED * dt);
 		}
-		setAngle(angle);		
 	}
 
+	private Matrix4f modelMatrix = new Matrix4f();
 	
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		shader.enable();
 		
-		calcModelMatrix();
+		getModelToWorldMatrix(modelMatrix);
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));
-
-		// compute normal matrix to transform normals without scaling
 		shader.setUniform("u_normalMatrix", modelMatrix.normal(normalMatrix));
-//		shader.setUniform("u_normalMatrix", normalMatrix.identity()); // WRONG
-//		shader.setUniform("u_normalMatrix", modelMatrix); // WRONG
+		
+		shader.setUniform("u_lightDirection", light.getDirection(lightDirection));
+		shader.setUniform("u_intensity", light.getIntensity(lightIntensity));
+		shader.setUniform("u_ambientIntensity", light.getAmbientIntensity(ambientIntensity));
+		shader.setUniform("u_viewDirection", camera.getViewDirection(viewDirection));
+
+		shader.setUniform("u_diffuseMaterial", diffuseMaterial);
+		shader.setUniform("u_specularMaterial", specularMaterial);
 		
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_normal", normalBuffer);

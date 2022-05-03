@@ -7,93 +7,95 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 
 import comp3170.InputManager;
+import comp3170.demos.SceneObject;
 
 /**
- * A camera that revolves around the origin
+ * An orthographic camera that revolves around the origin
  * @author malcolmryan
  *
  */
 
-public abstract class Camera {
+public class Camera extends SceneObject {
 
 	public static final float TAU = (float) (2 * Math.PI);		// https://tauday.com/tau-manifesto
 
-	private Matrix4f modelMatrix;
+	private Vector3f offset = new Vector3f(0,0.5f,2);
+	private Vector3f eulerAngles;
 
-	private float distance;
-	private Vector3f angle;
-
+	private float width;	
 	private float height;
-	
-	public Camera() {
-		this.distance = 1;
-		this.height = 0;
-		this.modelMatrix = new Matrix4f();
-		this.angle = new Vector3f(0,0,0);
-
-		modelMatrix.translate(0,height,distance);		
+	private float near;
+	private float far;
 		
-	}
-	
-	public void setDistance(float distance) {
-		this.distance = distance;
-		updateModelMatrix();		
-	}
-	
-	public void setHeight(float height) {
+	public Camera(float width, float height, float near, float far) {
+		this.width = width;
 		this.height = height;
-		updateModelMatrix();		
+		this.near = near;
+		this.far = far;
+
+		eulerAngles = new Vector3f(0,0,0);		
+		updateMatrix();				
 	}
-	
-	public Matrix4f getModelMatrix(Matrix4f dest) {
-		return dest.set(modelMatrix);
+
+	public Matrix4f getProjectionMatrix(Matrix4f dest) {		
+		return dest.setOrtho(-width/2, width/2, -height/2, height/2, near, far);
 	}
+
+	private Matrix4f modelMatrix = new Matrix4f();
 
 	public Matrix4f getViewMatrix(Matrix4f dest) {
-		// invert the model matrix (we have never applied any scale)
+		getModelToWorldMatrix(modelMatrix);
+		modelMatrix.normalize3x3();		// remove any scaling
 		return modelMatrix.invert(dest);
 	}
 	
 	public Vector4f getViewDirection(Vector4f dest) {
+		getModelToWorldMatrix(modelMatrix);
+
 		// the viewDirection is the Z axis (i.e. the k vector)
 		// because the view direction points towards the camera
-		// and the view volume is normally negative view space.
-					
-		return modelMatrix.getColumn(2, dest);		
+		// and the view volume is normally in negative view space.
+
+		// Note: this assumes the camera is orthographic
+		// the view direction for a perspective camera will
+		// depend on the target's position
+
+		modelMatrix.getColumn(2, dest);
+		dest.normalize();
+		return dest;
 	}
-	
-	abstract public Matrix4f getProjectionMatrix(Matrix4f dest);
 	
 	final static float ROTATION_SPEED = TAU / 4;
 	final static float MOVEMENT_SPEED = 1;
 
 	public void update(InputManager input, float deltaTime) {
 		if (input.isKeyDown(KeyEvent.VK_UP)) {
-			angle.x -= ROTATION_SPEED * deltaTime;
+			eulerAngles.x -= ROTATION_SPEED * deltaTime;
 		}
 		if (input.isKeyDown(KeyEvent.VK_DOWN)) {
-			angle.x += ROTATION_SPEED * deltaTime;
+			eulerAngles.x += ROTATION_SPEED * deltaTime;
 		}
 		if (input.isKeyDown(KeyEvent.VK_LEFT)) {
-			angle.y -= ROTATION_SPEED * deltaTime;
+			eulerAngles.y -= ROTATION_SPEED * deltaTime;
 		}
 		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
-			angle.y += ROTATION_SPEED * deltaTime;
+			eulerAngles.y += ROTATION_SPEED * deltaTime;
 		}
 		if (input.isKeyDown(KeyEvent.VK_PAGE_DOWN)) {
-			distance += MOVEMENT_SPEED * deltaTime;
+			offset.z += MOVEMENT_SPEED * deltaTime;
 		}
 		if (input.isKeyDown(KeyEvent.VK_PAGE_UP)) {
-			distance -= MOVEMENT_SPEED * deltaTime;
+			offset.z -= MOVEMENT_SPEED * deltaTime;
 		}
 
-		updateModelMatrix();		
+		updateMatrix();		
 	}
 	
-	private void updateModelMatrix() {
-		modelMatrix.identity();
-		modelMatrix.rotateY(angle.y);	// heading
-		modelMatrix.rotateX(angle.x);	// pitch
-		modelMatrix.translate(0,height,distance);
+	private void updateMatrix() {
+		Matrix4f matrix = getMatrix();
+		matrix.identity();
+		matrix.rotateY(eulerAngles.y);	// heading
+		matrix.rotateX(eulerAngles.x);	// pitch
+		matrix.translate(offset);
 	}
 }
