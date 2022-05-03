@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import com.jogamp.opengl.GL;
@@ -22,6 +23,7 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week7.cameras.PerspectiveCamera;
 import comp3170.demos.week7.sceneobjects.Quad;
 
@@ -42,30 +44,32 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 	private PerspectiveCamera camera;
 	private Quad redQuad;
 	private Quad blueQuad;
+
+	private SceneObject root;
 	
 	public ZFightingDemo() {
 		super("Z-fighting demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenWidth, screenHeight);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth, screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -84,13 +88,18 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);	
 
-		this.redQuad = new Quad(Color.RED);
-		this.blueQuad = new Quad(Color.BLUE);
-		blueQuad.setAngle(0, 0.1f, 0);
+		root = new SceneObject();
+		
+		redQuad = new Quad(Color.RED);
+		redQuad.setParent(root);
+		
+		blueQuad = new Quad(Color.BLUE);
+		blueQuad.setParent(root);
+		blueQuad.getMatrix().rotateY(0.1f);
 				
 		// camera 
 		float aspect = (float)screenWidth / screenHeight;
-		this.camera = new PerspectiveCamera(input, CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		camera = new PerspectiveCamera(input, CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 		camera.setHeight(CAMERA_HEIGHT);
 	}
@@ -109,24 +118,25 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 		float dt = (time - oldTime) / 1000.0f;
 		oldTime = time;
 		
-		blueQuad.getAngle(angle);
-		
 		if (input.isKeyDown(KeyEvent.VK_NUMPAD1)) {
-			angle.y -= ROTATE_SPEED * dt;		
+			blueQuad.getMatrix().rotateY(-ROTATE_SPEED * dt);		
 		}
 		if (input.isKeyDown(KeyEvent.VK_NUMPAD2)) {
-			angle.y = 0;		
+			blueQuad.getMatrix().identity();		
 		}
 		if (input.isKeyDown(KeyEvent.VK_NUMPAD3)) {
-			angle.y += ROTATE_SPEED * dt;		
+			blueQuad.getMatrix().rotateY(ROTATE_SPEED * dt);		
 		}
-		blueQuad.setAngle(angle);
 		
 		camera.update(dt);
 		input.clear();
 	}
 	
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 	
+
 	@Override
 	/**
 	 * Called when the canvas is redrawn
@@ -147,8 +157,12 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
 		// draw
-		this.redQuad.draw(camera);
-		this.blueQuad.draw(camera);
+		// pre-multiply projetion and view matrices
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
+			
+		root.draw(mvpMatrix);
 	}
 
 	@Override
@@ -158,9 +172,8 @@ public class ZFightingDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenWidth = width;
-		this.screenHeight = height;
-		
+		screenWidth = width;
+		screenHeight = height;		
 	}
 
 	@Override

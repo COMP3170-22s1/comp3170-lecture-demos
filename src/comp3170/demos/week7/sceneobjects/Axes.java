@@ -8,13 +8,15 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
-import comp3170.demos.week7.cameras.Camera;
+import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week7.shaders.ShaderLibrary;
 
 public class Axes extends SceneObject {
 	static final private String VERTEX_SHADER = "simpleVertex.glsl";
 	static final private String FRAGMENT_SHADER = "simpleFragment.glsl";
 
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int indexBufferX;
@@ -22,7 +24,7 @@ public class Axes extends SceneObject {
 	private int indexBufferZ;
 
 	public Axes() {
-		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
+		shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		
 		// A set of i,j,k axes		
 		
@@ -41,18 +43,11 @@ public class Axes extends SceneObject {
 	
 
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		// activate the shader
 		shader.enable();		
-
-		calcModelMatrix();
-		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
-
-		// connect the vertex buffer to the a_position attribute
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
 
 		// X axis in red

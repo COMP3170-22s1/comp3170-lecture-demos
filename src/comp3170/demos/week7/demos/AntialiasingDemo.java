@@ -52,15 +52,15 @@ public class AntialiasingDemo extends JFrame implements GLEventListener {
 		capabilities.setSampleBuffers(false);
 		capabilities.setNumSamples(4);
 
-		this.canvas = new GLCanvas(capabilities);		
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);		
+		canvas.addGLEventListener(this);
+		add(canvas);
 
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -78,19 +78,19 @@ public class AntialiasingDemo extends JFrame implements GLEventListener {
 		// set the background colour to black
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		this.shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
+		shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		
 		// create the shape
 		
 		// vertices of a square as (x,y) pairs
-		this.vertices = new float[] {
+		vertices = new float[] {
 				 0.0f,	1.0f,
 				 1.0f, -1.0f,
 				-1.0f, -1.0f,
 		};
 		
 		// copy the data into a Vertex Buffer Object in graphics memory		
-	    this.vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
+	    vertexBuffer = GLBuffers.createBuffer(vertices, GL4.GL_FLOAT_VEC2);
 
 	}
 
@@ -114,14 +114,14 @@ public class AntialiasingDemo extends JFrame implements GLEventListener {
 		gl.glClear(GL_COLOR_BUFFER_BIT);		
 
 		// activate the shader
-		this.shader.enable();
+		shader.enable();
 		
         // connect the vertex buffer to the a_position attribute		   
-	    this.shader.setAttribute("a_position", vertexBuffer);
+	    shader.setAttribute("a_position", vertexBuffer);
 
 	    // write the colour value into the u_colour uniform 
 	    float[] colour = {1.0f, 0.0f, 0.0f, 1.0f};	    
-        this.shader.setUniform("u_colour", colour);
+        shader.setUniform("u_colour", colour);
    
         // draw the shape as a series of lines in a loop
         gl.glDrawArrays(GL_TRIANGLES, 0, vertices.length / 2);           	

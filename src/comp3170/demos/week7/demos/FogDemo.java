@@ -1,17 +1,12 @@
 package comp3170.demos.week7.demos;
 
-import static com.jogamp.opengl.GL.GL_COLOR_BUFFER_BIT;
-
 import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
 
 import javax.swing.JFrame;
 
 import org.joml.Matrix4f;
-import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
@@ -23,9 +18,8 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
-import comp3170.GLException;
 import comp3170.InputManager;
-import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week7.cameras.PerspectiveCamera;
 import comp3170.demos.week7.sceneobjects.Axes;
 import comp3170.demos.week7.sceneobjects.Cube;
@@ -49,31 +43,33 @@ public class FogDemo extends JFrame implements GLEventListener {
 	private Axes axes;
 	private PerspectiveCamera camera;
 
+	private SceneObject root;
+
 	public FogDemo() {
 		super("Week 6 3D camera demo");
 
 		// set up a GL canvas
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
 
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();		
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();		
 
 		// input
 		
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame
 		
-		this.setSize(width,height);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(width,height);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -85,38 +81,36 @@ public class FogDemo extends JFrame implements GLEventListener {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);	
-
-		// set the background colour to black
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+		
+		root = new SceneObject();
 		
 		// Set up the scene
-		this.grid = new Grid(11);
-		grid.setAngle(0, 0, 0);
-		grid.setPosition(0,0,0);
+		Grid grid = new Grid(11);
+		grid.setParent(root);
 		
-		this.axes = new Axes();
-		
-		this.cubes = new Cube[] {
-			new Cube(),
-			new Cube(),
-			new Cube(),
-		};
-		
-		cubes[0].setPosition(0.7f, 0.05f, -0.3f);
-		cubes[0].setScale(0.05f);
-		cubes[0].setColour(Color.RED);
+		axes = new Axes();
+		axes.setParent(root);
 
-		cubes[1].setPosition(-0.5f, 0.05f, 0.3f);
-		cubes[1].setScale(0.05f);
-		cubes[1].setColour(Color.BLUE);
-
-		cubes[2].setPosition(0.1f, 0.05f, 0.1f);
-		cubes[2].setScale(0.05f);
-		cubes[2].setColour(Color.GREEN);
-
-		this.camera = new PerspectiveCamera(input, TAU/6, 1, 0.1f, 10f);
+		camera = new PerspectiveCamera(input, TAU/6, 1, 0.1f, 10f);
 		camera.setDistance(2);
 		camera.setHeight(0);
+
+		cubes = new Cube[3];
+		for (int i = 0; i < 3; i++) {
+			cubes[i] = new Cube(camera);
+			cubes[i].setParent(grid);
+		}
+		
+		
+		cubes[0].getMatrix().translate(0.7f, 0.05f, -0.3f).scale(0.05f);
+		cubes[0].setColour(Color.RED);
+
+		cubes[1].getMatrix().translate(-0.5f, 0.05f, 0.3f).scale(0.05f);
+		cubes[1].setColour(Color.BLUE);
+
+		cubes[2].getMatrix().translate(0.1f, 0.05f, 0.1f).scale(0.05f);
+		cubes[2].setColour(Color.GREEN);
+
 	}
 
 	
@@ -129,6 +123,10 @@ public class FogDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
+	
 	@Override
 	public void display(GLAutoDrawable arg0) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
@@ -136,16 +134,17 @@ public class FogDemo extends JFrame implements GLEventListener {
 		update();
 		
         // clear the colour & depth buffers
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);				
 				
+		// pre-multiply projetion and view matrices
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
+			
 		// draw the scene
-		this.grid.draw(camera);
-		this.axes.draw(camera);
-		for (int i = 0; i < cubes.length; i++) {
-			cubes[i].draw(camera);
-		}
-		
+		root.draw(mvpMatrix);		
 	}
 
 	@Override

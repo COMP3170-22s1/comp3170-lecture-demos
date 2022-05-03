@@ -15,6 +15,7 @@ import comp3170.demos.SceneObject;
 
 public class Quad extends SceneObject {
 
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
@@ -25,7 +26,8 @@ public class Quad extends SceneObject {
 	private Vector2f screenSize;
 	
 
-	public Quad(float width, float height) {
+	public Quad(Shader shader, float width, float height) {
+		this.shader = shader;
 		screenSize = new Vector2f(width, height);
 		
 		// 2--3
@@ -59,9 +61,10 @@ public class Quad extends SceneObject {
 	
 	
 	@Override
-	protected void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	protected void drawSelf(Matrix4f modelMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
+		shader.enable();
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setUniform("u_screenSize", screenSize);
 		

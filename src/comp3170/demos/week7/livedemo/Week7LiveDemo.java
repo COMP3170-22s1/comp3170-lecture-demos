@@ -93,9 +93,8 @@ public class Week7LiveDemo extends JFrame implements GLEventListener {
 				
 		shader = compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 
-		root = new SceneObject();
-		
-		quad = new Quad(width, height);
+		root = new SceneObject();		
+		quad = new Quad(shader, width, height);
 		quad.setParent(root);
 		
 		// Set up the scene
@@ -141,7 +140,7 @@ public class Week7LiveDemo extends JFrame implements GLEventListener {
 		shader.enable();
 
 		// draw the scene
-		root.draw(shader);		
+		root.draw();		
 	}
 
 	@Override

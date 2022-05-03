@@ -1,5 +1,7 @@
 package comp3170.demos.week7.sceneobjects;
 
+import java.awt.Color;
+
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -9,23 +11,29 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
+import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week7.cameras.Camera;
 import comp3170.demos.week7.shaders.ShaderLibrary;
 
 public class Cube extends SceneObject {
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
 	private int indexBuffer;
 
+	private Camera camera;
 	private Matrix4f cameraModelMatrix = new Matrix4f();
 	private Vector4f cameraPosition = new Vector4f();
+	private Vector3f colour;
 	
 	final private static String VERTEX_SHADER = "fogVertex.glsl";
 	final private static String FRAGMENT_SHADER = "fogFragment.glsl";
 
-	public Cube() {
-		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
+	public Cube(Camera camera) {
+		shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
+		this.camera = camera;
 
 		//          6-----7
 		//         /|    /|
@@ -48,11 +56,11 @@ public class Cube extends SceneObject {
 			new Vector4f( 1, 1,-1, 1),
 		};
 		
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 
 		// indices for the triangle forming each face
 
-		this.indices = new int[] {
+		indices = new int[] {
 			// front
 			0, 1, 2,
 			2, 3, 0,
@@ -79,36 +87,37 @@ public class Cube extends SceneObject {
 			
 		};
 
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 		
 		// scale down to fit in window
-		this.setScale((float) (1.0f / Math.sqrt(3)));
+		getMatrix().scale((float) (1.0f / Math.sqrt(3)));
 
-		this.colour = new Vector3f(1f, 1f, 1f); // default is white
+		colour = new Vector3f(1f, 1f, 1f); // default is white
 	}
 	
+	public void setColour(Color colour) {
+		float[] rgb = colour.getComponents(new float[4]);
+		this.colour.set(rgb[0], rgb[1], rgb[2]);
+	}
+	
+	private Matrix4f modelMatrix = new Matrix4f();
+	
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
 		shader.enable();
-
-		calcModelMatrix();
+		
+		getModelToWorldMatrix(modelMatrix);
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
+		shader.setAttribute("a_position", vertexBuffer);
+		shader.setUniform("u_colour", colour);
 
 		camera.getModelMatrix(cameraModelMatrix);
 		cameraModelMatrix.getColumn(3, cameraPosition);
 		shader.setUniform("u_cameraPosition", cameraPosition);
-
 		shader.setUniform("u_fogColour", new float[] { 1, 1, 1 });
-
-		// connect the vertex buffer to the a_position attribute
-		shader.setAttribute("a_position", vertexBuffer);
-
-		// write the colour value into the u_colour uniform
-		shader.setUniform("u_colour", colour);
 
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);

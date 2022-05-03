@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -19,8 +21,8 @@ import com.jogamp.opengl.util.Animator;
 
 import comp3170.GLException;
 import comp3170.InputManager;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week7.cameras.Camera;
-import comp3170.demos.week7.cameras.OrthographicCamera;
 import comp3170.demos.week7.cameras.PerspectiveCamera;
 import comp3170.demos.week7.sceneobjects.Grid;
 import comp3170.demos.week7.sceneobjects.Triangle;
@@ -39,11 +41,7 @@ public class DepthDemo extends JFrame implements GLEventListener {
 	private Animator animator;
 	private long oldTime;
 
-	private Triangle redTriangle;
-	private Triangle blueTriangle;
-
-	private Grid grid;
-
+	private SceneObject root;
 	private Camera camera;
 	
 	public DepthDemo() {
@@ -51,24 +49,24 @@ public class DepthDemo extends JFrame implements GLEventListener {
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenWidth, screenHeight);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth, screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -87,22 +85,22 @@ public class DepthDemo extends JFrame implements GLEventListener {
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);	
 		
-		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
-
+		root = new SceneObject();
+		Grid grid = new Grid(10);
+		grid.setParent(root);
 		
-		this.grid = new Grid(10);
 		
-		this.redTriangle = new Triangle(Color.RED);
+		Triangle redTriangle = new Triangle(Color.RED);
+		redTriangle.setParent(root);
 		
-		this.blueTriangle = new Triangle(Color.BLUE);
-		blueTriangle.setPosition(0.1f,0,0);
-		blueTriangle.setAngle(0,TAU/12,0);
+		Triangle blueTriangle = new Triangle(Color.BLUE);
+		blueTriangle.setParent(root);
+		blueTriangle.getMatrix().translate(0.1f, 0, 0).rotateY(TAU/12);
 		
 		// camera 
 		float aspect = (float)screenWidth / screenHeight;
-//		this.camera = new OrthographicCamera(input, 2, 2, CAMERA_NEAR, CAMERA_FAR);
-		this.camera = new PerspectiveCamera(input, CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+//		camera = new OrthographicCamera(input, 2, 2, CAMERA_NEAR, CAMERA_FAR);
+		camera = new PerspectiveCamera(input, CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 		camera.setHeight(CAMERA_HEIGHT);		
 	}
@@ -122,6 +120,9 @@ public class DepthDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 	
 	@Override
 	/**
@@ -135,16 +136,20 @@ public class DepthDemo extends JFrame implements GLEventListener {
 		gl.glViewport(0, 0, screenWidth, screenHeight);
 		
 		// set the background colour to black
+		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		
 		// clear the depth buffer
 		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 
-				
+		// pre-multiply projetion and view matrices
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
+			
 		// draw
-		this.grid.draw(camera);
-		this.redTriangle.draw(camera);
-		this.blueTriangle.draw(camera);
+		root.draw(mvpMatrix);
 	}
 
 	@Override
@@ -154,9 +159,8 @@ public class DepthDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenWidth = width;
-		this.screenHeight = height;
-		
+		screenWidth = width;
+		screenHeight = height;		
 	}
 
 	@Override
