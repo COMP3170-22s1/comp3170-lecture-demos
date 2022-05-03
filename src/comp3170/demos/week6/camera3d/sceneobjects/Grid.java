@@ -13,13 +13,15 @@ import comp3170.demos.SceneObject;
 
 public class Grid extends SceneObject {
 	
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
 	private int indexBuffer;
 	private float[] colour = {1f, 1f, 1f};
 
-	public Grid(int nLines) {
+	public Grid(Shader shader, int nLines) {
+		this.shader = shader;
 		// Create a 2x2 square grid with the origin in the centre		
 		
 		vertices = new Vector4f[4 * nLines];
@@ -45,10 +47,11 @@ public class Grid extends SceneObject {
 	
 
 	@Override
-	public void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.enable();
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setUniform("u_colour", colour);
 

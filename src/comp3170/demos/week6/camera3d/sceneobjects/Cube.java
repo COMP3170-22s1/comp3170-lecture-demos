@@ -14,6 +14,7 @@ import comp3170.Shader;
 import comp3170.demos.SceneObject;
 
 public class Cube extends SceneObject {
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
@@ -22,7 +23,8 @@ public class Cube extends SceneObject {
 	private float[] colour = {1f, 1f, 1f}; 
 	
 
-	public Cube(Color colour) {
+	public Cube(Shader shader, Color colour) {
+		this.shader = shader;
 
 		// convert colour to RGB array of floats
 		colour.getRGBColorComponents(this.colour);
@@ -87,10 +89,11 @@ public class Cube extends SceneObject {
 	}
 
 	@Override
-	public void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.enable();
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setUniform("u_colour", colour);
 

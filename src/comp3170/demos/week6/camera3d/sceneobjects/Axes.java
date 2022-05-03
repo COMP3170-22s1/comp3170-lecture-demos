@@ -13,13 +13,16 @@ import comp3170.demos.SceneObject;
 
 public class Axes extends SceneObject {
 	
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int indexBufferX;
 	private int indexBufferY;
 	private int indexBufferZ;
 
-	public Axes() {
+	public Axes(Shader shader) {
+		this.shader = shader;
+		
 		// A set of i,j,k axes		
 		
 		vertices = new Vector4f[] {
@@ -37,10 +40,11 @@ public class Axes extends SceneObject {
 	
 
 	@Override
-	public void drawSelf(Shader shader, Matrix4f modelMatrix) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
-		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.enable();
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
 
 		// X axis in red

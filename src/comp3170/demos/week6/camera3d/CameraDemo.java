@@ -55,8 +55,9 @@ public class CameraDemo extends JFrame implements GLEventListener {
 
 	private Camera[] cameras;
 	private int currentCamera;
-	private Matrix4f viewMatrix;
-	private Matrix4f projectionMatrix;
+	private Matrix4f viewMatrix  = new Matrix4f();
+	private Matrix4f projectionMatrix  = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 
 	private Cube[] cubes;
 
@@ -112,16 +113,16 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		root = new SceneObject();
 		
 		// Set up the scene
-		grid = new Grid(11);
+		grid = new Grid(shader, 11);
 		grid.setParent(root);
 		
-		axes = new Axes();
+		axes = new Axes(shader);
 		axes.setParent(root);
 		
 		cubes = new Cube[] {
-			new Cube(Color.RED),
-			new Cube(new Color(0.4f, 0.4f, 1.0f)),
-			new Cube(Color.GREEN),
+			new Cube(shader, Color.RED),
+			new Cube(shader, new Color(0.4f, 0.4f, 1.0f)),
+			new Cube(shader, Color.GREEN),
 		};
 		
 		for (int i = 0; i < cubes.length; i++) {
@@ -140,9 +141,7 @@ public class CameraDemo extends JFrame implements GLEventListener {
 			perspectiveCamera,
 		};
 		currentCamera = 0;
-		
-		viewMatrix = new Matrix4f();
-		projectionMatrix = new Matrix4f();
+	
 	}
 
 	private Shader compileShader(String vertex, String fragment) {
@@ -192,14 +191,10 @@ public class CameraDemo extends JFrame implements GLEventListener {
 		cameras[currentCamera].getViewMatrix(viewMatrix);
 		cameras[currentCamera].getProjectionMatrix(projectionMatrix);
 		
-		// set the same view and projection matrices for all scene objects
-
-		shader.enable();
-		shader.setUniform("u_viewMatrix", viewMatrix);
-		shader.setUniform("u_projectionMatrix", projectionMatrix);
+		// pre-multiply projetion and view matrices
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
 		
-		// draw the scene
-		root.draw(shader);		
+		root.draw(mvpMatrix);		
 	}
 
 	@Override

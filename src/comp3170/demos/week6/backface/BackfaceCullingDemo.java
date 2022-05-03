@@ -55,8 +55,9 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 	private Axes axes;
 
 	private Camera camera;
-	private Matrix4f viewMatrix;
-	private Matrix4f projectionMatrix;
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 
 	private boolean isCulling = false;
 	private int cullFace = GL.GL_BACK;
@@ -113,18 +114,16 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		
 		// Set up the scene
 		root = new SceneObject();
-		grid = new Grid(11);
+		grid = new Grid(shader, 11);
 		grid.setParent(root);
 		
-		axes = new Axes();
+		axes = new Axes(shader);
 		axes.setParent(root);
 		
-		triangle = new Triangle(Color.YELLOW);
+		triangle = new Triangle(shader, Color.YELLOW);
 		triangle.setParent(root);
 		
 		camera = new PerspectiveCamera(2, TAU/6, 1, 0.1f, 10f);		
-		viewMatrix = new Matrix4f();
-		projectionMatrix = new Matrix4f();
 	}
 
 	private Shader compileShader(String vertex, String fragement) {
@@ -191,13 +190,11 @@ public class BackfaceCullingDemo extends JFrame implements GLEventListener {
 		camera.getViewMatrix(viewMatrix);
 		camera.getProjectionMatrix(projectionMatrix);
 		
-		// set the same view and projection matrices for all scene objects
-		shader.enable();
-		shader.setUniform("u_viewMatrix", viewMatrix);
-		shader.setUniform("u_projectionMatrix", projectionMatrix);
+		// pre-multiply projetion and view matrices
+		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
 		
 		// draw the scene
-		root.draw(shader);
+		root.draw(mvpMatrix);
 		
 	}
 
