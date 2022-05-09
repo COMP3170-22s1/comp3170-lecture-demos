@@ -105,7 +105,7 @@ public class SceneObject {
 		
 		// ascend the scene graph multiplying matrices on the left
 		while (o.parent != null) {
-			dest.mulLocal(modelToParentMatrix);
+			dest.mulLocal(o.modelToParentMatrix);
 			o = o.parent;
 		}		
 		
