@@ -65,24 +65,24 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenWidth, screenHeight);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth, screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -104,28 +104,31 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		
 		Shader simpleShader = ShaderLibrary.compileShader(SIMPLE_VERTEX_SHADER, SIMPLE_FRAGMENT_SHADER);
 		
-		this.cylinder = new Cylinder(simpleShader, Color.RED);
+		cylinder = new Cylinder(simpleShader, Color.RED);
 		cylinder.setScale(1,2,1);
 		
 		float aspect = (float)screenWidth / screenHeight;
-		this.camera1 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		camera1 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera1.setDistance(CAMERA_DISTANCE);
 		camera1.setTarget(0,1,0);	
 
 		// Scene 2
 		
-		this.camera2 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		camera2 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera2.setDistance(CAMERA_DISTANCE);
 		camera2.setTarget(0,0,0);	
 		
 		Shader textureShader = ShaderLibrary.compileShader(TEXTURE_VERTEX_SHADER, TEXTURE_FRAGMENT_SHADER);
 		
-		this.renderTexture = Shader.createRenderTexture(renderWidth, renderHeight);
-		this.cube = new Cube(textureShader, renderTexture);
-//		this.cube = new Cube(simpleShader, renderTexture);
+		renderTexture = Shader.createRenderTexture(renderWidth, renderHeight);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, renderTexture);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+
+		cube = new Cube(textureShader, renderTexture);
 		
 		try {
-			this.frameBuffer = Shader.createFrameBuffer(renderTexture);
+			frameBuffer = Shader.createFrameBuffer(renderTexture);
 		} catch (GLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -143,7 +146,7 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		oldTime = time;
 		
 		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
-			this.useEffect = !this.useEffect ;
+			useEffect = !useEffect ;
 		}
 		
 		if (useEffect) {
@@ -173,29 +176,29 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		if (useEffect) {
 			// Pass 1: render to buffer
-			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, this.frameBuffer);
+			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, frameBuffer);
 			gl.glViewport(0, 0, renderWidth, renderHeight);			
 		}
 		else {
 			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-			gl.glViewport(0, 0, this.screenWidth, this.screenHeight);			
+			gl.glViewport(0, 0, screenWidth, screenHeight);			
 		}		
 		
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
-		this.cylinder.draw(camera1);
+		cylinder.draw(camera1);
 		
 		if (useEffect) {
 			// Pass 2: render cube to screen
 			
 			gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-			gl.glViewport(0, 0, this.screenWidth, this.screenHeight);
+			gl.glViewport(0, 0, screenWidth, screenHeight);
 	
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			
-			this.cube.draw(camera2);
+			cube.draw(camera2);
 		}
 	}
 
@@ -206,8 +209,8 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenWidth = width;
-		this.screenHeight = height;		
+		screenWidth = width;
+		screenHeight = height;		
 	}
 
 	@Override

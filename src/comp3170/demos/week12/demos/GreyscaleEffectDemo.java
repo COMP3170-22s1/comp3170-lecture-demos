@@ -61,24 +61,24 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenWidth, screenHeight);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenWidth, screenHeight);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -101,21 +101,21 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 
 		Shader simpleShader = ShaderLibrary.compileShader(SIMPLE_VERTEX_SHADER, SIMPLE_FRAGMENT_SHADER);
 
-		this.cylinder = new Cylinder(simpleShader, Color.RED);
+		cylinder = new Cylinder(simpleShader, Color.RED);
 		cylinder.setScale(1,2,1);
 		
 		float aspect = (float)screenWidth / screenHeight;
-		this.camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 		camera.setTarget(0,1,0);	
 		
 		Shader greyscaleShder = ShaderLibrary.compileShader(GREYSCALE_VERTEX_SHADER, GREYSCALE_FRAGMENT_SHADER);
 		
-		this.renderTexture = Shader.createRenderTexture(renderWidth, renderHeight);
-		this.quad = new RenderQuad(greyscaleShder, renderTexture);
+		renderTexture = Shader.createRenderTexture(renderWidth, renderHeight);
+		quad = new RenderQuad(greyscaleShder, renderTexture);
 		
 		try {
-			this.frameBuffer = Shader.createFrameBuffer(renderTexture);
+			frameBuffer = Shader.createFrameBuffer(renderTexture);
 		} catch (GLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -133,7 +133,7 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		oldTime = time;
 		
 		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
-			this.useEffect = !this.useEffect ;
+			useEffect = !useEffect ;
 		}
 		
 		camera.update(input, dt);
@@ -153,29 +153,29 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		
 		if (useEffect) {
 			// Pass 1: render to buffer
-			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, this.frameBuffer);
+			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, frameBuffer);
 			gl.glViewport(0, 0, renderWidth, renderHeight);			
 		}
 		else {
 			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-			gl.glViewport(0, 0, this.screenWidth, this.screenHeight);
+			gl.glViewport(0, 0, screenWidth, screenHeight);
 			
 		}		
 		
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
-		this.cylinder.draw(camera);
+		cylinder.draw(camera);
 		
 		if (useEffect) {
 			// Pass 2: render quad to screen
 			
 			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
-			gl.glViewport(0, 0, this.screenWidth, this.screenHeight);
+			gl.glViewport(0, 0, screenWidth, screenHeight);
 	
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			
-			this.quad.draw();
+			quad.draw();
 		}
 	}
 
@@ -186,8 +186,8 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenWidth = width;
-		this.screenHeight = height;		
+		screenWidth = width;
+		screenHeight = height;		
 	}
 
 	@Override

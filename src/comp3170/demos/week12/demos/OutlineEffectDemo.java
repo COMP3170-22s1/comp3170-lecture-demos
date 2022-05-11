@@ -52,33 +52,31 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 	private int renderTexture;
 	private int frameBuffer;
 
-	private boolean useEffect;
-
-
+	private boolean useEffect = false;
 	
 	public OutlineEffectDemo() {
 		super("Outline effect demo");
 		
 		GLProfile profile = GLProfile.get(GLProfile.GL4);		 
 		GLCapabilities capabilities = new GLCapabilities(profile);
-		this.canvas = new GLCanvas(capabilities);
-		this.canvas.addGLEventListener(this);
-		this.add(canvas);
+		canvas = new GLCanvas(capabilities);
+		canvas.addGLEventListener(this);
+		add(canvas);
 		
 		// set up Animator		
-		this.animator = new Animator(canvas);
-		this.animator.start();
-		this.oldTime = System.currentTimeMillis();
+		animator = new Animator(canvas);
+		animator.start();
+		oldTime = System.currentTimeMillis();
 				
 		// set up Input manager
-		this.input = new InputManager(canvas);
+		input = new InputManager(canvas);
 		
 		// set up the JFrame		
 		// make it twice as wide as the view width
 		
-		this.setSize(screenSize[0], screenSize[1]);
-		this.setVisible(true);
-		this.addWindowListener(new WindowAdapter() {
+		setSize(screenSize[0], screenSize[1]);
+		setVisible(true);
+		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				System.exit(0);
 			}
@@ -100,20 +98,20 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		
 		Shader depthShader = ShaderLibrary.compileShader(DEPTH_VERTEX_SHADER, DEPTH_FRAGMENT_SHADER);
-		this.cylinder = new Cylinder(depthShader, Color.RED);
+		cylinder = new Cylinder(depthShader, Color.RED);
 		cylinder.setScale(1,2,1);
 		
 		float aspect = (float)screenSize[0] / screenSize[1];
-		this.camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
+		camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
 		camera.setDistance(CAMERA_DISTANCE);
 		camera.setTarget(0,1,0);	
 		
 		Shader outlineShader = ShaderLibrary.compileShader(OUTLINE_VERTEX_SHADER, OUTLINE_FRAGMENT_SHADER); 
-		this.renderTexture = Shader.createRenderTexture(renderWidth, renderHeight);
-		this.quad = new RenderQuad(outlineShader, renderTexture);
+		renderTexture = Shader.createRenderTexture(renderWidth, renderHeight);
+		quad = new RenderQuad(outlineShader, renderTexture);
 		
 		try {
-			this.frameBuffer = Shader.createFrameBuffer(renderTexture);
+			frameBuffer = Shader.createFrameBuffer(renderTexture);
 		} catch (GLException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -131,7 +129,7 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		oldTime = time;
 		
 		if (input.wasKeyPressed(KeyEvent.VK_SPACE)) {
-			this.useEffect = !this.useEffect ;
+			useEffect = !useEffect ;
 		}
 
 		camera.update(input, dt);
@@ -147,12 +145,11 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		update();
-
 		
 		if (useEffect) {
 			// Pass 1: render scene to frameBuffer
 
-			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, this.frameBuffer);
+			gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, frameBuffer);
 			gl.glViewport(0, 0, renderWidth, renderHeight);			
 		}
 		else {
@@ -165,7 +162,7 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
 		// draw
-		this.cylinder.draw(camera);
+		cylinder.draw(camera);
 		
 		if (useEffect) {
 			// Pass 2: render quad to screen
@@ -176,11 +173,11 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			
-			Shader shader = this.quad.getShader();
+			Shader shader = quad.getShader();
 			shader.enable();
 			shader.setUniform("u_thickness", 5.0f);
 			shader.setUniform("u_screenSize", screenSize);
-			this.quad.draw();			
+			quad.draw();			
 		}
 	}
 
@@ -191,8 +188,8 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		
-		this.screenSize[0] = width;
-		this.screenSize[1] = height;		
+		screenSize[0] = width;
+		screenSize[1] = height;		
 	}
 
 	@Override
