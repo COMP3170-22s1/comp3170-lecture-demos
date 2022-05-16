@@ -75,6 +75,7 @@ public class CubemapDemo extends JFrame implements GLEventListener {
 		
 		gl.glEnable(GL.GL_DEPTH_TEST);	
 		gl.glDepthFunc(GL.GL_LEQUAL);	
+		gl.glEnable(GL.GL_CULL_FACE);	
 		
 		root = new SceneObject();
 		Grid grid = new Grid(20);
@@ -163,15 +164,14 @@ public class CubemapDemo extends JFrame implements GLEventListener {
 		cameraMatrix.invert(viewMatrix);
 		cubemapViewMatrix.set3x3(viewMatrix); // view matrix with no translation
 		projectionMatrix.setPerspective(CAMERA_FOVY, 1, CAMERA_NEAR, CAMERA_FAR);
-			
-		// draw
+
+		// draw the rest of the scale over the top
 		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
 		root.draw(mvpMatrix);
 
-		// draw the cubemap first
+		// draw the cubemap behind everything else
 		mvpMatrix.set(projectionMatrix).mul(cubemapViewMatrix);
 		cubemap.draw(mvpMatrix);
-
 	}
 
 	@Override
