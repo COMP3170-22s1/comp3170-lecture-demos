@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -99,7 +101,7 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		
 		Shader depthShader = ShaderLibrary.compileShader(DEPTH_VERTEX_SHADER, DEPTH_FRAGMENT_SHADER);
 		cylinder = new Cylinder(depthShader, Color.RED);
-		cylinder.setScale(1,2,1);
+		cylinder.getMatrix().scale(1,2,1);
 		
 		float aspect = (float)screenSize[0] / screenSize[1];
 		camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
@@ -136,6 +138,7 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
+	private Matrix4f mvpMatrix = new Matrix4f();
 	
 	@Override
 	/**
@@ -162,7 +165,7 @@ public class OutlineEffectDemo extends JFrame implements GLEventListener {
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
 		// draw
-		cylinder.draw(camera);
+		cylinder.drawSelf(camera.getMVPMatrix(mvpMatrix));
 		
 		if (useEffect) {
 			// Pass 2: render quad to screen

@@ -2,6 +2,7 @@ package comp3170.demos.week12.sceneobjects;
 
 import java.awt.event.KeyEvent;
 
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
@@ -13,12 +14,13 @@ import com.jogamp.opengl.GLContext;
 import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.Shader;
-import comp3170.demos.week12.cameras.Camera;
+import comp3170.demos.SceneObject;
 
 public class Cube extends SceneObject {
 
 	private static final float TAU = (float) (Math.PI * 2);;
 
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private int[] indices;
@@ -29,7 +31,7 @@ public class Cube extends SceneObject {
 	
 
 	public Cube(Shader shader, int texture) {
-		super(shader);
+		this.shader = shader;
 
 		this.texture = texture;
 		
@@ -95,27 +97,22 @@ public class Cube extends SceneObject {
 	private Vector3f angle = new Vector3f();
 	
 	public void update(InputManager input, float dt) {
-		getAngle(angle);		
 		if (input.isKeyDown(KeyEvent.VK_Z)) {
-			angle.y = (angle.y - ROTATION_SPEED * dt) % TAU;
+			getMatrix().rotateY(-ROTATION_SPEED * dt);
 		}
 		if (input.isKeyDown(KeyEvent.VK_X)) {
-			angle.y = (angle.y + ROTATION_SPEED * dt) % TAU;
+			getMatrix().rotateY(ROTATION_SPEED * dt);
 		}
-		setAngle(angle);		
 	}
 
 	private static final float[] RED = new float[] {1.0f, 0.0f, 0.0f, 1.0f};
 	
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		shader.enable();
 		
-		calcModelMatrix();
-		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
 		
 		if (shader.hasUniform("u_texture")) {

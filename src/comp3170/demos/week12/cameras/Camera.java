@@ -6,6 +6,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import comp3170.InputManager;
+import comp3170.Shader;
 
 /**
  * A camera that revolves around the origin
@@ -62,7 +63,12 @@ abstract public class Camera {
 	public Matrix4f getProjectionMatrix(Matrix4f dest) {
 		return dest.set(projectionMatrix);
 	}
-	
+
+	public Matrix4f getMVPMatrix(Matrix4f dest) {
+		return 	getViewMatrix(dest).mulLocal(projectionMatrix);  // M_mvp = M_proj * M_view
+	}
+
+
 	public float getNear() {
 		return near;
 	}

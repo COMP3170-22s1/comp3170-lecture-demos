@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -102,7 +104,7 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		Shader simpleShader = ShaderLibrary.compileShader(SIMPLE_VERTEX_SHADER, SIMPLE_FRAGMENT_SHADER);
 
 		cylinder = new Cylinder(simpleShader, Color.RED);
-		cylinder.setScale(1,2,1);
+		cylinder.getMatrix().scale(1,2,1);
 		
 		float aspect = (float)screenWidth / screenHeight;
 		camera = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
@@ -140,7 +142,8 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
-	
+	private Matrix4f mvpMatrix = new Matrix4f();
+		
 	@Override
 	/**
 	 * Called when the canvas is redrawn
@@ -163,8 +166,10 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 		}		
 		
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
-		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
-		cylinder.draw(camera);
+		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
+		
+		camera.getMVPMatrix(mvpMatrix);
+		cylinder.draw(mvpMatrix);
 		
 		if (useEffect) {
 			// Pass 2: render quad to screen
@@ -175,6 +180,7 @@ public class GreyscaleEffectDemo extends JFrame implements GLEventListener {
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			
+			// no mvp matrix required
 			quad.draw();
 		}
 	}

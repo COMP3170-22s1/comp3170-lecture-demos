@@ -16,6 +16,7 @@ import com.jogamp.opengl.GLContext;
 import comp3170.GLBuffers;
 import comp3170.InputManager;
 import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week12.cameras.Camera;
 
 public class Cylinder extends SceneObject {
@@ -23,6 +24,7 @@ public class Cylinder extends SceneObject {
 	private static final float TAU = (float) (Math.PI * 2);;
 	private static final int NSIDES = 12;
 
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private Vector4f[] normals;
@@ -30,7 +32,6 @@ public class Cylinder extends SceneObject {
 	private int[] indices;
 	private int indexBuffer;
 	
-	private Matrix4f normalMatrix = new Matrix4f();
 	private List<Integer> topIndices;
 	private List<Integer> bottomIndices;
 	private List<Integer> sideIndices;
@@ -38,8 +39,7 @@ public class Cylinder extends SceneObject {
 	private float[] colour;
 
 	public Cylinder(Shader shader, Color colour) {
-		super(shader);
-
+		this.shader = shader;
 		this.colour = colour.getRGBComponents(new float[4]);
 		
 		createVertexBuffer();
@@ -47,8 +47,8 @@ public class Cylinder extends SceneObject {
 	}
 
 	private void createVertexBuffer() {
-		this.vertices = new Vector4f[NSIDES * 4 + 2];
-		this.normals = new Vector4f[NSIDES * 4 + 2];
+		vertices = new Vector4f[NSIDES * 4 + 2];
+		normals = new Vector4f[NSIDES * 4 + 2];
 		
 		int kv = 0;			
 		int kn = 0;
@@ -69,9 +69,9 @@ public class Cylinder extends SceneObject {
 		Matrix4f rotate = new Matrix4f();
 		Matrix4f translate = new Matrix4f().translation(0,1,0);
 		
-		this.topIndices = new ArrayList<Integer>();
-		this.bottomIndices = new ArrayList<Integer>();
-		this.sideIndices = new ArrayList<Integer>();
+		topIndices = new ArrayList<Integer>();
+		bottomIndices = new ArrayList<Integer>();
+		sideIndices = new ArrayList<Integer>();
 		
 		for (int i = 0; i < NSIDES; i++) {
 			float angle = i * TAU / NSIDES; 
@@ -100,12 +100,12 @@ public class Cylinder extends SceneObject {
 			normals[kn++] = ni;
 		}
 		
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
-		this.normalBuffer = GLBuffers.createBuffer(normals);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
+		normalBuffer = GLBuffers.createBuffer(normals);
 	}
 	
 	private void createIndexBuffer() {
-		this.indices = new int[NSIDES * 3 * 4];
+		indices = new int[NSIDES * 3 * 4];
 		
 		int k = 0;
 		for (int i = 0; i < NSIDES; i++) {
@@ -132,7 +132,7 @@ public class Cylinder extends SceneObject {
 			indices[k++] = sideIndices.get(2 * j + 1);
 		}
 		
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 
 
@@ -140,52 +140,26 @@ public class Cylinder extends SceneObject {
 	private Vector3f angle = new Vector3f();
 	
 	public void update(InputManager input, float dt) {
-		getAngle(angle);		
 		if (input.isKeyDown(KeyEvent.VK_Z)) {
-			angle.y = (angle.y - ROTATION_SPEED * dt) % TAU;
+			getMatrix().rotateY(- ROTATION_SPEED * dt);
 		}
 		if (input.isKeyDown(KeyEvent.VK_X)) {
-			angle.y = (angle.y + ROTATION_SPEED * dt) % TAU;
+			getMatrix().rotateY(ROTATION_SPEED * dt);
 		}
-		setAngle(angle);		
 	}
 
-	
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
-		shader.enable();
-		
-		calcModelMatrix();
-		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
+		shader.enable();		
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
-		
-		if (shader.hasUniform("u_normalMatrix")) {
-			shader.setUniform("u_normalMatrix", modelMatrix.normal(normalMatrix));			
-		}
-		
-		shader.setAttribute("a_position", vertexBuffer);
-
-		if (shader.hasAttribute("a_normal")) {
-			shader.setAttribute("a_normal", normalBuffer);			
-		}
-		
+				
 		if (shader.hasUniform("u_colour")) {
 			shader.setUniform("u_colour", colour);
 		}
 
-		if (shader.hasUniform("u_near")) {
-			float near = camera.getNear();
-			shader.setUniform("u_near", near);			
-		}
-		
-		if (shader.hasUniform("u_far")) {		
-			float far = camera.getFar();
-			shader.setUniform("u_far", far);
-		}
-		
+	
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		
 

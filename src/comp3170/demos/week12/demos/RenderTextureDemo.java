@@ -8,6 +8,8 @@ import java.io.IOException;
 
 import javax.swing.JFrame;
 
+import org.joml.Matrix4f;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -24,7 +26,6 @@ import comp3170.Shader;
 import comp3170.demos.week12.cameras.PerspectiveCamera;
 import comp3170.demos.week12.sceneobjects.Cube;
 import comp3170.demos.week12.sceneobjects.Cylinder;
-import comp3170.demos.week12.sceneobjects.RenderQuad;
 import comp3170.demos.week12.shaders.ShaderLibrary;
 
 public class RenderTextureDemo extends JFrame implements GLEventListener {
@@ -105,7 +106,7 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		Shader simpleShader = ShaderLibrary.compileShader(SIMPLE_VERTEX_SHADER, SIMPLE_FRAGMENT_SHADER);
 		
 		cylinder = new Cylinder(simpleShader, Color.RED);
-		cylinder.setScale(1,2,1);
+		cylinder.getMatrix().scale(1,2,1);
 		
 		float aspect = (float)screenWidth / screenHeight;
 		camera1 = new PerspectiveCamera(CAMERA_FOVY, aspect, CAMERA_NEAR, CAMERA_FAR);
@@ -162,6 +163,7 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
+	private Matrix4f mvpMatrix = new Matrix4f();
 	
 	@Override
 	/**
@@ -186,7 +188,7 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 		
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
-		cylinder.draw(camera1);
+		cylinder.draw(camera1.getMVPMatrix(mvpMatrix));
 		
 		if (useEffect) {
 			// Pass 2: render cube to screen
@@ -198,7 +200,7 @@ public class RenderTextureDemo extends JFrame implements GLEventListener {
 			gl.glClear(GL.GL_COLOR_BUFFER_BIT);
 			gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 			
-			cube.draw(camera2);
+			cube.draw(camera2.getMVPMatrix(mvpMatrix));
 		}
 	}
 

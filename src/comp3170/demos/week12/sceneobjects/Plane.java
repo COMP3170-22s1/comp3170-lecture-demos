@@ -2,6 +2,7 @@ package comp3170.demos.week12.sceneobjects;
 
 import java.awt.Color;
 
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import com.jogamp.opengl.GL;
@@ -10,7 +11,7 @@ import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
 import comp3170.Shader;
-import comp3170.demos.week12.cameras.Camera;
+import comp3170.demos.SceneObject;
 
 public class Plane extends SceneObject {
 
@@ -19,36 +20,34 @@ public class Plane extends SceneObject {
 	private int[] indices;
 	private int indexBuffer;
 	private float[] colour;
+	private Shader shader;
 
 	public Plane(Shader shader, Color colour) {
-		super(shader);
+		this.shader = shader;
 
 		this.colour = colour.getRGBComponents(new float[4]);
 		
-		this.vertices = new Vector4f[] {
+		vertices = new Vector4f[] {
 			new Vector4f( 1, 0,  1, 1),
 			new Vector4f(-1, 0,  1, 1),
 			new Vector4f( 1, 0, -1, 1),
 			new Vector4f(-1, 0, -1, 1),
 		};
 		
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 		
-		this.indices = new int[] {
+		indices = new int[] {
 			0, 1, 2,
 			3, 2, 1,
 		};
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 	}
 	
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 		shader.enable();
 
-		calcModelMatrix();
-		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		shader.setAttribute("a_position", vertexBuffer);
 
 		if (shader.hasUniform("u_colour")) {
