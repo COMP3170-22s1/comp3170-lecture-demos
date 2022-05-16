@@ -1,11 +1,12 @@
 package comp3170.demos.week11.demos;
 
-import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
 import javax.swing.JFrame;
+
+import org.joml.Matrix4f;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
@@ -104,6 +105,9 @@ public class TextureDemo extends JFrame implements GLEventListener {
 		input.clear();
 	}
 	
+	private Matrix4f viewMatrix = new Matrix4f();
+	private Matrix4f projectionMatrix = new Matrix4f();
+	private Matrix4f mvpMatrix = new Matrix4f();
 	
 	@Override
 	/**
@@ -123,8 +127,12 @@ public class TextureDemo extends JFrame implements GLEventListener {
 		gl.glClearDepth(1f);
 		gl.glClear(GL.GL_DEPTH_BUFFER_BIT);		
 				
+		camera.getViewMatrix(viewMatrix);
+		camera.getProjectionMatrix(projectionMatrix);		
+		mvpMatrix.get(projectionMatrix).mul(viewMatrix);  // M_mvp = M_proj * M_view
+
 		// draw
-		quad.draw(camera);
+		quad.draw(mvpMatrix);
 	}
 
 	@Override

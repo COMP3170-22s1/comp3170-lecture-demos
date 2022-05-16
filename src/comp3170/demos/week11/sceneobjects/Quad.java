@@ -2,6 +2,7 @@ package comp3170.demos.week11.sceneobjects;
 
 import java.io.IOException;
 
+import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -10,7 +11,8 @@ import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLContext;
 
 import comp3170.GLBuffers;
-import comp3170.demos.week11.cameras.Camera;
+import comp3170.Shader;
+import comp3170.demos.SceneObject;
 import comp3170.demos.week11.shaders.ShaderLibrary;
 import comp3170.demos.week11.textures.TextureLibrary;
 
@@ -20,6 +22,7 @@ public class Quad extends SceneObject {
 	static final private String FRAGMENT_SHADER = "textureFragment.glsl";
 	static final private String TEXTURE = "colours.png";
 	
+	private Shader shader;
 	private Vector4f[] vertices;
 	private int vertexBuffer;
 	private Vector2f[] uvs;
@@ -29,42 +32,42 @@ public class Quad extends SceneObject {
 	private int texture;
 
 	public Quad() {
-		super(ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER));
+		shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 
 		//  1---3
-		//  |   |   y
+		//  |\  |   y
 		//  | * |   |
-		//  |   |   +--x
+		//  |  \|   +--x
 		//  0---2
 		
-		this.vertices = new Vector4f[] {
+		vertices = new Vector4f[] {
 			new Vector4f(-1, -1, 0, 1),
 			new Vector4f(-1,  1, 0, 1),
 			new Vector4f( 1, -1, 0, 1),
 			new Vector4f( 1,  1, 0, 1),
 		};
 		
-		this.vertexBuffer = GLBuffers.createBuffer(vertices);
+		vertexBuffer = GLBuffers.createBuffer(vertices);
 
-		this.uvs = new Vector2f[] {
+		uvs = new Vector2f[] {
 			new Vector2f(0, 1),
 			new Vector2f(0, 0),
-			new Vector2f(2, 1),
+			new Vector2f(1, 1),
 			new Vector2f(1, 0),
 		};
 			
-		this.uvBuffer = GLBuffers.createBuffer(uvs);
+		uvBuffer = GLBuffers.createBuffer(uvs);
 		
-		this.indices = new int[] {
+		indices = new int[] {
 //			0, 1, 3,
 //			3, 2, 0,
 			0, 1, 2,
 			3, 2, 1,
 		};
-		this.indexBuffer = GLBuffers.createIndexBuffer(indices);
+		indexBuffer = GLBuffers.createIndexBuffer(indices);
 		
 		try {
-			this.texture = TextureLibrary.loadTexture(TEXTURE);
+			texture = TextureLibrary.loadTexture(TEXTURE);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
@@ -72,22 +75,18 @@ public class Quad extends SceneObject {
 	}
 
 	@Override
-	public void draw(Camera camera) {
+	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
 
 		shader.enable();
-
-		calcModelMatrix();
-		shader.setUniform("u_modelMatrix", modelMatrix);
-		shader.setUniform("u_viewMatrix", camera.getViewMatrix(viewMatrix));
-		shader.setUniform("u_projectionMatrix", camera.getProjectionMatrix(projectionMatrix));		
+		shader.setUniform("u_mvpMatrix", mvpMatrix);
 		
 		gl.glActiveTexture(GL.GL_TEXTURE0);
-		gl.glBindTexture(GL.GL_TEXTURE_2D, this.texture);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, texture);
 		shader.setUniform("u_texture", 0);
 		
-		shader.setAttribute("a_position", this.vertexBuffer);		
-		shader.setAttribute("a_texcoord", this.uvBuffer);		
+		shader.setAttribute("a_position", vertexBuffer);		
+		shader.setAttribute("a_texcoord", uvBuffer);		
 
 		gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer);
 		gl.glDrawElements(GL.GL_TRIANGLES, indices.length, GL.GL_UNSIGNED_INT, 0);		
