@@ -21,7 +21,7 @@ public class Cubemap extends SceneObject {
 	private static final String FRAGMENT_SHADER = "cubemapFragment.glsl";
 	
 	private static final String[] TEXTURE_FILES = new String[] {
-		"X.png", "X.png", 
+	 	"X.png", "X.png", 
 		"Y.png", "Y.png", 
 		"Z.png", "Z.png", 
 	};
