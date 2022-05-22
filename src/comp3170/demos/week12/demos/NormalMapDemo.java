@@ -26,6 +26,7 @@ import comp3170.demos.SceneObject;
 import comp3170.demos.week12.sceneobjects.Cubemap;
 import comp3170.demos.week12.sceneobjects.CylinderWithNormalMap;
 import comp3170.demos.week12.sceneobjects.Grid;
+import comp3170.demos.week12.sceneobjects.QuadWithNormalMap;
 
 public class NormalMapDemo extends JFrame implements GLEventListener {
 
@@ -78,13 +79,18 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 		gl.glEnable(GL.GL_CULL_FACE);	
 		
 		root = new SceneObject();
+		
 		Grid grid = new Grid(20);
 		grid.setParent(root);
 		grid.getMatrix().scale(2);
-		
-		CylinderWithNormalMap cylinder = new CylinderWithNormalMap();
-		cylinder.setParent(root);
-		cylinder.getMatrix().scale(1,2,1);
+
+		QuadWithNormalMap quad = new QuadWithNormalMap();
+		quad.setParent(root);
+		quad.getMatrix().translate(0,1,0);
+
+//		CylinderWithNormalMap cylinder = new CylinderWithNormalMap();
+//		cylinder.setParent(root);
+//		cylinder.getMatrix().scale(1,2,1);
 		
 	}
 	
@@ -143,7 +149,7 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 			
 		// pre-multiply projetion and view matrices
 
-		viewMatrix.identity().rotateY(cameraAngles.y).rotateX(cameraAngles.x).translate(0,0,cameraDistance).invert();
+		viewMatrix.identity().rotateY(cameraAngles.y).rotateX(cameraAngles.x).translate(0,1,cameraDistance).invert();
 
 		projectionMatrix.setOrtho(
 				-CAMERA_WIDTH / 2, CAMERA_WIDTH / 2, 
