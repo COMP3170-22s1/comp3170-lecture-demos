@@ -84,19 +84,13 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 		
 		CylinderWithNormalMap cylinder = new CylinderWithNormalMap();
 		cylinder.setParent(root);
+		cylinder.getMatrix().scale(1,2,1);
 		
 	}
-
-	
-	private Vector3f cameraAngles = new Vector3f();
-	private float cameraDistance = 5;
-	
-	// perspective camera
 	
 	private static final float CAMERA_ROTATION = TAU/6;
-	private static final float CAMERA_MOVEMENT = 2;
-	private static final float CAMERA_D_FOVY = TAU/6;
-
+	private Vector3f cameraAngles = new Vector3f();
+	private float cameraDistance = 5;	
 	
 	private void update() {
 		long time = System.currentTimeMillis();
