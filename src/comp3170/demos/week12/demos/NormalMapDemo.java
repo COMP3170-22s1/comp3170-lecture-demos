@@ -42,7 +42,6 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 
 	private SceneObject root;
-	private Cubemap cubemap;
 	
 	public NormalMapDemo() {
 		super("Normal map demo");
@@ -88,56 +87,44 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 		
 	}
 
-	private static final float CAMERA_HEIGHT = 0.5f;
-	private Vector3f cameraPosition = new Vector3f(0,CAMERA_HEIGHT,0);
-	private Vector3f cameraAngles = new Vector3f(0,0,0);
-	private static final float CAMERA_ROTATION = TAU / 10;
-	private static final float CAMERA_MOVEMENT = 1;
-	private static final float CAMERA_FOVY = TAU / 8;
-	private static final float CAMERA_NEAR = 0.1f;
-	private static final float CAMERA_FAR = 10.0f;		
 	
-	public void update() {
+	private Vector3f cameraAngles = new Vector3f();
+	private float cameraDistance = 5;
+	
+	// perspective camera
+	
+	private static final float CAMERA_ROTATION = TAU/6;
+	private static final float CAMERA_MOVEMENT = 2;
+	private static final float CAMERA_D_FOVY = TAU/6;
+
+	
+	private void update() {
 		long time = System.currentTimeMillis();
-		float dt = (time - oldTime) / 1000.0f;
+		float dt = (time - oldTime) / 1000f;
 		oldTime = time;
-		
-		
+
 		if (input.isKeyDown(KeyEvent.VK_LEFT)) {
-			cameraAngles.y += CAMERA_ROTATION * dt;
-		}
-		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
 			cameraAngles.y -= CAMERA_ROTATION * dt;
 		}
-		if (input.isKeyDown(KeyEvent.VK_UP)) {
-			cameraAngles.x += CAMERA_ROTATION * dt;
+		if (input.isKeyDown(KeyEvent.VK_RIGHT)) {
+			cameraAngles.y += CAMERA_ROTATION * dt;
 		}
-		if (input.isKeyDown(KeyEvent.VK_DOWN)) {
+		if (input.isKeyDown(KeyEvent.VK_UP)) {
 			cameraAngles.x -= CAMERA_ROTATION * dt;
 		}
-		
-		if (input.isKeyDown(KeyEvent.VK_A)) {
-			cameraPosition.x -= CAMERA_MOVEMENT * dt;
-		}
-		if (input.isKeyDown(KeyEvent.VK_D)) {
-			cameraPosition.x += CAMERA_MOVEMENT * dt;
-		}
-		if (input.isKeyDown(KeyEvent.VK_S)) {
-			cameraPosition.z += CAMERA_MOVEMENT * dt;
-		}
-		if (input.isKeyDown(KeyEvent.VK_W)) {
-			cameraPosition.z -= CAMERA_MOVEMENT * dt;
+		if (input.isKeyDown(KeyEvent.VK_DOWN)) {
+			cameraAngles.x += CAMERA_ROTATION * dt;
 		}
 
-		cameraMatrix.identity().translate(cameraPosition).rotateY(cameraAngles.y).rotateX(cameraAngles.x);
-		
-		
 		input.clear();
 	}
 	
-	private Matrix4f cameraMatrix = new Matrix4f();
+	private static final float CAMERA_WIDTH = 5;
+	private static final float CAMERA_HEIGHT = 5;
+	private static final float CAMERA_NEAR = 1;
+	private static final float CAMERA_FAR = 20;
+
 	private Matrix4f viewMatrix = new Matrix4f();
-	private Matrix4f cubemapViewMatrix = new Matrix4f();
 	private Matrix4f projectionMatrix = new Matrix4f();
 	private Matrix4f mvpMatrix = new Matrix4f();
 	
@@ -162,17 +149,16 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 			
 		// pre-multiply projetion and view matrices
 
-		cameraMatrix.invert(viewMatrix);
-		cubemapViewMatrix.set3x3(viewMatrix); // view matrix with no translation
-		projectionMatrix.setPerspective(CAMERA_FOVY, 1, CAMERA_NEAR, CAMERA_FAR);
+		viewMatrix.identity().rotateY(cameraAngles.y).rotateX(cameraAngles.x).translate(0,0,cameraDistance).invert();
+
+		projectionMatrix.setOrtho(
+				-CAMERA_WIDTH / 2, CAMERA_WIDTH / 2, 
+				-CAMERA_HEIGHT / 2, CAMERA_HEIGHT / 2, 
+				CAMERA_NEAR, CAMERA_FAR);
 
 		// draw the rest of the scale over the top
 		mvpMatrix.set(projectionMatrix).mul(viewMatrix);
 		root.draw(mvpMatrix);
-
-		// draw the cubemap behind everything else
-		mvpMatrix.set(projectionMatrix).mul(cubemapViewMatrix);
-		cubemap.draw(mvpMatrix);
 	}
 
 	@Override
