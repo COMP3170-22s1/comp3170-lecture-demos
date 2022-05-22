@@ -36,17 +36,22 @@ public class QuadWithNormalMap extends SceneObject {
 	private int vertexBuffer;
 	private Vector2f[] uvs;
 	private int uvBuffer;
-	private Matrix3f[] tangentMatrices;
-	private int tangetMatrixBuffer;
+	private Vector3f[] tangents;
+	private int tangentBuffer;
+	private Vector3f[] bitangents;
+	private int bitangentBuffer;
+	private Vector3f[] normals;
+	private int normalBuffer;
 	private int diffuseTexture;
 	private int normalMapTexture;	
 	
 	public QuadWithNormalMap() {
 		shader = ShaderLibrary.compileShader(VERTEX_SHADER, FRAGMENT_SHADER);
 		createVertexBuffer();
+		createNormalBuffer();
 		createUVBuffer();
 		loadTextures();
-		createTangentMatrixBuffer();
+		createTangentsBuffer();
 		
 	}
 
@@ -64,15 +69,29 @@ public class QuadWithNormalMap extends SceneObject {
 		vertexBuffer = GLBuffers.createBuffer(vertices);
 	}
 
+	private void createNormalBuffer() {
+		normals = new Vector3f[] {
+			new Vector3f(0,0,1),
+			new Vector3f(0,0,1),
+			new Vector3f(0,0,1),
+
+			new Vector3f(0,0,1),
+			new Vector3f(0,0,1),
+			new Vector3f(0,0,1),
+		};
+			
+		normalBuffer = GLBuffers.createBuffer(normals);
+	}
+
 	private void createUVBuffer() {
 		uvs = new Vector2f[] {
 			new Vector2f(0,1),
-			new Vector2f(0,0),
 			new Vector2f(1,1),
+			new Vector2f(0,0),
 			
 			new Vector2f(1,0),
-			new Vector2f(1,1),
 			new Vector2f(0,0),
+			new Vector2f(1,1),
 		};
 		
 		uvBuffer = GLBuffers.createBuffer(uvs);
@@ -88,28 +107,37 @@ public class QuadWithNormalMap extends SceneObject {
 		}
 	}
 	
-	private void createTangentMatrixBuffer() {
-		tangentMatrices = new Matrix3f[6];
+	private void createTangentsBuffer() {
+		tangents = new Vector3f[6];
+		bitangents = new Vector3f[6];
 
 		int k = 0;
 		Matrix3f matrix;
 		matrix = calculateTangentMatrix(0);
-		tangentMatrices[k++] = matrix;
-		tangentMatrices[k++] = matrix;
-		tangentMatrices[k++] = matrix;
+		tangents[0] = matrix.getColumn(0, new Vector3f());
+		bitangents[0] = matrix.getColumn(1, new Vector3f());
+		tangents[1] = matrix.getColumn(0, new Vector3f());
+		bitangents[1] = matrix.getColumn(1, new Vector3f());
+		tangents[2] = matrix.getColumn(0, new Vector3f());
+		bitangents[2] = matrix.getColumn(1, new Vector3f());
 
 		matrix = calculateTangentMatrix(1);
-		tangentMatrices[k++] = matrix;
-		tangentMatrices[k++] = matrix;
-		tangentMatrices[k++] = matrix;
+		tangents[3] = matrix.getColumn(0, new Vector3f());
+		bitangents[3] = matrix.getColumn(1, new Vector3f());
+		tangents[4] = matrix.getColumn(0, new Vector3f());
+		bitangents[4] = matrix.getColumn(1, new Vector3f());
+		tangents[5] = matrix.getColumn(0, new Vector3f());
+		bitangents[5] = matrix.getColumn(1, new Vector3f());
 		
-		tangetMatrixBuffer = GLBuffers.createBuffer(tangentMatrices);
+		tangentBuffer = GLBuffers.createBuffer(tangents);
+		bitangentBuffer = GLBuffers.createBuffer(bitangents);
 
 	}
 
 	Vector3f one = new Vector3f(0,0,1);
 	Vector3f dP10 = new Vector3f();
 	Vector3f dP20 = new Vector3f();
+	Vector3f normal = new Vector3f();
 	Vector3f dUV10 = new Vector3f();
 	Vector3f dUV20 = new Vector3f();
 
@@ -140,10 +168,11 @@ public class QuadWithNormalMap extends SceneObject {
 		dUV20.set(uv2.x - uv0.x, uv2.y - uv0.y, 0);
 		uvMatrix.identity();
 		uvMatrix.setColumn(0, dUV10);
-		uvMatrix.setColumn(1, dUV10);
+		uvMatrix.setColumn(1, dUV20);
 		uvMatrix.invert();		
 
 		Matrix3f tangentMatrix = edgeMatrix.mul(uvMatrix, new Matrix3f());		
+		
 		return tangentMatrix;		
 	}
 
@@ -158,6 +187,9 @@ public class QuadWithNormalMap extends SceneObject {
 		}
 	}
 
+	private Matrix4f modelMatrix = new Matrix4f();
+	private Matrix3f normalMatrix = new Matrix3f();
+	
 	@Override
 	public void drawSelf(Matrix4f mvpMatrix) {
 		GL4 gl = (GL4) GLContext.getCurrentGL();
@@ -166,10 +198,22 @@ public class QuadWithNormalMap extends SceneObject {
 		shader.setAttribute("a_position", vertexBuffer);
 		shader.setAttribute("a_texcoord", uvBuffer);
 
+		shader.setAttribute("a_normal", normalBuffer);
+		shader.setAttribute("a_tangent", tangentBuffer);
+		shader.setAttribute("a_bitangent", bitangentBuffer);
+
+		getModelToWorldMatrix(modelMatrix);
+		shader.setUniform("u_modelMatrix", modelMatrix);
+		shader.setUniform("u_normalMatrix", modelMatrix.normal(normalMatrix));
+		
 		gl.glActiveTexture(GL.GL_TEXTURE0);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, diffuseTexture);
 		shader.setUniform("u_diffuseTexture", 0);
-		
+
+		gl.glActiveTexture(GL.GL_TEXTURE1);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, normalMapTexture);
+		shader.setUniform("u_normalMapTexture", 1);
+
 		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL4.GL_FILL);
         gl.glDrawArrays(GL4.GL_TRIANGLES, 0, vertices.length);           	
 	}

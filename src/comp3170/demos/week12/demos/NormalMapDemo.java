@@ -23,8 +23,7 @@ import com.jogamp.opengl.util.Animator;
 import comp3170.GLException;
 import comp3170.InputManager;
 import comp3170.demos.SceneObject;
-import comp3170.demos.week12.sceneobjects.Cubemap;
-import comp3170.demos.week12.sceneobjects.CylinderWithNormalMap;
+import comp3170.demos.week12.sceneobjects.Axes;
 import comp3170.demos.week12.sceneobjects.Grid;
 import comp3170.demos.week12.sceneobjects.QuadWithNormalMap;
 
@@ -79,6 +78,10 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 		gl.glEnable(GL.GL_CULL_FACE);	
 		
 		root = new SceneObject();
+		
+		Axes axes = new Axes();
+		axes.setParent(root);
+		axes.getMatrix().translate(0, 2.5f, 0);
 		
 		Grid grid = new Grid(20);
 		grid.setParent(root);
