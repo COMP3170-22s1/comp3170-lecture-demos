@@ -7,7 +7,6 @@ out vec4 v_position;	// WORDL
 
 void main() {
 	v_position = a_position;
-    vec4 position = u_mvpMatrix * a_position;
-    gl_Position = position.xyww;
+    gl_Position = u_mvpMatrix * a_position;
 }
 
