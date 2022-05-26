@@ -42,6 +42,8 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 	private long oldTime;
 
 	private SceneObject root;
+
+	private QuadWithNormalMap quad;
 	
 	public NormalMapDemo() {
 		super("Normal map demo");
@@ -87,14 +89,10 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 		grid.setParent(root);
 		grid.getMatrix().scale(2);
 
-		QuadWithNormalMap quad = new QuadWithNormalMap();
+		quad = new QuadWithNormalMap();
 		quad.setParent(root);
 		quad.getMatrix().translate(0,1,0);
 
-//		CylinderWithNormalMap cylinder = new CylinderWithNormalMap();
-//		cylinder.setParent(root);
-//		cylinder.getMatrix().scale(1,2,1);
-		
 	}
 	
 	private static final float CAMERA_ROTATION = TAU/6;
@@ -119,6 +117,8 @@ public class NormalMapDemo extends JFrame implements GLEventListener {
 			cameraAngles.x += CAMERA_ROTATION * dt;
 		}
 
+		quad.update(input, dt);
+		
 		input.clear();
 	}
 	

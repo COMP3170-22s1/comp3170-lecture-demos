@@ -86,12 +86,12 @@ public class QuadWithNormalMap extends SceneObject {
 	private void createUVBuffer() {
 		uvs = new Vector2f[] {
 			new Vector2f(0,1),
-			new Vector2f(1,1),
 			new Vector2f(0,0),
+			new Vector2f(1,1),
 			
 			new Vector2f(1,0),
-			new Vector2f(0,0),
 			new Vector2f(1,1),
+			new Vector2f(0,0),
 		};
 		
 		uvBuffer = GLBuffers.createBuffer(uvs);
@@ -113,21 +113,26 @@ public class QuadWithNormalMap extends SceneObject {
 
 		int k = 0;
 		Matrix3f matrix;
+		Vector3f t,b;
 		matrix = calculateTangentMatrix(0);
-		tangents[0] = matrix.getColumn(0, new Vector3f());
-		bitangents[0] = matrix.getColumn(1, new Vector3f());
-		tangents[1] = matrix.getColumn(0, new Vector3f());
-		bitangents[1] = matrix.getColumn(1, new Vector3f());
-		tangents[2] = matrix.getColumn(0, new Vector3f());
-		bitangents[2] = matrix.getColumn(1, new Vector3f());
+		t = matrix.getColumn(0, new Vector3f()).normalize();
+		b = matrix.getColumn(1, new Vector3f()).normalize();				
+		tangents[0] = t;
+		bitangents[0] = b;
+		tangents[1] = t;
+		bitangents[1] = b;
+		tangents[2] = t;
+		bitangents[2] = b;
 
 		matrix = calculateTangentMatrix(1);
-		tangents[3] = matrix.getColumn(0, new Vector3f());
-		bitangents[3] = matrix.getColumn(1, new Vector3f());
-		tangents[4] = matrix.getColumn(0, new Vector3f());
-		bitangents[4] = matrix.getColumn(1, new Vector3f());
-		tangents[5] = matrix.getColumn(0, new Vector3f());
-		bitangents[5] = matrix.getColumn(1, new Vector3f());
+		t = matrix.getColumn(0, new Vector3f()).normalize();
+		b = matrix.getColumn(1, new Vector3f()).normalize();
+		tangents[3] = t;
+		bitangents[3] = b;
+		tangents[4] = t;
+		bitangents[4] = b;
+		tangents[5] = t;
+		bitangents[5] = b;
 		
 		tangentBuffer = GLBuffers.createBuffer(tangents);
 		bitangentBuffer = GLBuffers.createBuffer(bitangents);
@@ -185,7 +190,25 @@ public class QuadWithNormalMap extends SceneObject {
 		if (input.isKeyDown(KeyEvent.VK_X)) {
 			getMatrix().rotateY(ROTATION_SPEED * dt);
 		}
+
+		if (input.isKeyDown(KeyEvent.VK_A)) {
+			lightDirection.rotateY(ROTATION_SPEED * dt);
+		}
+		if (input.isKeyDown(KeyEvent.VK_D)) {
+			lightDirection.rotateY(-ROTATION_SPEED * dt);
+		}
+		if (input.isKeyDown(KeyEvent.VK_W)) {
+			lightDirection.rotateX(ROTATION_SPEED * dt);
+		}
+		if (input.isKeyDown(KeyEvent.VK_S)) {
+			lightDirection.rotateX(-ROTATION_SPEED * dt);
+		}
+
 	}
+	
+	private Vector3f lightDirection = new Vector3f(0,0,1);
+	private Vector3f lightIntensity = new Vector3f(1,1,0.5f);
+	private Vector3f ambientIntensity = new Vector3f();
 
 	private Matrix4f modelMatrix = new Matrix4f();
 	private Matrix3f normalMatrix = new Matrix3f();
@@ -205,6 +228,10 @@ public class QuadWithNormalMap extends SceneObject {
 		getModelToWorldMatrix(modelMatrix);
 		shader.setUniform("u_modelMatrix", modelMatrix);
 		shader.setUniform("u_normalMatrix", modelMatrix.normal(normalMatrix));
+		
+		shader.setUniform("u_lightDirection", lightDirection);
+		shader.setUniform("u_lightIntensity", lightIntensity);
+		shader.setUniform("u_ambientIntensity", ambientIntensity);
 		
 		gl.glActiveTexture(GL.GL_TEXTURE0);
 		gl.glBindTexture(GL.GL_TEXTURE_2D, diffuseTexture);
